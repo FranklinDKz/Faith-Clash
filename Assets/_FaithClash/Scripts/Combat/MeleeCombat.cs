@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using FaithClash.Core;
@@ -7,9 +7,9 @@ using FaithClash.Player;
 namespace FaithClash.Combat
 {
     /// <summary>
-    /// Training-mode melee: 3-hit light combo (LMB), heavy attack (RMB), block (Q).
-    /// Hits are resolved with an overlap sphere in front of the player at the impact moment of each swing.
-    /// Visuals are procedural until real animations arrive.
+    /// Corpo a corpo do Modo Treino: combo leve de 3 golpes (botão esquerdo), golpe pesado (botão direito) e defesa (Q).
+    /// O acerto é resolvido com uma esfera na frente do jogador no momento de impacto de cada golpe.
+    /// Visual procedural até as animações reais chegarem.
     /// </summary>
     public class MeleeCombat : MonoBehaviour
     {

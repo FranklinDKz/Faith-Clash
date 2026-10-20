@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -9,7 +9,7 @@ using FaithClash.Training;
 
 namespace FaithClash.EditorTools
 {
-    /// <summary>Menu: Faith Clash > Criar Cena de Treino. Builds a playable Training scene from primitives.</summary>
+    /// <summary>Menu: Faith Clash > Criar Cena de Treino. Monta uma cena de treino jogável com formas primitivas.</summary>
     public static class TrainingSceneBuilder
     {
         const string SceneDir = "Assets/_FaithClash/Scenes";
@@ -28,7 +28,7 @@ namespace FaithClash.EditorTools
             ground.transform.localScale = new Vector3(5f, 1f, 5f);
             ground.GetComponent<Renderer>().sharedMaterial = Mat("Ground", new Color(0.28f, 0.3f, 0.33f));
 
-            // Arena walls
+            // Paredes da arena
             var wallMat = Mat("Wall", new Color(0.18f, 0.19f, 0.22f));
             float half = 25f;
             for (int i = 0; i < 4; i++)
@@ -73,14 +73,14 @@ namespace FaithClash.EditorTools
             so.FindProperty("weaponPivot").objectReferenceValue = pivot;
             so.ApplyModifiedPropertiesWithoutUndo();
 
-            // Camera
+            // Câmera
             var camGo = Camera.main.gameObject;
             var tpc = camGo.AddComponent<ThirdPersonCamera>();
             var camSo = new SerializedObject(tpc);
             camSo.FindProperty("target").objectReferenceValue = player.transform;
             camSo.ApplyModifiedPropertiesWithoutUndo();
 
-            // Dummies
+            // Bonecos de treino
             Vector3[] spots = { new Vector3(0, 0, 5), new Vector3(-4, 0, 7), new Vector3(4, 0, 7) };
             for (int i = 0; i < spots.Length; i++)
             {
@@ -96,7 +96,7 @@ namespace FaithClash.EditorTools
                 dso.ApplyModifiedPropertiesWithoutUndo();
             }
 
-            // Manager
+            // Gerenciador
             var mgr = new GameObject("TrainingManager").AddComponent<TrainingManager>();
             var mso = new SerializedObject(mgr);
             mso.FindProperty("player").objectReferenceValue = combat;

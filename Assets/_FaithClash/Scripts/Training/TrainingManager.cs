@@ -1,11 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using FaithClash.Combat;
 
 namespace FaithClash.Training
 {
-    /// <summary>Training mode HUD (IMGUI for now) and damage / DPS statistics.</summary>
+    /// <summary>HUD do Modo Treino (IMGUI por enquanto) e estatísticas de dano / DPS.</summary>
     public class TrainingManager : MonoBehaviour
     {
         public static TrainingManager Instance { get; private set; }
@@ -37,7 +37,7 @@ namespace FaithClash.Training
         void OnGUI()
         {
             var box = new GUIStyle(GUI.skin.box) { alignment = TextAnchor.UpperLeft, fontSize = 14, padding = new RectOffset(10, 10, 8, 8) };
-            GUI.Box(new Rect(10, 10, 230, 120), "FAITH CLASH - TREINO", box);
+            GUI.Box(new Rect(10, 10, 230, 120), "FAITH CLASH — TREINO", box);
             GUI.Label(new Rect(20, 40, 220, 24), $"Dano total: {totalDamage:0}");
             GUI.Label(new Rect(20, 60, 220, 24), $"Golpes: {hits}   DPS: {dps:0.0}");
             if (player != null)
@@ -48,7 +48,7 @@ namespace FaithClash.Training
 
             if (!showHelp) return;
             GUI.Box(new Rect(Screen.width - 270, 10, 260, 190),
-                "CONTROLES (F1 esconde)\n\nWASD mover | Shift correr\nEspaco pular | Ctrl esquiva\nMouse E: golpe leve (combo x3)\nMouse D: golpe pesado\nQ defender | T zerar stats\nR reiniciar | Esc soltar mouse", box);
+                "CONTROLES (F1 esconde)\n\nWASD mover | Shift correr\nEspaço pular | Ctrl esquiva\nMouse esq.: golpe leve (combo x3)\nMouse dir.: golpe pesado\nQ defender | T zerar stats\nR reiniciar | Esc soltar mouse", box);
         }
     }
 }

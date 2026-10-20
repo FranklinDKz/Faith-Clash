@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace FaithClash.Player
@@ -27,7 +27,7 @@ namespace FaithClash.Player
         public bool IsDodging => dodgeTimer > 0f;
         public bool IsGrounded => cc.isGrounded;
         public Vector3 Velocity { get; private set; }
-        /// <summary>Set by the combat component to slow the player while attacking/blocking.</summary>
+        /// <summary>Definido pelo combate para reduzir a velocidade ao atacar ou defender.</summary>
         public float MoveMultiplier { get; set; } = 1f;
 
         void Awake()

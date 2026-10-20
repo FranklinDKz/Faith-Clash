@@ -1,71 +1,72 @@
 ﻿<p align="center">
-  <img src="Branding/logo_transparent.png" width="520" alt="Faith Clash logo">
+  <img src="Branding/logo_transparent.png" width="520" alt="Logo do Faith Clash">
 </p>
 
 <h1 align="center">Faith Clash</h1>
 
 <p align="center">
-  Jogo de combate 3D em terceira pessoa num mundo pos-guerra mundial (2026-2030).<br>
-  Katanas, jutsus, estilos de luta, armas de fogo e poderes - com personagem criado pelo jogador.
+  Jogo de combate 3D em terceira pessoa, num mundo pós-guerra mundial (2026–2030).<br>
+  Katanas, jutsus, estilos de luta, armas de fogo e poderes — com personagem criado pelo jogador.
 </p>
 
 ![Banner](Branding/banners/readme_banner_1500x500.png)
 
-> **Status:** em desenvolvimento inicial. Modo Treino jogavel (prototipo com primitivas).
+> **Status:** em desenvolvimento inicial. Modo Treino jogável (protótipo com formas primitivas).
 
 ## Sobre
 
-Faith Clash e um jogo de combate para **PC (offline)**, feito na **Unity 6 (6000.6.6f1)** com URP. No futuro tera **online (1v1 e modo livre PvP)** e versao **mobile**.
+Faith Clash é um jogo de combate para **PC (offline)**, feito na **Unity 6 (6000.6.6f1)** com URP. No futuro terá **online (1v1 e modo livre com PvP)** e versão **mobile**.
 
-Inspiracoes: Jujutsu Kaisen, Naruto, Dragon Ball Z, Naraka: Bladepoint, Elden Ring e MMORPGs de aventura.
+Inspirações: Jujutsu Kaisen, Naruto, Dragon Ball Z, Naraka: Bladepoint, Elden Ring e MMORPGs de aventura.
 
 ## Modos de jogo
 
-| Modo | Descricao | Estado |
+| Modo | Descrição | Estado |
 |---|---|---|
-| Treino | Praticar combos, esquiva e defesa contra bonecos, com dano total e DPS | Prototipo |
-| Historia | Campanha com personagem proprio | Planejado |
-| Arcade | Lutas sequenciais com pontuacao | Planejado |
+| Treino | Praticar combos, esquiva e defesa contra bonecos, com dano total e DPS | Protótipo |
+| História | Campanha com personagem próprio | Planejado |
+| Arcade | Lutas em sequência com pontuação | Planejado |
 | Livre | Mundo aberto, PvP no futuro | Planejado |
 | Online | Batalhas 1v1 e PvP livre | Futuro |
 
 ## Controles (Modo Treino)
 
-| Acao | Teclado / Mouse | Controle |
+| Ação | Teclado / Mouse | Controle |
 |---|---|---|
-| Mover | WASD | Analogico esquerdo |
-| Camera | Mouse | Analogico direito |
-| Correr | Shift | Clique analogico esquerdo |
-| Pular | Espaco | A / Cruz |
+| Mover | WASD | Analógico esquerdo |
+| Câmera | Mouse | Analógico direito |
+| Correr | Shift | Clique no analógico esquerdo |
+| Pular | Espaço | A / X |
 | Esquiva | Ctrl | B / Bolinha |
-| Golpe leve (combo x3) | Botao esquerdo | X / Quadrado |
-| Golpe pesado | Botao direito | Y / Triangulo |
+| Golpe leve (combo x3) | Botão esquerdo | X / Quadrado |
+| Golpe pesado | Botão direito | Y / Triângulo |
 | Defender | Q | LT / L2 |
-| Zerar stats / Reiniciar | T / R | - |
-| Soltar mouse | Esc | - |
+| Zerar estatísticas / Reiniciar | T / R | — |
+| Soltar o mouse | Esc | — |
 
 ## Como rodar
 
-1. Instale a **Unity Hub** e o editor **6000.6.6f1**.
-2. Clone o repositorio e abra a pasta pelo Unity Hub.
-3. Menu **Faith Clash > Criar Cena de Treino** (cria `Assets/_FaithClash/Scenes/Training.unity`).
+1. Instale o **Unity Hub** e o editor **6000.6.6f1**.
+2. Clone o repositório e abra a pasta pelo Unity Hub.
+3. No menu, clique em **Faith Clash > Criar Cena de Treino** (gera `Assets/_FaithClash/Scenes/Training.unity`).
 4. Aperte **Play**.
 
 ## Estrutura
 
 ```
 Assets/_FaithClash/
-  Scripts/{Core,Player,Combat,Training,Editor}
-  Scenes  Materials  Prefabs  Art  Audio  Animations
-Branding/   logo (png) e banners prontos para redes, Steam e GitHub
-Docs/       GDD e roadmap
+  Scripts/{Core,Player,Combat,Training,UI,Data,Utils,Editor}
+  Art  Animations  Audio  Prefabs  Scenes  Materials  ScriptableObjects  Settings
+Branding/   logo e banners prontos para redes sociais, Steam e GitHub
+Docs/       GDD e estrutura do projeto
 ```
+
+Mais detalhes em [Docs/PROJECT_STRUCTURE.md](Docs/PROJECT_STRUCTURE.md).
 
 ## Roadmap
 
-Veja [Docs/GDD.md](Docs/GDD.md).
+Veja o [GDD](Docs/GDD.md).
 
-## Licenca
+## Licença
 
-Todos os direitos reservados ate definicao de licenca. Jogo original; nenhum asset de franquias de terceiros deve ser incluido no repositorio.
-
+Todos os direitos reservados até a definição de uma licença. Jogo original: nenhum asset de franquias de terceiros deve ser incluído no repositório.

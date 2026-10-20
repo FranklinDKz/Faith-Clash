@@ -23,18 +23,16 @@ namespace FaithClash.EditorTools
 
         static readonly (string nome, Color cor, float suavidade, float metal)[] Materiais =
         {
-            ("Pele", new Color(0.56f, 0.37f, 0.26f), 0.35f, 0f),
-            ("Cabelo", new Color(0.02f, 0.018f, 0.02f), 0.45f, 0f),
-            ("Olho", new Color(0.9f, 0.88f, 0.85f), 0.8f, 0f),
-            ("Iris", new Color(0.22f, 0.1f, 0.05f), 0.8f, 0f),
-            ("Labios", new Color(0.62f, 0.3f, 0.28f), 0.4f, 0f),
-            ("Camisa", new Color(0.05f, 0.05f, 0.06f), 0.15f, 0f),
-            ("Calca", new Color(0.16f, 0.17f, 0.2f), 0.15f, 0f),
+            ("Pele", new Color(0.6f, 0.42f, 0.32f), 0.3f, 0f),
+            ("Rosto", Color.white, 0.25f, 0f),
+            ("Jaqueta", new Color(0.05f, 0.05f, 0.055f), 0.55f, 0f),
+            ("Calca", new Color(0.08f, 0.085f, 0.1f), 0.15f, 0f),
             ("Bota", new Color(0.03f, 0.03f, 0.03f), 0.35f, 0f),
             ("Aco", new Color(0.78f, 0.8f, 0.85f), 0.8f, 1f),
-            ("Cabo", new Color(0.45f, 0.12f, 0.1f), 0.3f, 0f),
+            ("Cabo", new Color(0.12f, 0.05f, 0.04f), 0.3f, 0f),
             ("Ouro", new Color(0.85f, 0.65f, 0.2f), 0.7f, 1f),
         };
+        const string TexturaRosto = Pasta + "/Rosto.png";
 
         static readonly HashSet<string> Loop = new HashSet<string> { "Parado", "Andar", "Correr", "Defesa" };
 
@@ -73,6 +71,7 @@ namespace FaithClash.EditorTools
                 m.SetColor("_BaseColor", cor);
                 m.SetFloat("_Smoothness", suav);
                 m.SetFloat("_Metallic", metal);
+                if (nome == "Rosto") m.SetTexture("_BaseMap", AssetDatabase.LoadAssetAtPath<Texture2D>(TexturaRosto));
                 EditorUtility.SetDirty(m);
                 mapa[nome] = m;
             }
@@ -156,8 +155,15 @@ namespace FaithClash.EditorTools
             var cc = raiz.AddComponent<CharacterController>();
             cc.height = 1.8f; cc.radius = 0.35f; cc.center = new Vector3(0, 0.9f, 0);
             var pc = raiz.AddComponent<PlayerController>();
+            var vida = raiz.AddComponent<FaithClash.Core.Health>();
             var combate = raiz.AddComponent<MeleeCombat>();
             var anim = raiz.AddComponent<AnimadorProtagonista>();
+            raiz.AddComponent<StatusJogador>();
+            raiz.AddComponent<EstilosElementais>();
+            raiz.AddComponent<TravaAlvo>();
+            var vso = new SerializedObject(vida);
+            vso.FindProperty("maxHealth").floatValue = 1850f;
+            vso.ApplyModifiedPropertiesWithoutUndo();
 
             var modelo = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(Fbx));
             modelo.name = "Modelo";

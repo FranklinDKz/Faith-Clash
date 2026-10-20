@@ -24,6 +24,12 @@ namespace FaithClash.Core
             if (IsDead) Died?.Invoke();
         }
 
+        public void Heal(float amount)
+        {
+            if (IsDead) return;
+            Current = Mathf.Min(maxHealth, Current + amount);
+        }
+
         public void ResetHealth() => Current = maxHealth;
     }
 }

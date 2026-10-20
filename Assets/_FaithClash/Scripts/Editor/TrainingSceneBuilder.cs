@@ -1,15 +1,16 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using FaithClash.Combat;
 using FaithClash.Core;
 using FaithClash.Player;
 using FaithClash.Training;
+using FaithClash.UI;
 
 namespace FaithClash.EditorTools
 {
-    /// <summary>Menu: Faith Clash > Criar Cena de Treino. Monta a cena de treino com o protagonista e bonecos.</summary>
+    /// <summary>Menu: Faith Clash > Criar Cena de Treino. Monta a arena simples com o protagonista, bonecos e o HUD.</summary>
     public static class TrainingSceneBuilder
     {
         const string PastaCena = "Assets/_FaithClash/Scenes";
@@ -29,10 +30,11 @@ namespace FaithClash.EditorTools
             }
 
             var cena = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
+            Camera cam = null;
             foreach (var go in cena.GetRootGameObjects())
             {
-                if (go.name == "Main Camera") go.name = "Câmera Principal";
-                else if (go.name == "Directional Light") go.name = "Luz Direcional";
+                if (go.TryGetComponent(out Camera c)) { go.name = "Câmera Principal"; cam = c; }
+                else if (go.TryGetComponent(out Light _)) go.name = "Luz Direcional";
             }
 
             var chao = GameObject.CreatePrimitive(PrimitiveType.Plane);
@@ -56,33 +58,38 @@ namespace FaithClash.EditorTools
 
             var jogador = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
             jogador.transform.position = new Vector3(0, 0.1f, 0);
-            var combate = jogador.GetComponent<MeleeCombat>();
 
-            var camGo = Camera.main.gameObject;
-            var tpc = camGo.AddComponent<ThirdPersonCamera>();
-            var camSo = new SerializedObject(tpc);
-            camSo.FindProperty("target").objectReferenceValue = jogador.transform;
-            camSo.ApplyModifiedPropertiesWithoutUndo();
+            var tpc = cam.gameObject.AddComponent<ThirdPersonCamera>();
+            Ligar(tpc, "target", jogador.transform);
 
-            Vector3[] pontos = { new Vector3(0, 0, 5), new Vector3(-4, 0, 7), new Vector3(4, 0, 7) };
-            for (int i = 0; i < pontos.Length; i++)
+            var bonecos = new (string nome, Vector3 pos)[]
+            {
+                ("Prelado Corrompido", new Vector3(0, 0, 7)),
+                ("Sentinela do Lago", new Vector3(-6, 0, 11)),
+                ("Colosso Corrompido", new Vector3(6, 0, 11)),
+            };
+            var matBoneco = Mat("Boneco", new Color(0.85f, 0.55f, 0.2f));
+            foreach (var (nome, p) in bonecos)
             {
                 var d = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-                d.name = "Boneco de Treino " + (i + 1);
-                d.transform.position = pontos[i] + Vector3.up;
+                d.name = nome;
+                d.transform.position = p + Vector3.up;
                 var r = d.GetComponent<Renderer>();
-                r.sharedMaterial = Mat("Boneco", new Color(0.85f, 0.55f, 0.2f));
-                d.AddComponent<Health>();
+                r.sharedMaterial = matBoneco;
+                var h = d.AddComponent<Health>();
+                var hs = new SerializedObject(h);
+                hs.FindProperty("maxHealth").floatValue = 1200f;
+                hs.ApplyModifiedPropertiesWithoutUndo();
                 var boneco = d.AddComponent<TrainingDummy>();
                 var dso = new SerializedObject(boneco);
                 dso.FindProperty("body").objectReferenceValue = r;
+                dso.FindProperty("nome").stringValue = nome;
                 dso.ApplyModifiedPropertiesWithoutUndo();
             }
 
-            var mgr = new GameObject("Gerenciador de Treino").AddComponent<TrainingManager>();
-            var mso = new SerializedObject(mgr);
-            mso.FindProperty("player").objectReferenceValue = combate;
-            mso.ApplyModifiedPropertiesWithoutUndo();
+            new GameObject("Gerenciador de Treino").AddComponent<TrainingManager>();
+            var hud = new GameObject("HUD").AddComponent<HUDJogo>();
+            Ligar(hud, "jogador", jogador.transform);
 
             Directory.CreateDirectory(PastaCena);
             EditorSceneManager.SaveScene(cena, CaminhoCena);
@@ -90,21 +97,31 @@ namespace FaithClash.EditorTools
             Debug.Log("[Faith Clash] Cena de treino criada em " + CaminhoCena + ". Aperte Play!");
         }
 
+        static void Ligar(Object alvo, string campo, Object valor)
+        {
+            var so = new SerializedObject(alvo);
+            so.FindProperty(campo).objectReferenceValue = valor;
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
         static Material Mat(string nome, Color cor)
         {
             Directory.CreateDirectory(PastaMat);
             string caminho = $"{PastaMat}/{nome}.mat";
             var m = AssetDatabase.LoadAssetAtPath<Material>(caminho);
-            if (m != null) return m;
-            m = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            if (m == null)
+            {
+                m = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+                AssetDatabase.CreateAsset(m, caminho);
+            }
             m.SetColor("_BaseColor", cor);
-            AssetDatabase.CreateAsset(m, caminho);
+            EditorUtility.SetDirty(m);
             return m;
         }
 
         static void AdicionarAosBuildSettings(string caminho)
         {
-            var lista = new System.Collections.Generic.List<EditorBuildSettingsScene>();
+            var lista = new List<EditorBuildSettingsScene>();
             foreach (var s in EditorBuildSettings.scenes)
                 if (File.Exists(s.path)) lista.Add(s);
             if (!lista.Exists(s => s.path == caminho)) lista.Add(new EditorBuildSettingsScene(caminho, true));

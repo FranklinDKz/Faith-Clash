@@ -38,11 +38,19 @@ Inspirações: Jujutsu Kaisen, Naruto, Dragon Ball Z, Naraka: Bladepoint, Elden 
 | Correr | Shift | Clique no analógico esquerdo |
 | Pular | Espaço | A / X |
 | Esquiva | Ctrl | B / Bolinha |
-| Golpe leve (combo x3) | Botão esquerdo | X / Quadrado |
+| Golpe leve (combo x4) | Botão esquerdo | X / Quadrado |
 | Golpe pesado | Botão direito | Y / Triângulo |
-| Defender | Q | LT / L2 |
-| Zerar estatísticas / Reiniciar | T / R | — |
-| Soltar o mouse | Esc | — |
+| Travar no alvo / soltar | Q | Clique no analógico direito |
+| Trocar de alvo | Roda do mouse | — |
+| Defender | F | LT / L2 |
+| Estilo Fogo / Água / Terra / Ar | 1 / 2 / 3 / 4 | — |
+| Golpe Espiritual (gasta carga) | R | — |
+| Itens | Z / X / C / V | — |
+| Dica de combo / combate / fechar | Tab | — |
+| Zerar estatísticas / Reiniciar | T / F5 | — |
+| Mostrar / esconder o mouse | ' (aspas) | — |
+
+Com alvo travado a câmera acompanha o inimigo, o personagem anda de lado olhando para ele e os golpes avançam até o alvo (estilo Elden Ring / Naruto Storm). Sem alvo, o combate é livre.
 
 ## Como rodar
 

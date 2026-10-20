@@ -2,7 +2,9 @@
     "name": "FaithClash.Editor",
     "rootNamespace": "FaithClash.EditorTools",
     "references": [
-        "FaithClash.Runtime"
+        "FaithClash.Runtime",
+        "Unity.RenderPipelines.Core.Runtime",
+        "Unity.RenderPipelines.Universal.Runtime"
     ],
     "includePlatforms": [
         "Editor"

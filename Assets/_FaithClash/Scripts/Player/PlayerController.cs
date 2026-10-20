@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.InputSystem;
+using FaithClash.Combat;
 
 namespace FaithClash.Player
 {
@@ -22,6 +23,7 @@ namespace FaithClash.Player
         [SerializeField] AnimadorProtagonista animador;
 
         CharacterController cc;
+        TravaAlvo trava;
         Transform cam;
         float verticalVelocity;
         float dodgeTimer, dodgeReady;
@@ -36,6 +38,7 @@ namespace FaithClash.Player
         void Awake()
         {
             cc = GetComponent<CharacterController>();
+            trava = GetComponent<TravaAlvo>();
             cam = Camera.main != null ? Camera.main.transform : null;
         }
 
@@ -69,8 +72,16 @@ namespace FaithClash.Player
             }
             else
             {
-                horizontal = wish * ((sprint ? sprintSpeed : walkSpeed) * MoveMultiplier);
-                if (wish.sqrMagnitude > 0.01f && MoveMultiplier > 0.5f)
+                bool focado = trava != null && trava.Travado && !sprint;
+                horizontal = wish * ((sprint ? sprintSpeed : walkSpeed) * MoveMultiplier * (focado ? 0.85f : 1f));
+                if (focado)
+                {
+                    // com alvo travado o personagem anda de lado, sempre de frente para o alvo
+                    Vector3 paraAlvo = Vector3.ProjectOnPlane(trava.Alvo.position - transform.position, Vector3.up);
+                    if (paraAlvo.sqrMagnitude > 0.01f)
+                        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(paraAlvo), turnSpeed * Time.deltaTime);
+                }
+                else if (wish.sqrMagnitude > 0.01f && MoveMultiplier > 0.5f)
                     transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(wish), turnSpeed * Time.deltaTime);
             }
 

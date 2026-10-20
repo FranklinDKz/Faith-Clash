@@ -11,8 +11,12 @@ GameObject:
   - component: {fileID: 1316573124833080465}
   - component: {fileID: 8790748525359726108}
   - component: {fileID: 7090031441069809190}
+  - component: {fileID: 2309399056177308983}
   - component: {fileID: 8265879732538599302}
   - component: {fileID: 4206430916425000933}
+  - component: {fileID: 4208014655503304773}
+  - component: {fileID: 8877017826916772194}
+  - component: {fileID: 5588646751675594520}
   m_Layer: 0
   m_Name: Jogador
   m_TagString: Untagged
@@ -82,6 +86,19 @@ MonoBehaviour:
   dodgeTime: 0.25
   dodgeCooldown: 0.6
   animador: {fileID: 4206430916425000933}
+--- !u!114 &2309399056177308983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710523199073090931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d53cdac38aac9e343a0a52fdaf30b9be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FaithClash.Runtime::FaithClash.Core.Health
+  maxHealth: 1850
 --- !u!114 &8265879732538599302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100,6 +117,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   comboWindow: 0.6
+  comboCounterReset: 2.5
+  maxHomingDistance: 7
 --- !u!114 &4206430916425000933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,6 +134,71 @@ MonoBehaviour:
   animator: {fileID: 1946444538592170079}
   jogador: {fileID: 7090031441069809190}
   suavizacaoVelocidade: 12
+--- !u!114 &4208014655503304773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710523199073090931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 600c16a259ce3b3479799f95d7e24b15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FaithClash.Runtime::FaithClash.Player.StatusJogador
+  nivel: 25
+  titulo: "Portador da F\xE9"
+  feMaxima: 980
+  feInicial: 620
+  regeneracaoFe: 14
+  acertosPorCarga: 8
+  Itens:
+  - nome: "Po\xE7\xE3o de Vida"
+    tecla: Z
+    quantidade: 18
+    icone: item_pocao
+  - nome: "Cristal de F\xE9"
+    tecla: X
+    quantidade: 7
+    icone: item_cristal
+  - nome: Lanterna Sagrada
+    tecla: C
+    quantidade: 3
+    icone: item_lanterna
+  - nome: "Frasco de F\xFAria"
+    tecla: V
+    quantidade: 2
+    icone: item_frasco
+--- !u!114 &8877017826916772194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710523199073090931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ab1d6ddcf549bb468c485f9114b4f8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FaithClash.Runtime::FaithClash.Combat.EstilosElementais
+  tempoSegurar: 0.45
+  custo3x: 60
+  custo4x: 120
+  custoSegurar: 150
+--- !u!114 &5588646751675594520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710523199073090931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 894f956e8f14a6247b3b4cbe55db91a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FaithClash.Runtime::FaithClash.Combat.TravaAlvo
+  alcance: 25
+  alturaFoco: 1.1
 --- !u!1001 &5362025013694803406
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -137,7 +221,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5944c5e2859d30d4fb6d16959712b1f1, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.00000004371139
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5944c5e2859d30d4fb6d16959712b1f1, type: 3}
       propertyPath: m_LocalRotation.x
@@ -145,7 +229,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5944c5e2859d30d4fb6d16959712b1f1, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5944c5e2859d30d4fb6d16959712b1f1, type: 3}
       propertyPath: m_LocalRotation.z

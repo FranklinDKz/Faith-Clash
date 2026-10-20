@@ -40,17 +40,28 @@ def mat(nome, rgb, rough=0.55, metal=0.0):
     return m
 
 
+PASTA_CABECA = os.environ.get("FC_CABECA")  # saida de cabeca_das_fotos.py (cabeca.npz + Rosto.png)
+
+
+def mat_textura(nome, arquivo):
+    m = bpy.data.materials.new(nome)
+    m.use_nodes = True
+    nt = m.node_tree
+    tex = nt.nodes.new("ShaderNodeTexImage")
+    tex.image = bpy.data.images.load(arquivo)
+    nt.links.new(tex.outputs["Color"], nt.nodes["Principled BSDF"].inputs["Base Color"])
+    nt.nodes["Principled BSDF"].inputs["Roughness"].default_value = 0.6
+    return m
+
+
 M = {
-    "Pele": mat("Pele", (0.56, 0.37, 0.26), 0.6),
-    "Cabelo": mat("Cabelo", (0.02, 0.018, 0.02), 0.5),
-    "Olho": mat("Olho", (0.9, 0.88, 0.85), 0.2),
-    "Iris": mat("Iris", (0.22, 0.1, 0.05), 0.2),
-    "Labios": mat("Labios", (0.62, 0.3, 0.28), 0.5),
-    "Camisa": mat("Camisa", (0.05, 0.05, 0.06), 0.8),
-    "Calca": mat("Calca", (0.16, 0.17, 0.2), 0.8),
+    "Pele": mat("Pele", (0.6, 0.42, 0.32), 0.6),
+    "Rosto": mat_textura("Rosto", os.path.join(PASTA_CABECA, "Rosto.png")),
+    "Jaqueta": mat("Jaqueta", (0.035, 0.035, 0.04), 0.45),
+    "Calca": mat("Calca", (0.07, 0.075, 0.09), 0.8),
     "Bota": mat("Bota", (0.03, 0.03, 0.03), 0.6),
     "Aco": mat("Aco", (0.78, 0.8, 0.85), 0.25, 1.0),
-    "Cabo": mat("Cabo", (0.45, 0.12, 0.1), 0.7),
+    "Cabo": mat("Cabo", (0.12, 0.05, 0.04), 0.7),
     "Ouro": mat("Ouro", (0.85, 0.65, 0.2), 0.3, 1.0),
 }
 SLOTS = list(M.keys())
@@ -74,7 +85,7 @@ V("bacia", (0, 0, 0.95), (0.155, 0.105))
 V("cintura", (0, 0, 1.1), (0.145, 0.1), "bacia")
 V("peito", (0, 0, 1.28), (0.18, 0.115), "cintura")
 V("ombros", (0, 0, 1.4), (0.19, 0.105), "peito")
-V("pescoco", (0, 0, 1.5), (0.052, 0.052), "ombros")
+V("pescoco", (0, 0, 1.53), (0.05, 0.05), "ombros")
 for s, sx in (("E", 1), ("D", -1)):
     V("ombro" + s, (0.19 * sx, 0, 1.415), (0.06, 0.06), "ombros")
     V("cotovelo" + s, (0.356 * sx, 0, 1.182), (0.043, 0.043), "ombro" + s)
@@ -104,20 +115,22 @@ sub.render_levels = 2
 bpy.ops.object.modifier_apply(modifier="Skin")
 bpy.ops.object.modifier_apply(modifier="Sub")
 bpy.ops.object.shade_smooth()
-for m in M.values():
-    pass
 for n in SLOTS:
     corpo.data.materials.append(M[n])
+DIR_BRACO = Vector((0.574, 0, -0.819))
 for poly in corpo.data.polygons:
     c = poly.center
-    if c.z < 0.075:
+    if c.z < 0.075 or (c.z < 0.16 and abs(c.x) < 0.2):
         n = "Bota"
-    elif c.z < 0.16 and abs(c.x) < 0.2:
-        n = "Bota"
-    elif c.z < 1.03 and abs(c.x) < 0.2:
+    elif c.z < 1.0 and abs(c.x) < 0.2:
         n = "Calca"
-    elif 1.03 <= c.z < 1.46 and abs(c.x) < 0.215:
-        n = "Camisa"
+    elif abs(c.x) >= 0.17 and c.z < 1.43:
+        # braco: jaqueta ate o punho, mao de pele
+        ombro = Vector((0.19 * (1 if c.x > 0 else -1), 0, 1.415))
+        d = Vector((DIR_BRACO.x * (1 if c.x > 0 else -1), 0, DIR_BRACO.z))
+        n = "Pele" if (c - ombro).dot(d) > 0.535 else "Jaqueta"
+    elif c.z < 1.49:
+        n = "Jaqueta"
     else:
         n = "Pele"
     poly.material_index = IDX[n]
@@ -185,34 +198,29 @@ def caixa(mat_n, centro, tam, grupo, rot=(0, 0, 0)):
     partes.append((mat_n, bm, grupo))
 
 
-HC = (0, 0.0, 1.63)
-esfera("Pele", HC, (0.077, 0.095, 0.108))                       # cranio
-esfera("Pele", (0, -0.022, 1.565), (0.064, 0.07, 0.07))          # mandibula
-esfera("Pele", (0, -0.098, 1.6), (0.013, 0.019, 0.023), 10, 8)    # nariz
-esfera("Pele", (0, -0.092, 1.583), (0.021, 0.012, 0.01), 10, 8)   # ponta do nariz
-for sx in (1, -1):
-    esfera("Olho", (0.032 * sx, -0.083, 1.642), (0.0165, 0.012, 0.012), 10, 8)
-    esfera("Iris", (0.032 * sx, -0.094, 1.642), (0.009, 0.004, 0.009), 10, 8)
-    caixa("Cabelo", (0.034 * sx, -0.088, 1.67), (0.034, 0.01, 0.008), "Head", (0, 0, 8 * sx))  # sobrancelha
-    esfera("Pele", (0.081 * sx, 0.005, 1.62), (0.008, 0.016, 0.027), 8, 6)  # orelha
-esfera("Labios", (0, -0.087, 1.552), (0.025, 0.01, 0.007), 10, 8)
-caixa("Cabelo", (0, -0.092, 1.568), (0.045, 0.008, 0.01), "Head")          # bigode
-esfera("Cabelo", (0, -0.072, 1.512), (0.03, 0.02, 0.026), 10, 8)          # cavanhaque
-esfera("Cabelo", (0, 0.015, 1.69), (0.083, 0.098, 0.078), 16, 10)         # base do cabelo
-for _ in range(110):                                                      # cachos
-    a = random.uniform(0, 2 * math.pi)
-    e = math.acos(random.uniform(0.15, 1.0))
-    rx, ry, rz = 0.088, 0.1, 0.085
-    x = rx * math.sin(e) * math.cos(a)
-    y = 0.015 + ry * math.sin(e) * math.sin(a)
-    z = 1.69 + rz * math.cos(e)
-    if y < -0.06 and z < 1.7:
-        continue
-    r = random.uniform(0.019, 0.028)
-    esfera("Cabelo", (x, y, z), (r, r, r), 8, 6)
-for _ in range(14):                                                       # franja
-    x = random.uniform(-0.055, 0.055)
-    esfera("Cabelo", (x, random.uniform(-0.082, -0.06), random.uniform(1.715, 1.745)), (0.022, 0.02, 0.02), 8, 6)
+def cabeca_das_fotos():
+    """Cabeca reconstruida das fotos (silhuetas + textura projetada), gerada por cabeca_das_fotos.py."""
+    import numpy as np
+    d = np.load(os.path.join(PASTA_CABECA, "cabeca.npz"))
+    dz = 1.525 - float(d["queixo_z"])    # queixo na altura do pescoco do corpo
+    bm = bmesh.new()
+    uv = bm.loops.layers.uv.new("UVMap")
+    vs = [bm.verts.new((float(x), float(y) - 0.006, float(z) + dz)) for x, y, z in d["verts"]]
+    bm.verts.ensure_lookup_table()
+    uvs = d["uvs"]
+    for face in list(d["quads"]) + list(d["tris"]):
+        try:
+            f = bm.faces.new([vs[i] for i in face])
+        except ValueError:
+            continue
+        for loop, i in zip(f.loops, face):
+            loop[uv].uv = (float(uvs[i][0]), float(uvs[i][1]))
+    bmesh.ops.remove_doubles(bm, verts=[v for v in bm.verts], dist=1e-6)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    partes.append(("Rosto", bm, "Head"))
+
+
+cabeca_das_fotos()
 
 # katana presa a mao direita (peso rigido no osso RightHand)
 dir_d = Vector((-0.574, 0, -0.819))
@@ -225,6 +233,7 @@ def ponto(t):
 
 def cilindro(mat_n, t0, t1, raio_xy, grupo="RightHand", achatar=1.0):
     bm = bmesh.new()
+    bm.loops.layers.uv.new("UVMap")
     bmesh.ops.create_cone(bm, cap_ends=True, segments=10, radius1=raio_xy, radius2=raio_xy, depth=(t1 - t0))
     for v in bm.verts:
         v.co.x *= achatar
@@ -277,6 +286,8 @@ bpy.ops.object.join()
 personagem = bpy.context.view_layer.objects.active
 personagem.name = "Protagonista"
 personagem.data.name = "Protagonista"
+personagem.data.uv_layers.active = personagem.data.uv_layers["UVMap"]
+personagem.data.uv_layers["UVMap"].active_render = True
 
 # ---------------------------------------------------------------- animacao
 arm.animation_data_create()
@@ -590,7 +601,7 @@ for nome, frames, fn, loop in ACOES:
 if PREVIEW_DIR:
     os.makedirs(PREVIEW_DIR, exist_ok=True)
     scene.render.engine = "BLENDER_WORKBENCH"
-    scene.display.shading.color_type = "MATERIAL"
+    scene.display.shading.color_type = "TEXTURE"
     scene.display.shading.light = "STUDIO"
     scene.render.resolution_x, scene.render.resolution_y = 360, 480
     cam_d = bpy.data.cameras.new("cam")
@@ -627,6 +638,7 @@ if PREVIEW_DIR:
 
 # ---------------------------------------------------------------- exportar
 if OUT_BLEND:
+    bpy.ops.file.pack_all()  # embute a textura do rosto no .blend
     bpy.ops.wm.save_as_mainfile(filepath=OUT_BLEND)
 arm.animation_data.action = bpy.data.actions["Parado"]
 select_only(personagem, arm)
@@ -635,7 +647,7 @@ bpy.ops.export_scene.fbx(
     filepath=OUT_FBX, use_selection=True, object_types={"ARMATURE", "MESH"},
     add_leaf_bones=False, bake_anim=True, bake_anim_use_all_actions=True, bake_anim_use_nla_strips=False,
     bake_anim_force_startend_keying=True, bake_anim_simplify_factor=0.0,
-    apply_scale_options="FBX_SCALE_ALL", axis_forward="-Z", axis_up="Y",
-    primary_bone_axis="Y", secondary_bone_axis="X", path_mode="COPY", embed_textures=False,
+    apply_scale_options="FBX_SCALE_ALL", axis_forward="Z", axis_up="Y",
+    primary_bone_axis="Y", secondary_bone_axis="X", path_mode="STRIP", embed_textures=False,
 )
 print("FBX OK:", OUT_FBX)

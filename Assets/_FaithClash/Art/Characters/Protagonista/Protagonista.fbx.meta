@@ -42,6 +42,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Jaqueta
+    second: {fileID: 2100000, guid: d744b9f682df70c4aa59f592524fdef8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Labios
     second: {fileID: 2100000, guid: 65c72b758ea0e8945b0ed63a981711cd, type: 2}
   - first:
@@ -59,6 +64,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: Pele
     second: {fileID: 2100000, guid: 788036d716ce13e4199665c7751b63df, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Rosto
+    second: {fileID: 2100000, guid: e06f6717e45d5f14dab0d133af3f01d3, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0

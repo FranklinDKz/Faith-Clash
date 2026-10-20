@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using FaithClash.Core;
 
@@ -7,8 +8,14 @@ namespace FaithClash.Training
     [RequireComponent(typeof(Health))]
     public class TrainingDummy : MonoBehaviour
     {
+        public static readonly List<TrainingDummy> Todos = new List<TrainingDummy>();
+
         [SerializeField] Renderer body;
         [SerializeField] float respawnDelay = 2f;
+        [Header("Identidade (HUD)")]
+        [SerializeField] string nome = "Boneco de Treino";
+        [SerializeField] string subtitulo = "Fé Maculada";
+        [SerializeField] int nivel = 26;
 
         static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
 
@@ -16,6 +23,14 @@ namespace FaithClash.Training
         Color baseColor = Color.white;
         Vector3 home;
         MaterialPropertyBlock block;
+        Vector3 empurrao;
+        float presoAte;
+
+        public string Nome => nome;
+        public string Subtitulo => subtitulo;
+        public int Nivel => nivel;
+        public Health Vida => health;
+        public bool Preso => Time.time < presoAte;
 
         void Awake()
         {
@@ -31,17 +46,44 @@ namespace FaithClash.Training
             health = GetComponent<Health>();
             health.Damaged += OnDamaged;
             health.Died += OnDied;
+            Todos.Add(this);
         }
 
         void OnDisable()
         {
             health.Damaged -= OnDamaged;
             health.Died -= OnDied;
+            Todos.Remove(this);
+        }
+
+        void Update()
+        {
+            if (empurrao.sqrMagnitude > 0.0001f)
+            {
+                transform.position += empurrao * Time.deltaTime;
+                empurrao = Vector3.Lerp(empurrao, Vector3.zero, 5f * Time.deltaTime);
+            }
+        }
+
+        /// <summary>Empurra o boneco (vento, explosões). Ele volta sozinho ao ponto inicial ao renascer.</summary>
+        public void Empurrar(Vector3 impulso)
+        {
+            if (Preso) return;
+            impulso.y = 0f;
+            empurrao += impulso;
+        }
+
+        /// <summary>Imobiliza o boneco (Prisão de Água).</summary>
+        public void Prender(float duracao)
+        {
+            presoAte = Time.time + duracao;
+            empurrao = Vector3.zero;
         }
 
         void OnDamaged(float amount, Vector3 point, GameObject source)
         {
             if (TrainingManager.Instance != null) TrainingManager.Instance.RegisterDamage(amount);
+            if (health.IsDead) return;
             StopAllCoroutines();
             StartCoroutine(Flash());
         }
@@ -69,6 +111,7 @@ namespace FaithClash.Training
             transform.rotation = Quaternion.identity;
             transform.position = home;
             transform.localScale = Vector3.one;
+            empurrao = Vector3.zero;
             health.ResetHealth();
             SetColor(baseColor);
         }
@@ -76,6 +119,7 @@ namespace FaithClash.Training
         void SetColor(Color c)
         {
             if (body == null) return;
+            if (block == null) block = new MaterialPropertyBlock();
             body.GetPropertyBlock(block);
             block.SetColor(BaseColorId, c);
             body.SetPropertyBlock(block);

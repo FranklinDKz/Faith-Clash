@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 500" width="1500" height="500">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a0c18"/>
+      <stop offset=".55" stop-color="#2a1030"/>
+      <stop offset="1" stop-color="#7a1f1a"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffe08a"/>
+      <stop offset="1" stop-color="#d68a1c"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="72%" cy="62%" r="40%">
+      <stop offset="0" stop-color="#ff7a3c" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#ff7a3c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1500" height="500" fill="url(#sky)"/>
+  <rect width="1500" height="500" fill="url(#sun)"/>
+  <!-- ruined skyline -->
+  <path d="M0 500 V380 H70 V330 H130 V400 H200 V300 H260 V360 H340 V320 H400 V410 H480 V350 H560 V420 H640 V340 H720 V390 H800 V310 H860 V370 H940 V330 H1010 V400 H1090 V300 H1150 V380 H1240 V340 H1310 V410 H1400 V360 H1500 V500 Z" fill="#06070f"/>
+  <!-- slash lines -->
+  <g stroke="url(#gold)" stroke-width="4" stroke-linecap="round" opacity=".7">
+    <line x1="980" y1="60" x2="1360" y2="300"/>
+    <line x1="1060" y1="40" x2="1440" y2="250"/>
+  </g>
+  <text x="90" y="230" font-family="Impact, 'Arial Black', sans-serif" font-size="130" letter-spacing="10" fill="url(#gold)">FAITH CLASH</text>
+  <text x="96" y="290" font-family="Segoe UI, Arial, sans-serif" font-size="30" letter-spacing="6" fill="#f4e9d0">COMBATE 3D  -  MUNDO POS-GUERRA  -  ANO 2030</text>
+  <text x="96" y="345" font-family="Segoe UI, Arial, sans-serif" font-size="24" fill="#f4e9d0" opacity=".8">Katanas  |  Jutsus  |  Armas de fogo  |  Poderes  |  Seu proprio personagem</text>
+  <rect x="96" y="380" width="260" height="52" rx="8" fill="url(#gold)"/>
+  <text x="226" y="415" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0a0c18">EM DESENVOLVIMENTO</text>
+</svg>

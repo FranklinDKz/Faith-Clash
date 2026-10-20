@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b1f3a"/>
+      <stop offset="1" stop-color="#0a0c18"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffe08a"/>
+      <stop offset="1" stop-color="#d68a1c"/>
+    </linearGradient>
+    <linearGradient id="blade" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#9aa6c4"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="45%" r="50%">
+      <stop offset="0" stop-color="#ff5a2b" stop-opacity=".75"/>
+      <stop offset="1" stop-color="#ff5a2b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- shield -->
+  <path d="M256 24 L456 96 V248 C456 366 372 448 256 492 C140 448 56 366 56 248 V96 Z" fill="url(#bg)" stroke="url(#gold)" stroke-width="12" stroke-linejoin="round"/>
+  <path d="M256 52 L430 114 V246 C430 350 358 420 256 460 C154 420 82 350 82 246 V114 Z" fill="none" stroke="url(#gold)" stroke-opacity=".45" stroke-width="3"/>
+  <circle cx="256" cy="230" r="150" fill="url(#glow)"/>
+  <!-- crossed katanas -->
+  <g transform="rotate(45 256 240)">
+    <rect x="248" y="84" width="16" height="230" rx="4" fill="url(#blade)"/>
+    <rect x="226" y="312" width="60" height="12" rx="3" fill="url(#gold)"/>
+    <rect x="248" y="324" width="16" height="70" rx="4" fill="#3a2a1a"/>
+  </g>
+  <g transform="rotate(-45 256 240)">
+    <rect x="248" y="84" width="16" height="230" rx="4" fill="url(#blade)"/>
+    <rect x="226" y="312" width="60" height="12" rx="3" fill="url(#gold)"/>
+    <rect x="248" y="324" width="16" height="70" rx="4" fill="#3a2a1a"/>
+  </g>
+  <!-- cross of faith -->
+  <g fill="url(#gold)" stroke="#0a0c18" stroke-width="4">
+    <rect x="240" y="150" width="32" height="150" rx="5"/>
+    <rect x="200" y="190" width="112" height="32" rx="5"/>
+  </g>
+  <text x="256" y="446" text-anchor="middle" font-family="Impact, 'Arial Black', sans-serif" font-size="44" letter-spacing="6" fill="url(#gold)">FAITH CLASH</text>
+</svg>

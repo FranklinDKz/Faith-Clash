@@ -18,6 +18,9 @@ namespace FaithClash.Player
         [SerializeField] float dodgeTime = 0.25f;
         [SerializeField] float dodgeCooldown = 0.6f;
 
+        [Header("Animação")]
+        [SerializeField] AnimadorProtagonista animador;
+
         CharacterController cc;
         Transform cam;
         float verticalVelocity;
@@ -54,6 +57,7 @@ namespace FaithClash.Player
                 dodgeDir = wish.sqrMagnitude > 0.01f ? wish.normalized : transform.forward;
                 dodgeTimer = dodgeTime;
                 dodgeReady = Time.time + dodgeCooldown;
+                if (animador != null) animador.Acao("Esquiva", dodgeTime + 0.05f, 0.04f);
             }
 
             Vector3 horizontal;

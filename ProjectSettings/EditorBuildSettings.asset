@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/_FaithClash/Scenes/Training.unity
-    guid: 1bd12180a78dad2488568f7091716216
+    path: Assets/_FaithClash/Scenes/Treino.unity
+    guid: efcc4fa3d588c7f48a1fd19b6e9cf46f
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

@@ -9,125 +9,106 @@ using FaithClash.Training;
 
 namespace FaithClash.EditorTools
 {
-    /// <summary>Menu: Faith Clash > Criar Cena de Treino. Monta uma cena de treino jogável com formas primitivas.</summary>
+    /// <summary>Menu: Faith Clash > Criar Cena de Treino. Monta a cena de treino com o protagonista e bonecos.</summary>
     public static class TrainingSceneBuilder
     {
-        const string SceneDir = "Assets/_FaithClash/Scenes";
-        const string MatDir = "Assets/_FaithClash/Materials";
-        const string ScenePath = SceneDir + "/Training.unity";
+        const string PastaCena = "Assets/_FaithClash/Scenes";
+        const string PastaMat = "Assets/_FaithClash/Materials";
+        const string CaminhoCena = PastaCena + "/Treino.unity";
 
         [MenuItem("Faith Clash/Criar Cena de Treino")]
         public static void Build()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
 
-            var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
-
-            var ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            ground.name = "Ground";
-            ground.transform.localScale = new Vector3(5f, 1f, 5f);
-            ground.GetComponent<Renderer>().sharedMaterial = Mat("Ground", new Color(0.28f, 0.3f, 0.33f));
-
-            // Paredes da arena
-            var wallMat = Mat("Wall", new Color(0.18f, 0.19f, 0.22f));
-            float half = 25f;
-            for (int i = 0; i < 4; i++)
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PreparadorProtagonista.CaminhoPrefab);
+            if (prefab == null)
             {
-                var w = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                w.name = "Wall" + i;
-                bool ns = i < 2;
-                float s = (i % 2 == 0 ? 1 : -1) * half;
-                w.transform.position = ns ? new Vector3(0, 2, s) : new Vector3(s, 2, 0);
-                w.transform.localScale = ns ? new Vector3(half * 2, 4, 1) : new Vector3(1, 4, half * 2);
-                w.GetComponent<Renderer>().sharedMaterial = wallMat;
+                Debug.LogError("[Faith Clash] Rode primeiro: Faith Clash > Preparar Protagonista");
+                return;
             }
 
-            // Player
-            var player = new GameObject("Player");
-            player.transform.position = new Vector3(0, 1.1f, 0);
-            var cc = player.AddComponent<CharacterController>();
-            cc.height = 1.8f; cc.radius = 0.35f; cc.center = new Vector3(0, 0.9f, 0);
-            player.AddComponent<PlayerController>();
-            var combat = player.AddComponent<MeleeCombat>();
+            var cena = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
+            foreach (var go in cena.GetRootGameObjects())
+            {
+                if (go.name == "Main Camera") go.name = "Câmera Principal";
+                else if (go.name == "Directional Light") go.name = "Luz Direcional";
+            }
 
-            var body = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            body.name = "Body";
-            Object.DestroyImmediate(body.GetComponent<Collider>());
-            body.transform.SetParent(player.transform, false);
-            body.transform.localPosition = new Vector3(0, 0.9f, 0);
-            body.transform.localScale = new Vector3(0.7f, 0.9f, 0.7f);
-            body.GetComponent<Renderer>().sharedMaterial = Mat("Player", new Color(0.15f, 0.45f, 0.9f));
+            var chao = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            chao.name = "Chão";
+            chao.transform.localScale = new Vector3(5f, 1f, 5f);
+            chao.GetComponent<Renderer>().sharedMaterial = Mat("Chao", new Color(0.28f, 0.3f, 0.33f));
 
-            var pivot = new GameObject("WeaponPivot").transform;
-            pivot.SetParent(player.transform, false);
-            pivot.localPosition = new Vector3(0, 1.1f, 0);
-            var blade = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            blade.name = "Katana";
-            Object.DestroyImmediate(blade.GetComponent<Collider>());
-            blade.transform.SetParent(pivot, false);
-            blade.transform.localPosition = new Vector3(0, 0, 0.8f);
-            blade.transform.localScale = new Vector3(0.06f, 0.06f, 1.4f);
-            blade.GetComponent<Renderer>().sharedMaterial = Mat("Blade", new Color(0.85f, 0.88f, 0.95f));
+            var matParede = Mat("Parede", new Color(0.18f, 0.19f, 0.22f));
+            string[] lados = { "Norte", "Sul", "Leste", "Oeste" };
+            float metade = 25f;
+            for (int i = 0; i < 4; i++)
+            {
+                var p = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                p.name = "Parede " + lados[i];
+                bool ns = i < 2;
+                float s = (i % 2 == 0 ? 1 : -1) * metade;
+                p.transform.position = ns ? new Vector3(0, 2, s) : new Vector3(s, 2, 0);
+                p.transform.localScale = ns ? new Vector3(metade * 2, 4, 1) : new Vector3(1, 4, metade * 2);
+                p.GetComponent<Renderer>().sharedMaterial = matParede;
+            }
 
-            var so = new SerializedObject(combat);
-            so.FindProperty("weaponPivot").objectReferenceValue = pivot;
-            so.ApplyModifiedPropertiesWithoutUndo();
+            var jogador = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+            jogador.transform.position = new Vector3(0, 0.1f, 0);
+            var combate = jogador.GetComponent<MeleeCombat>();
 
-            // Câmera
             var camGo = Camera.main.gameObject;
             var tpc = camGo.AddComponent<ThirdPersonCamera>();
             var camSo = new SerializedObject(tpc);
-            camSo.FindProperty("target").objectReferenceValue = player.transform;
+            camSo.FindProperty("target").objectReferenceValue = jogador.transform;
             camSo.ApplyModifiedPropertiesWithoutUndo();
 
-            // Bonecos de treino
-            Vector3[] spots = { new Vector3(0, 0, 5), new Vector3(-4, 0, 7), new Vector3(4, 0, 7) };
-            for (int i = 0; i < spots.Length; i++)
+            Vector3[] pontos = { new Vector3(0, 0, 5), new Vector3(-4, 0, 7), new Vector3(4, 0, 7) };
+            for (int i = 0; i < pontos.Length; i++)
             {
                 var d = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-                d.name = "TrainingDummy" + (i + 1);
-                d.transform.position = spots[i] + Vector3.up;
+                d.name = "Boneco de Treino " + (i + 1);
+                d.transform.position = pontos[i] + Vector3.up;
                 var r = d.GetComponent<Renderer>();
-                r.sharedMaterial = Mat("Dummy", new Color(0.85f, 0.55f, 0.2f));
+                r.sharedMaterial = Mat("Boneco", new Color(0.85f, 0.55f, 0.2f));
                 d.AddComponent<Health>();
-                var dummy = d.AddComponent<TrainingDummy>();
-                var dso = new SerializedObject(dummy);
+                var boneco = d.AddComponent<TrainingDummy>();
+                var dso = new SerializedObject(boneco);
                 dso.FindProperty("body").objectReferenceValue = r;
                 dso.ApplyModifiedPropertiesWithoutUndo();
             }
 
-            // Gerenciador
-            var mgr = new GameObject("TrainingManager").AddComponent<TrainingManager>();
+            var mgr = new GameObject("Gerenciador de Treino").AddComponent<TrainingManager>();
             var mso = new SerializedObject(mgr);
-            mso.FindProperty("player").objectReferenceValue = combat;
+            mso.FindProperty("player").objectReferenceValue = combate;
             mso.ApplyModifiedPropertiesWithoutUndo();
 
-            Directory.CreateDirectory(SceneDir);
-            EditorSceneManager.SaveScene(scene, ScenePath);
-            AddToBuildSettings(ScenePath);
-            Debug.Log("[Faith Clash] Cena de treino criada em " + ScenePath + ". Aperte Play!");
+            Directory.CreateDirectory(PastaCena);
+            EditorSceneManager.SaveScene(cena, CaminhoCena);
+            AdicionarAosBuildSettings(CaminhoCena);
+            Debug.Log("[Faith Clash] Cena de treino criada em " + CaminhoCena + ". Aperte Play!");
         }
 
-        static Material Mat(string name, Color color)
+        static Material Mat(string nome, Color cor)
         {
-            Directory.CreateDirectory(MatDir);
-            string path = $"{MatDir}/{name}.mat";
-            var m = AssetDatabase.LoadAssetAtPath<Material>(path);
+            Directory.CreateDirectory(PastaMat);
+            string caminho = $"{PastaMat}/{nome}.mat";
+            var m = AssetDatabase.LoadAssetAtPath<Material>(caminho);
             if (m != null) return m;
-            var shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
-            m = new Material(shader);
-            m.SetColor("_BaseColor", color);
-            m.color = color;
-            AssetDatabase.CreateAsset(m, path);
+            m = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            m.SetColor("_BaseColor", cor);
+            AssetDatabase.CreateAsset(m, caminho);
             return m;
         }
 
-        static void AddToBuildSettings(string path)
+        static void AdicionarAosBuildSettings(string caminho)
         {
-            var list = new System.Collections.Generic.List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
-            if (list.Exists(s => s.path == path)) return;
-            list.Add(new EditorBuildSettingsScene(path, true));
-            EditorBuildSettings.scenes = list.ToArray();
+            var lista = new System.Collections.Generic.List<EditorBuildSettingsScene>();
+            foreach (var s in EditorBuildSettings.scenes)
+                if (File.Exists(s.path)) lista.Add(s);
+            if (!lista.Exists(s => s.path == caminho)) lista.Add(new EditorBuildSettingsScene(caminho, true));
+            EditorBuildSettings.scenes = lista.ToArray();
         }
     }
 }

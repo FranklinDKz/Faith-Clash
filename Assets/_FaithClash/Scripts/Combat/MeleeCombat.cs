@@ -19,6 +19,7 @@ namespace FaithClash.Combat
         }
 
         [SerializeField] Transform weaponPivot;
+        [SerializeField] AnimadorProtagonista animador;
         [SerializeField] LayerMask hitMask = ~0;
         [SerializeField] float comboWindow = 0.6f;
 
@@ -58,6 +59,7 @@ namespace FaithClash.Combat
                           || (Gamepad.current != null && Gamepad.current.leftTrigger.isPressed));
 
             controller.MoveMultiplier = attacking ? 0.25f : IsBlocking ? 0.4f : 1f;
+            if (animador != null) animador.Defendendo = IsBlocking;
 
             if (attacking)
             {
@@ -66,7 +68,7 @@ namespace FaithClash.Combat
             }
             else if (!controller.IsDodging)
             {
-                if (heavyPressed) Begin(Heavy, true);
+                if (heavyPressed) Begin(Heavy, true, "AtaquePesado");
                 else if (lightPressed) StartLight();
             }
 
@@ -76,12 +78,14 @@ namespace FaithClash.Combat
         void StartLight()
         {
             if (Time.time - lastAttackEnd > comboWindow) comboIndex = 0;
-            Begin(Light[comboIndex % Light.Length], false);
+            int i = comboIndex % Light.Length;
+            Begin(Light[i], false, "Ataque" + (i + 1));
         }
 
-        void Begin(Attack a, bool isHeavy)
+        void Begin(Attack a, bool isHeavy, string clip)
         {
             current = a; heavy = isHeavy; attacking = true; impactDone = false; attackTimer = 0f; queuedLight = false;
+            if (animador != null) animador.Acao(clip, a.duration);
             if (weaponPivot) weaponPivot.localRotation = Quaternion.identity;
         }
 

@@ -1,4 +1,4 @@
-﻿<p align="center">
+<p align="center">
   <img src="Branding/logo_transparent.png" width="520" alt="Logo do Faith Clash">
 </p>
 
@@ -48,7 +48,7 @@ Inspirações: Jujutsu Kaisen, Naruto, Dragon Ball Z, Naraka: Bladepoint, Elden 
 
 1. Instale o **Unity Hub** e o editor **6000.6.6f1**.
 2. Clone o repositório e abra a pasta pelo Unity Hub.
-3. No menu, clique em **Faith Clash > Criar Cena de Treino** (gera `Assets/_FaithClash/Scenes/Training.unity`).
+3. No menu, clique em **Faith Clash > Preparar Protagonista** e depois em **Faith Clash > Criar Cena de Treino** (gera `Assets/_FaithClash/Scenes/Treino.unity`).
 4. Aperte **Play**.
 
 ## Estrutura
@@ -59,6 +59,7 @@ Assets/_FaithClash/
   Art  Animations  Audio  Prefabs  Scenes  Materials  ScriptableObjects  Settings
 Branding/   logo e banners prontos para redes sociais, Steam e GitHub
 Docs/       GDD e estrutura do projeto
+Ferramentas/Blender/   script que gera o protagonista (malha, rig e animações)
 ```
 
 Mais detalhes em [Docs/PROJECT_STRUCTURE.md](Docs/PROJECT_STRUCTURE.md).

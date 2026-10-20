@@ -1,4 +1,4 @@
-﻿# Estrutura do projeto
+# Estrutura do projeto
 
 Tudo do jogo fica em `Assets/_FaithClash/` (o `_` mantém a pasta no topo).
 
@@ -21,4 +21,6 @@ Tudo do jogo fica em `Assets/_FaithClash/` (o `_` mantém a pasta no topo).
 - Assets pesados (fbx, imagens grandes, áudio) vão por Git LFS, via `.gitattributes`.
 - Entrada de dados somente pelo Input System (o projeto não usa o sistema antigo).
 - Comentários e documentação em português do Brasil; nomes de código em inglês.
-- O menu **Faith Clash > Criar Cena de Treino** gera `Scenes/Training.unity`.
+- Menus **Faith Clash**: *Instalar Pacotes Recomendados*, *Preparar Protagonista* (materiais, Humanoid, Animator e prefab) e *Criar Cena de Treino* (gera `Scenes/Treino.unity`).
+- Nomes de cenas, objetos, materiais e prefabs em português (ex.: `Treino`, `Jogador`, `Boneco de Treino 1`).
+- O protagonista é gerado por script em `Ferramentas/Blender/gerar_protagonista.py` (Blender 5.x): malha, esqueleto Humanoid e 12 animações. Reexecute o script para regenerar o FBX.

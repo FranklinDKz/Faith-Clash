@@ -1,5 +1,5 @@
-<p align="center">
-  <img src="Branding/logo.svg" width="220" alt="Faith Clash logo">
+﻿<p align="center">
+  <img src="Branding/logo_transparent.png" width="520" alt="Faith Clash logo">
 </p>
 
 <h1 align="center">Faith Clash</h1>
@@ -9,7 +9,7 @@
   Katanas, jutsus, estilos de luta, armas de fogo e poderes - com personagem criado pelo jogador.
 </p>
 
-![Banner](Branding/banner.svg)
+![Banner](Branding/banners/readme_banner_1500x500.png)
 
 > **Status:** em desenvolvimento inicial. Modo Treino jogavel (prototipo com primitivas).
 
@@ -57,7 +57,7 @@ Inspiracoes: Jujutsu Kaisen, Naruto, Dragon Ball Z, Naraka: Bladepoint, Elden Ri
 Assets/_FaithClash/
   Scripts/{Core,Player,Combat,Training,Editor}
   Scenes  Materials  Prefabs  Art  Audio  Animations
-Branding/   logo e banner
+Branding/   logo (png) e banners prontos para redes, Steam e GitHub
 Docs/       GDD e roadmap
 ```
 
@@ -68,3 +68,4 @@ Veja [Docs/GDD.md](Docs/GDD.md).
 ## Licenca
 
 Todos os direitos reservados ate definicao de licenca. Jogo original; nenhum asset de franquias de terceiros deve ser incluido no repositorio.
+

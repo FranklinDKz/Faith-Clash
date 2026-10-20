@@ -173,10 +173,12 @@ namespace FaithClash.EditorTools
                             loopPose = loop,
                             lockRootRotation = true,
                             lockRootPositionXZ = true,
-                            lockRootHeightY = false,
+                            // altura baseada nos pés: o personagem sempre fica sobre o chão (o CharacterController cuida da gravidade e do pulo)
+                            lockRootHeightY = true,
                             keepOriginalOrientation = false,
                             keepOriginalPositionXZ = false,
                             keepOriginalPositionY = false,
+                            heightOffset = 0f,
                         };
                         clips.Add(c);
                     }

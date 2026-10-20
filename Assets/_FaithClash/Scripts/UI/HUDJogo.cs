@@ -288,8 +288,8 @@ namespace FaithClash.UI
                 tituloTxt.text = status.Titulo;
                 chamaTxt.text = status.Cargas.ToString();
                 escudoTxt.text = status.Escudos.ToString();
-                for (int i = 0; i < 3; i++) pips[i].sprite = i < status.Cargas ? pipCheio : pipVazio;
-                for (int i = 0; i < 4; i++) itensQtd[i].text = status.Itens[i].quantidade.ToString();
+                for (int i = 0; i < 3; i++) if (pips[i] != null) pips[i].sprite = i < status.Cargas ? pipCheio : pipVazio;
+                for (int i = 0; i < 4; i++) if (itensQtd[i] != null) itensQtd[i].text = status.Itens[i].quantidade.ToString();
             }
 
             int combo = combate != null ? combate.ComboCount : 0;

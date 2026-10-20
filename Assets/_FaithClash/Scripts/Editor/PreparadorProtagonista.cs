@@ -25,6 +25,7 @@ namespace FaithClash.EditorTools
         {
             ("Pele", new Color(0.6f, 0.42f, 0.32f), 0.3f, 0f),
             ("Rosto", Color.white, 0.25f, 0f),
+            ("Cabelo", new Color(0.035f, 0.032f, 0.035f), 0.45f, 0f),
             ("Jaqueta", new Color(0.05f, 0.05f, 0.055f), 0.55f, 0f),
             ("Calca", new Color(0.08f, 0.085f, 0.1f), 0.15f, 0f),
             ("Bota", new Color(0.03f, 0.03f, 0.03f), 0.35f, 0f),

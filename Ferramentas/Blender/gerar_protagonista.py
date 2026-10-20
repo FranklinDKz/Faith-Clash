@@ -41,6 +41,8 @@ def mat(nome, rgb, rough=0.55, metal=0.0):
 
 
 PASTA_CABECA = os.environ.get("FC_CABECA")  # saida de cabeca_das_fotos.py (cabeca.npz + Rosto.png)
+FB_BLEND = os.environ.get("FC_FB_BLEND")     # cabeca feita no KeenTools FaceBuilder (tem prioridade)
+FB_TEX = os.environ.get("FC_FB_TEX")         # textura exportada do FaceBuilder
 
 
 def mat_textura(nome, arquivo):
@@ -56,7 +58,8 @@ def mat_textura(nome, arquivo):
 
 M = {
     "Pele": mat("Pele", (0.6, 0.42, 0.32), 0.6),
-    "Rosto": mat_textura("Rosto", os.path.join(PASTA_CABECA, "Rosto.png")),
+    "Cabelo": mat("Cabelo", (0.012, 0.011, 0.012), 0.42),
+    "Rosto": mat_textura("Rosto", FB_TEX if FB_BLEND else os.path.join(PASTA_CABECA, "Rosto.png")),
     "Jaqueta": mat("Jaqueta", (0.035, 0.035, 0.04), 0.45),
     "Calca": mat("Calca", (0.07, 0.075, 0.09), 0.8),
     "Bota": mat("Bota", (0.03, 0.03, 0.03), 0.6),
@@ -220,7 +223,241 @@ def cabeca_das_fotos():
     partes.append(("Rosto", bm, "Head"))
 
 
-cabeca_das_fotos()
+def cabeca_facebuilder():
+    """
+    Cabeca do FaceBuilder encaixada no pescoco do corpo. Cabelo, sobrancelhas e barba viram objetos
+    separados (cascas com volume usando a mesma textura) e a pele ganha grupos de vertices por regiao
+    (Nariz, Boca, Olhos, Queixo, Orelhas) para facilitar a modelagem.
+    Devolve a lista de objetos criados.
+    """
+    import numpy as np
+    from mathutils import noise
+    with bpy.data.libraries.load(FB_BLEND, link=False) as (src, dst):
+        dst.objects = ["FBHead"]
+    fb = dst.objects[0]
+    me = fb.data.copy()
+    me.name = "Cabeca_Pele"
+    bpy.data.objects.remove(fb)
+    for m in list(me.materials):
+        pass
+    me.materials.clear()
+    for n in SLOTS:
+        me.materials.append(M[n])
+    for poly in me.polygons:
+        poly.material_index = IDX["Rosto"]
+
+    co = np.zeros(len(me.vertices) * 3)
+    me.vertices.foreach_get("co", co)
+    co = co.reshape(-1, 3)
+    largura = co[:, 0].max() - co[:, 0].min()
+    co *= 0.168 / largura
+    miny, maxy = co[:, 1].min(), co[:, 1].max()
+    frente = co[:, 1] < miny + 0.3 * (maxy - miny)
+    centro = np.abs(co[:, 0]) < 0.03
+    z_queixo = co[frente & centro, 2].min()
+    zmin = co[:, 2].min()
+    base = co[:, 2] < zmin + 0.02 * (co[:, 2].max() - zmin)
+    cx, cy = co[base, 0].mean(), co[base, 1].mean()
+    co[:, 0] -= cx
+    co[:, 1] -= cy + 0.005
+    co[:, 2] += 1.525 - z_queixo
+    me.vertices.foreach_set("co", co.ravel())
+    me.update()
+
+    # mascara de pelos pela textura (escuro = cabelo/barba/sobrancelha)
+    img = bpy.data.images.load(FB_TEX, check_existing=True)
+    w, h = img.size
+    px = np.zeros(w * h * 4, dtype=np.float32)
+    img.pixels.foreach_get(px)
+    px = px.reshape(h, w, 4)
+    uv = me.uv_layers["UVMap"].data
+    soma = np.zeros((len(me.vertices), 2))
+    cont = np.zeros(len(me.vertices))
+    for poly in me.polygons:
+        for li, vi in zip(poly.loop_indices, poly.vertices):
+            soma[vi] += uv[li].uv
+            cont[vi] += 1
+    uvv = soma / np.maximum(cont, 1)[:, None]
+    ix = np.clip((uvv[:, 0] * (w - 1)).astype(int), 0, w - 1)
+    iy = np.clip((uvv[:, 1] * (h - 1)).astype(int), 0, h - 1)
+    cor = px[iy, ix, :3]
+    lum = cor @ np.array([0.2126, 0.7152, 0.0722])
+    escuro = (lum < 0.11).astype(float)
+
+    # vizinhanca para suavizar mascaras
+    viz = [[] for _ in me.vertices]
+    for e in me.edges:
+        a, b = e.vertices
+        viz[a].append(b)
+        viz[b].append(a)
+
+    def suaviza(m, n):
+        for _ in range(n):
+            m = np.array([(m[i] + sum(m[j] for j in viz[i])) / (1 + len(viz[i])) for i in range(len(m))])
+        return m
+
+    zt = co[:, 2].max()
+    zc = 1.525
+    t = (co[:, 2] - zc) / (zt - zc)
+    yrel = (co[:, 1] - co[:, 1].min()) / (co[:, 1].max() - co[:, 1].min())
+    ax = np.abs(co[:, 0])
+    escuro = suaviza(escuro, 2)
+    reg_cabelo = np.maximum(escuro * (((t > 0.58)) | ((t > 0.28) & (yrel > 0.45))).astype(float),
+                            ((t > 0.80) | ((t > 0.50) & (yrel > 0.55))).astype(float))
+    reg_sobr = escuro * ((yrel < 0.32) & (t > 0.52) & (t < 0.70) & (ax > 0.006)).astype(float)
+    reg_barba = escuro * ((t < 0.47) & (yrel < 0.6)).astype(float)
+
+    objetos = []
+
+    def casca(nome, mascara, espessura, ruido, limiar=0.45):
+        m = suaviza(mascara, 3)
+        sel = m > limiar
+        bm = bmesh.new()
+        bm.from_mesh(me)
+        bm.verts.ensure_lookup_table()
+        bm.normal_update()
+        normais = [v.normal.copy() for v in bm.verts]
+        apagar = [f for f in bm.faces if not all(sel[v.index] for v in f.verts)]
+        bmesh.ops.delete(bm, geom=apagar, context="FACES")
+        for v in bm.verts:
+            k = min(1.0, (m[v.index] - limiar) / (1 - limiar) * 2.5)
+            n = noise.noise(v.co * 160.0) * 0.5 + 0.5
+            v.co += normais[v.index] * espessura * k * (1.0 - ruido + ruido * 2.0 * n)
+        bm.normal_update()
+        mesh = bpy.data.meshes.new(nome)
+        bm.to_mesh(mesh)
+        bm.free()
+        for mt in me.materials:
+            mesh.materials.append(mt)
+        ob = link(bpy.data.objects.new(nome, mesh))
+        objetos.append(ob)
+        return ob
+
+    def cachos(mascara):
+        """
+        Cabelo modelado: cachos em espiral (tubos) espalhados pelo couro cabeludo, seguindo a mascara de cabelo.
+        Topo com volume (cachos altos), laterais e nuca curtas (degrade), como nas fotos de referencia.
+        """
+        import random as rnd
+        rnd.seed(21)
+        m = suaviza(mascara, 3)
+        bm = bmesh.new()
+        bm.from_mesh(me)
+        bm.faces.ensure_lookup_table()
+        bm.normal_update()
+        faces = [f for f in bm.faces if min(m[v.index] for v in f.verts) > 0.25]
+        areas = np.array([f.calc_area() for f in faces])
+        if len(faces) == 0:
+            bm.free()
+            return
+        prob = areas / areas.sum()
+        n_cachos = 2900
+        escolhidas = np.random.default_rng(5).choice(len(faces), size=n_cachos, p=prob)
+        verts, faces_out = [], []
+        LADOS, SEG = 4, 14
+        for fi in escolhidas:
+            f = faces[fi]
+            # ponto aleatorio no poligono
+            cs = [v.co for v in f.verts]
+            pesos = [rnd.random() for _ in cs]
+            sp = sum(pesos)
+            base = sum((c * (w / sp) for c, w in zip(cs, pesos)), Vector())
+            nrm = f.normal.normalized()
+            alt = (base.z - zc) / (zt - zc)
+            atras = (base.y - co[:, 1].min()) / (co[:, 1].max() - co[:, 1].min())
+            # comprimento: alto no topo, curto nos lados/nuca (degrade)
+            topo = max(0.0, min(1.0, (alt - 0.66) / 0.18))
+            comp = 0.006 + topo * rnd.uniform(0.028, 0.048) + rnd.uniform(0, 0.006)
+            if atras > 0.7 and alt < 0.6:
+                comp *= 0.5
+            eixo = (nrm * (0.75 if topo > 0.3 else 0.95) + Vector((0, 0, 1)) * (0.25 if topo > 0.3 else 0.05)).normalized()
+            raio_hel = rnd.uniform(0.0035, 0.0065) * (0.6 + 0.6 * topo)
+            raio_tubo = rnd.uniform(0.0011, 0.0017)
+            voltas = comp / rnd.uniform(0.0055, 0.0085)
+            fase = rnd.uniform(0, 2 * math.pi)
+            sentido = rnd.choice((-1, 1))
+            t1 = eixo.orthogonal().normalized()
+            t2 = eixo.cross(t1)
+            centro = [
+                base + eixo * (comp * s / SEG)
+                + (t1 * math.cos(fase + sentido * 2 * math.pi * voltas * s / SEG)
+                   + t2 * math.sin(fase + sentido * 2 * math.pi * voltas * s / SEG)) * raio_hel * min(1.0, s / 3)
+                for s in range(SEG + 1)
+            ]
+            ini = len(verts)
+            for s, c in enumerate(centro):
+                tg = (centro[min(s + 1, SEG)] - centro[max(s - 1, 0)]).normalized()
+                u = tg.orthogonal().normalized()
+                vv = tg.cross(u)
+                rr = raio_tubo * (1.0 - 0.55 * s / SEG)
+                for k in range(LADOS):
+                    a = 2 * math.pi * k / LADOS
+                    verts.append(c + (u * math.cos(a) + vv * math.sin(a)) * rr)
+            for s in range(SEG):
+                for k in range(LADOS):
+                    a0 = ini + s * LADOS + k
+                    a1 = ini + s * LADOS + (k + 1) % LADOS
+                    faces_out.append((a0, a1, a1 + LADOS, a0 + LADOS))
+            ponta = len(verts)
+            verts.append(centro[-1])
+            for k in range(LADOS):
+                faces_out.append((ini + SEG * LADOS + k, ini + SEG * LADOS + (k + 1) % LADOS, ponta))
+        bm.free()
+        mesh = bpy.data.meshes.new("Cabelo")
+        mesh.from_pydata([tuple(v) for v in verts], [], faces_out)
+        mesh.update()
+        for mt in me.materials:
+            mesh.materials.append(mt)
+        for pl in mesh.polygons:
+            pl.material_index = IDX["Cabelo"]
+        ob = link(bpy.data.objects.new("Cabelo", mesh))
+        objetos.append(ob)
+
+    cachos(reg_cabelo)
+    casca("Sobrancelhas", reg_sobr, 0.0015, 0.2, 0.5)
+    casca("Barba", reg_barba, 0.0022, 0.4, 0.5)
+
+    # tom de pele do corpo igual ao do rosto (media do pescoco na foto)
+    amostra = cor[(t < 0.18) & (yrel < 0.45)]
+    if len(amostra):
+        tom = np.clip(np.median(amostra, axis=0), 0, 1) ** 2.2
+        b = M["Pele"].node_tree.nodes["Principled BSDF"]
+        b.inputs["Base Color"].default_value = (*tom, 1)
+        M["Pele"].diffuse_color = (*tom, 1)
+        print("TOM_PELE", tuple(round(float(x), 4) for x in tom))
+    # nuca: as fotos nao cobrem bem a parte de tras do pescoco; usa a cor de pele lisa ali
+    for poly in me.polygons:
+        if all(t[v] < 0.2 and yrel[v] > 0.5 for v in poly.vertices):
+            poly.material_index = IDX["Pele"]
+    pele = link(bpy.data.objects.new("Cabeca_Pele", me))
+    objetos.insert(0, pele)
+    regioes = {
+        "Nariz": (yrel < 0.14) & (ax < 0.022) & (t > 0.40) & (t < 0.62),
+        "Boca": (yrel < 0.22) & (ax < 0.03) & (t > 0.26) & (t < 0.40),
+        "Olhos": (yrel < 0.32) & (ax > 0.018) & (ax < 0.05) & (t > 0.52) & (t < 0.62),
+        "Queixo": (t < 0.26) & (yrel < 0.4),
+        "Orelhas": (ax > 0.8 * ax.max()) & (t > 0.35) & (t < 0.68),
+    }
+    for nome, msk in regioes.items():
+        vg = pele.vertex_groups.new(name=nome)
+        vg.add([int(i) for i in np.nonzero(msk)[0]], 1.0, "REPLACE")
+
+    for ob in objetos:
+        vg = ob.vertex_groups.get("Head") or ob.vertex_groups.new(name="Head")
+        vg.add(list(range(len(ob.data.vertices))), 1.0, "REPLACE")
+        md = ob.modifiers.new("Armature", "ARMATURE")
+        md.object = arm
+        ob.parent = arm
+        for pl in ob.data.polygons:
+            pl.use_smooth = True
+    return objetos
+
+
+cabeca_objs = []
+if FB_BLEND:
+    cabeca_objs = cabeca_facebuilder()
+else:
+    cabeca_das_fotos()
 
 # katana presa a mao direita (peso rigido no osso RightHand)
 dir_d = Vector((-0.574, 0, -0.819))
@@ -641,7 +878,7 @@ if OUT_BLEND:
     bpy.ops.file.pack_all()  # embute a textura do rosto no .blend
     bpy.ops.wm.save_as_mainfile(filepath=OUT_BLEND)
 arm.animation_data.action = bpy.data.actions["Parado"]
-select_only(personagem, arm)
+select_only(personagem, *cabeca_objs, arm)
 os.makedirs(os.path.dirname(OUT_FBX), exist_ok=True)
 bpy.ops.export_scene.fbx(
     filepath=OUT_FBX, use_selection=True, object_types={"ARMATURE", "MESH"},

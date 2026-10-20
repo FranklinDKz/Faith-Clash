@@ -1,0 +1,17 @@
+﻿{
+    "name": "FaithClash.Editor",
+    "rootNamespace": "FaithClash.EditorTools",
+    "references": [
+        "FaithClash.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

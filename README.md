@@ -35,28 +35,34 @@ Inspirações: Jujutsu Kaisen, Naruto, Dragon Ball Z, Naraka: Bladepoint, Elden 
 |---|---|---|
 | Mover | WASD | Analógico esquerdo |
 | Câmera | Mouse | Analógico direito |
-| Correr | Shift | Clique no analógico esquerdo |
-| Pular | Espaço | A / X |
-| Esquiva | Ctrl | B / Bolinha |
+| Correr rápido (sprint) | Shift | Clique no analógico esquerdo |
+| Pular / corrida na parede (sprint + pulo contra a parede) | Espaço | A / X |
+| **Dash para frente** (estilo Naraka) | **C** | RB / R1 |
+| Deslize / esquiva | Ctrl | B / Bolinha |
 | Golpe leve (combo x4) | Botão esquerdo | X / Quadrado |
 | Golpe pesado | Botão direito | Y / Triângulo |
-| Travar no alvo / soltar | Q | Clique no analógico direito |
+| Travar no alvo / **trocar de alvo** / soltar (segurar) | **Q** | Clique no analógico direito |
 | Trocar de alvo | Roda do mouse | — |
 | Defender | F | LT / L2 |
-| Estilo Fogo / Água / Terra / Ar | 1 / 2 / 3 / 4 | — |
-| Golpe Espiritual (gasta carga) | R | — |
-| Itens | Z / X / C / V | — |
+| **Alternar Espada ⇄ Poder** | **G** | — |
+| Estilo Fogo / Água / Terra / Ar (entra no modo Poder) | 1 / 2 / 3 / 4 | — |
+| Roxo (gasta carga espiritual) | R | — |
+| Itens | Z / X / B / V | — |
 | Dica de combo / combate / fechar | Tab | — |
 | Zerar estatísticas / Reiniciar | T / F5 | — |
 | Mostrar / esconder o mouse | ' (aspas) | — |
 
-Com alvo travado a câmera acompanha o inimigo, o personagem anda de lado olhando para ele e os golpes avançam até o alvo (estilo Elden Ring / Naruto Storm). Sem alvo, o combate é livre.
+**Dois modos de combate que não se misturam:**
+- **Espada (katana):** só corta. Combo de 4 cortes e golpe pesado com salto.
+- **Poder:** punhos e chutes (estilo Naruto) + jutsus (Katon, Suiton, Doton, Fuuton) no 3º e 4º golpe, e técnicas amaldiçoadas (Azul, Roxo, Faísca Negra) inspiradas em Jujutsu Kaisen.
+
+Sem alvo travado há uma assistência leve de mira nos ataques. Com alvo travado (Q) o personagem encara o inimigo e avança até ele.
 
 ## Como rodar
 
 1. Instale o **Unity Hub** e o editor **6000.6.6f1**.
 2. Clone o repositório e abra a pasta pelo Unity Hub.
-3. No menu, clique em **Faith Clash > Preparar Protagonista** e depois em **Faith Clash > Criar Cena de Treino** (gera `Assets/_FaithClash/Scenes/Treino.unity`).
+3. No menu, clique em **Faith Clash > Preparar Jogador** e depois em **Faith Clash > Criar Cena de Treino** (gera `Assets/_FaithClash/Scenes/Treino.unity`).
 4. Aperte **Play**.
 
 ## Estrutura

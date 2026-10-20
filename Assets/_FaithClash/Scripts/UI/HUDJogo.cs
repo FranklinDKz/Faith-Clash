@@ -31,6 +31,7 @@ namespace FaithClash.UI
         MeleeCombat combate;
         EstilosElementais estilos;
         TravaAlvo trava;
+        ModoCombate modoCombate;
         Health vidaJogador;
         Font fonte;
         RectTransform raiz;
@@ -46,6 +47,8 @@ namespace FaithClash.UI
         readonly Text[] itensQtd = new Text[4];
         Sprite pipCheio, pipVazio;
         RectTransform seta, mapaArea, mira;
+        Text armaTxt;
+        Image armaIcone;
         readonly List<RectTransform> marcadores = new List<RectTransform>();
         Camera camMapa;
         float avisoAte;
@@ -56,10 +59,10 @@ namespace FaithClash.UI
         static readonly string[] IconesElementos = { "elemento_fogo", "elemento_agua", "elemento_terra", "elemento_ar" };
         static readonly string[][] Dicas =
         {
-            new[] { "DICA DE COMBO — ESTILO FOGO", "Aperte [1] para ativar o Estilo Fogo.\n3x Mouse Esquerdo: <color=#FF9A3C>Corte Ígneo.</color>\n4x Mouse Esquerdo: <color=#FF9A3C>Chama Explosiva.</color>", "Perfeito para dano rápido e agressivo." },
-            new[] { "DICA DE COMBO — ESTILO ÁGUA", "Aperte [2] para ativar o Estilo Água.\n3x Mouse Esquerdo: Rajada de Água.\n4x Mouse Esquerdo: Prisão de Água.", "Controle o inimigo com pressão e aprisionamento." },
-            new[] { "DICA DE COMBO — ESTILO TERRA", "Aperte [3] para ativar o Estilo Terra.\n3x Mouse Esquerdo: Lança de Pedra.\nSegure Mouse Esquerdo: Muralha de Terra.", "Excelente para controle de área e defesa." },
-            new[] { "DICA DE COMBO — ESTILO AR", "Aperte [4] para ativar o Estilo Ar.\nSegure <color=#F2C14E>Mouse Esquerdo:</color> uma força repulsiva é liberada do corpo do usuário em todas as direções, criando um globo de vento que empurra tudo ao redor.", "Ideal para afastar inimigos e abrir espaço." },
+            new[] { "DICA DE COMBO — ESTILO FOGO", "Aperte [1] (modo Poder). [G] alterna Espada / Poder.\n3x Mouse Esquerdo: <color=#FF9A3C>Katon: Goukakyuu.</color>\n4x Mouse Esquerdo: <color=#FF9A3C>Katon: Housenka.</color>", "Dano explosivo e agressivo. R: Roxo." },
+            new[] { "DICA DE COMBO — ESTILO ÁGUA", "Aperte [2] para ativar o Estilo Água.\n3x Mouse Esquerdo: Suiton: Suiryuudan.\n4x Mouse Esquerdo: Suiton: Suirou.", "Controle o inimigo com pressão e aprisionamento." },
+            new[] { "DICA DE COMBO — ESTILO TERRA", "Aperte [3] para ativar o Estilo Terra.\n3x Mouse Esquerdo: Doton: Doryuudan.\nSegure Mouse Esquerdo: Doton: Doryuuheki.", "Excelente para controle de área e defesa." },
+            new[] { "DICA DE COMBO — ESTILO AR", "Aperte [4] para ativar o Estilo Ar.\n3x: Fuuton: Daitoppa.  4x: Azul (atrai).\nSegure <color=#F2C14E>Mouse Esquerdo:</color> Fuuton: Reppushou, um globo de vento que empurra tudo ao redor.", "Ideal para afastar inimigos e abrir espaço." },
         };
 
         void Awake()
@@ -75,6 +78,7 @@ namespace FaithClash.UI
                 combate = jogador.GetComponent<MeleeCombat>();
                 estilos = jogador.GetComponent<EstilosElementais>();
                 trava = jogador.GetComponent<TravaAlvo>();
+                modoCombate = jogador.GetComponent<ModoCombate>();
                 vidaJogador = jogador.GetComponent<Health>();
             }
             fonte = Font.CreateDynamicFontFromOSFont(new[] { "Palatino Linotype", "Book Antiqua", "Georgia", "Times New Roman" }, 32);
@@ -227,9 +231,9 @@ namespace FaithClash.UI
 
         void MontarArma()
         {
-            Img("arma_espada", new Vector2(126, 884), new Vector2(132, 132));
+            armaIcone = Img("arma_espada", new Vector2(126, 884), new Vector2(132, 132));
             Img("anel_simples", new Vector2(126, 884), new Vector2(176, 176));
-            Txt("Espada Espiritual", 18, Creme, TextAnchor.MiddleLeft, new Vector2(300, 948), new Vector2(200, 26));
+            armaTxt = Txt("Poder", 18, Creme, TextAnchor.MiddleLeft, new Vector2(300, 948), new Vector2(240, 26));
             pipCheio = Sprite("pip_cheio");
             pipVazio = Sprite("pip_vazio");
             for (int i = 0; i < 3; i++) pips[i] = Img("pip_vazio", new Vector2(220 + i * 25, 982), new Vector2(20, 20));
@@ -309,9 +313,13 @@ namespace FaithClash.UI
                 avisoTxt.color = c;
             }
 
+            bool emEspada = modoCombate != null && modoCombate.Atual == Modo.Espada;
+            armaTxt.text = emEspada ? "Katana  [G] trocar" : "Poder  [G] trocar";
+            armaIcone.color = emEspada ? Color.white : new Color(1f, 1f, 1f, 0.45f);
             for (int i = 0; i < 4; i++)
             {
-                bool sel = estilos != null && (int)estilos.Atual == i;
+                bool sel = estilos != null && (int)estilos.Atual == i && !emEspada;
+                orbes[i].GetComponent<Image>().color = emEspada ? new Color(1f, 1f, 1f, 0.4f) : Color.white;
                 float alvoEsc = sel ? 1.12f : 1f;
                 orbes[i].localScale = Vector3.Lerp(orbes[i].localScale, Vector3.one * alvoEsc, 10f * Time.deltaTime);
                 var cor = orbesBrilho[i].color;
@@ -347,7 +355,7 @@ namespace FaithClash.UI
             else if (modoDica == 1)
             {
                 dicaTitulo.text = "Dica de Combate";
-                dicaCorpo.text = "Combine elementos para causar\nExplosão Elemental e aumentar seu dano.\nOrdem recomendada:\n<color=#5AA9FF>ÁGUA</color> → <color=#FF5A3C>FOGO</color> → <color=#E0B060>TERRA</color> → <color=#B98CFF>AR</color>";
+                dicaCorpo.text = "Q: travar no alvo (Q de novo troca). C: dash.\nG: Espada (só corta) ou Poder (jutsus).\nÁGUA → FOGO → TERRA → AR causa Explosão Elemental.";
                 dicaRodape.text = "[Tab] Fechar";
                 dicaIcone.sprite = Sprite("elemento_ar");
             }

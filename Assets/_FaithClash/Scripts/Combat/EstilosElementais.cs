@@ -11,14 +11,16 @@ namespace FaithClash.Combat
     public enum Elemento { Fogo, Agua, Terra, Ar }
 
     /// <summary>
-    /// Estilos de combate 1-Fogo, 2-Água, 3-Terra, 4-Ar. Técnicas saem no 3º e 4º golpe do combo
-    /// ou segurando o botão esquerdo (Terra/Ar). R solta o Golpe Espiritual (gasta uma carga).
-    /// Usar Água → Fogo → Terra → Ar em sequência causa a Explosão Elemental.
+    /// Modo Poder: jutsus inspirados em Naruto e técnicas amaldiçoadas inspiradas em Jujutsu Kaisen.
+    /// 1-Fogo (Katon), 2-Água (Suiton), 3-Terra (Doton), 4-Ar (Fuuton). Os jutsus saem no 3º e 4º golpe do combo
+    /// ou segurando o botão esquerdo (Terra/Ar). R solta o Roxo (Técnica Reversa) gastando uma carga espiritual.
+    /// O golpe pesado tem chance de Faísca Negra (Kokusen). Água → Fogo → Terra → Ar em sequência causa a Explosão Elemental.
     /// </summary>
     public class EstilosElementais : MonoBehaviour
     {
         [SerializeField] float tempoSegurar = 0.45f;
-        [SerializeField] float custo3x = 60f, custo4x = 120f, custoSegurar = 150f;
+        [SerializeField] float custo3x = 60f, custo4x = 100f, custoSegurar = 150f;
+        [SerializeField, Range(0f, 1f)] float chanceFaiscaNegra = 0.3f;
 
         public static readonly Color[] Cores =
         {
@@ -31,10 +33,11 @@ namespace FaithClash.Combat
         MeleeCombat combate;
         StatusJogador status;
         AnimadorProtagonista animador;
+        ModoCombate modo;
         Animator animator;
-        Transform mao, antebraco;
+        Transform mao;
         ParticleSystem aura;
-        Light luzLamina;
+        Light luzAura;
         float segurandoDesde = -1f;
         bool tecnicaSegurarUsada;
         readonly List<(Elemento e, float t)> historico = new List<(Elemento, float)>();
@@ -42,28 +45,46 @@ namespace FaithClash.Combat
         public Elemento Atual { get; private set; } = Elemento.Fogo;
         public event Action<Elemento> ElementoMudou;
         public event Action<string, Color> TecnicaUsada;
+        internal MeleeCombat Combate => combate;
+
+        bool EmPoder => modo == null || modo.Atual == Modo.Poder;
 
         void Awake()
         {
             combate = GetComponent<MeleeCombat>();
             status = GetComponent<StatusJogador>();
             animador = GetComponent<AnimadorProtagonista>();
+            modo = GetComponent<ModoCombate>();
             animator = GetComponentInChildren<Animator>();
         }
 
         void Start()
         {
-            if (animator != null && animator.isHuman)
-            {
-                mao = animator.GetBoneTransform(HumanBodyBones.RightHand);
-                antebraco = animator.GetBoneTransform(HumanBodyBones.RightLowerArm);
-            }
+            if (animator != null && animator.isHuman) mao = animator.GetBoneTransform(HumanBodyBones.RightHand);
             CriarAura();
             Selecionar(Elemento.Fogo);
         }
 
-        void OnEnable() { if (combate != null) combate.AttackImpact += AoImpacto; }
-        void OnDisable() { if (combate != null) combate.AttackImpact -= AoImpacto; }
+        void OnEnable()
+        {
+            if (combate != null) combate.AttackImpact += AoImpacto;
+            if (modo != null) modo.Mudou += AoMudarModo;
+        }
+
+        void OnDisable()
+        {
+            if (combate != null) combate.AttackImpact -= AoImpacto;
+            if (modo != null) modo.Mudou -= AoMudarModo;
+        }
+
+        void AoMudarModo(Modo m)
+        {
+            if (aura != null)
+            {
+                if (m == Modo.Poder) aura.Play(); else aura.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            }
+            if (luzAura != null) luzAura.enabled = m == Modo.Poder;
+        }
 
         public void Selecionar(Elemento e)
         {
@@ -73,60 +94,69 @@ namespace FaithClash.Combat
                 var main = aura.main;
                 main.startColor = new ParticleSystem.MinMaxGradient(Cores[(int)e], Color.Lerp(Cores[(int)e], Color.white, 0.6f));
             }
-            if (luzLamina != null) luzLamina.color = Cores[(int)e];
+            if (luzAura != null) luzAura.color = Cores[(int)e];
             ElementoMudou?.Invoke(e);
         }
 
         void Update()
         {
             var k = Keyboard.current;
-            if (k != null)
+            if (k != null && Cursor.lockState == CursorLockMode.Locked)
             {
-                if (k.digit1Key.wasPressedThisFrame) Selecionar(Elemento.Fogo);
-                if (k.digit2Key.wasPressedThisFrame) Selecionar(Elemento.Agua);
-                if (k.digit3Key.wasPressedThisFrame) Selecionar(Elemento.Terra);
-                if (k.digit4Key.wasPressedThisFrame) Selecionar(Elemento.Ar);
-                if (k.rKey.wasPressedThisFrame && status != null && status.GastarCarga()) GolpeEspiritual();
+                if (k.digit1Key.wasPressedThisFrame) Escolher(Elemento.Fogo);
+                if (k.digit2Key.wasPressedThisFrame) Escolher(Elemento.Agua);
+                if (k.digit3Key.wasPressedThisFrame) Escolher(Elemento.Terra);
+                if (k.digit4Key.wasPressedThisFrame) Escolher(Elemento.Ar);
+                if (k.rKey.wasPressedThisFrame)
+                {
+                    if (!EmPoder) status?.Avisar("Guarde a espada (G) para usar poderes");
+                    else if (status != null && status.GastarCarga()) Roxo();
+                }
             }
 
             var m = Mouse.current;
             if (m == null) return;
             if (m.leftButton.wasPressedThisFrame) { segurandoDesde = Time.time; tecnicaSegurarUsada = false; }
-            if (m.leftButton.isPressed && segurandoDesde > 0f && !tecnicaSegurarUsada && Time.time - segurandoDesde > tempoSegurar)
+            if (EmPoder && m.leftButton.isPressed && segurandoDesde > 0f && !tecnicaSegurarUsada && Time.time - segurandoDesde > tempoSegurar)
             {
                 tecnicaSegurarUsada = true;
                 if (Atual == Elemento.Terra) TentarTecnica(custoSegurar, MuralhaDeTerra);
-                else if (Atual == Elemento.Ar) TentarTecnica(custoSegurar, GloboDeVento);
+                else if (Atual == Elemento.Ar) TentarTecnica(custoSegurar, Reppusho);
             }
             if (m.leftButton.wasReleasedThisFrame) segurandoDesde = -1f;
         }
 
+        void Escolher(Elemento e)
+        {
+            modo?.Definir(Modo.Poder);
+            Selecionar(e);
+        }
+
         void LateUpdate()
         {
-            if (aura == null || mao == null || antebraco == null) return;
-            Vector3 dir = (mao.position - antebraco.position).normalized;
-            aura.transform.position = mao.position + dir * 0.6f;
-            aura.transform.rotation = Quaternion.LookRotation(dir);
-            if (luzLamina) luzLamina.intensity = 1.2f + Mathf.Sin(Time.time * 9f) * 0.25f;
+            if (aura == null || mao == null) return;
+            aura.transform.position = mao.position;
+            if (luzAura) luzAura.intensity = 1.4f + Mathf.Sin(Time.time * 9f) * 0.3f;
         }
 
         void CriarAura()
         {
-            var go = new GameObject("Aura da Lâmina");
+            var go = new GameObject("Aura da Mão");
             aura = go.AddComponent<ParticleSystem>();
             aura.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             var main = aura.main;
             main.loop = true;
-            main.startLifetime = new ParticleSystem.MinMaxCurve(0.25f, 0.5f);
-            main.startSpeed = new ParticleSystem.MinMaxCurve(0.1f, 0.6f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.04f, 0.12f);
+            main.startLifetime = new ParticleSystem.MinMaxCurve(0.3f, 0.6f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(0.1f, 0.5f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.05f, 0.13f);
             main.simulationSpace = ParticleSystemSimulationSpace.World;
-            main.maxParticles = 400;
+            main.maxParticles = 300;
+            main.gravityModifier = -0.15f;
             var em = aura.emission;
-            em.rateOverTime = 140f;
+            em.rateOverTime = 90f;
             var sh = aura.shape;
-            sh.shapeType = ParticleSystemShapeType.Box;
-            sh.scale = new Vector3(0.03f, 0.03f, 0.85f);
+            sh.shapeType = ParticleSystemShapeType.Sphere;
+            sh.radius = 0.11f;
             var col = aura.colorOverLifetime;
             col.enabled = true;
             var g = new Gradient();
@@ -134,32 +164,44 @@ namespace FaithClash.Combat
                       new[] { new GradientAlphaKey(1f, 0f), new GradientAlphaKey(0f, 1f) });
             col.color = g;
             go.GetComponent<ParticleSystemRenderer>().sharedMaterial = Efeitos.MaterialAditivo;
-            aura.Play();
 
-            var lgo = new GameObject("Luz da Lâmina");
+            var lgo = new GameObject("Luz da Aura");
             lgo.transform.SetParent(go.transform, false);
-            luzLamina = lgo.AddComponent<Light>();
-            luzLamina.type = LightType.Point;
-            luzLamina.range = 3.5f;
-            luzLamina.intensity = 1.2f;
+            luzAura = lgo.AddComponent<Light>();
+            luzAura.type = LightType.Point;
+            luzAura.range = 3.5f;
+            luzAura.intensity = 1.4f;
+            if (modo != null && modo.Atual != Modo.Poder) { aura.Stop(); luzAura.enabled = false; }
+            else aura.Play();
         }
 
         void AoImpacto(int passo, bool acertou)
         {
+            if (!EmPoder) return;
+
+            if (passo == 0)
+            {
+                if (acertou && UnityEngine.Random.value < chanceFaiscaNegra) FaiscaNegra();
+                return;
+            }
             if (passo == 3)
             {
                 switch (Atual)
                 {
-                    case Elemento.Fogo: TentarTecnica(custo3x, CorteIgneo); break;
-                    case Elemento.Agua: TentarTecnica(custo3x, RajadaDeAgua); break;
-                    case Elemento.Terra: TentarTecnica(custo3x, LancaDePedra); break;
-                    case Elemento.Ar: TentarTecnica(custo3x * 0.5f, Lufada); break;
+                    case Elemento.Fogo: TentarTecnica(custo3x, GoukakyuuNoJutsu); break;
+                    case Elemento.Agua: TentarTecnica(custo3x, SuiryuudanNoJutsu); break;
+                    case Elemento.Terra: TentarTecnica(custo3x, DoryuudanNoJutsu); break;
+                    case Elemento.Ar: TentarTecnica(custo3x * 0.5f, DaitoppaNoJutsu); break;
                 }
             }
             else if (passo == 4)
             {
-                if (Atual == Elemento.Fogo) TentarTecnica(custo4x, ChamaExplosiva);
-                else if (Atual == Elemento.Agua) TentarTecnica(custo4x, PrisaoDeAgua);
+                switch (Atual)
+                {
+                    case Elemento.Fogo: TentarTecnica(custo4x, HousenkaNoJutsu); break;
+                    case Elemento.Agua: TentarTecnica(custo4x, SuirouNoJutsu); break;
+                    case Elemento.Ar: TentarTecnica(custo4x, Azul); break;
+                }
             }
         }
 
@@ -184,9 +226,20 @@ namespace FaithClash.Combat
         }
 
         // ------------------------------------------------------------------ utilidades
-        Vector3 Frente(float dist) => transform.position + Vector3.up * 1f + transform.forward * dist;
+        Vector3 Frente(float dist) => transform.position + Vector3.up * 1.1f + transform.forward * dist;
 
-        int Dano(Vector3 centro, float raio, float dano, float empurrao = 0f, float prender = 0f)
+        Vector3 DirecaoAlvo()
+        {
+            var trava = GetComponent<TravaAlvo>();
+            if (trava != null && trava.Travado)
+            {
+                Vector3 v = trava.PontoFoco + Vector3.up * 0.2f - Frente(0f);
+                if (v.sqrMagnitude > 0.01f) return v.normalized;
+            }
+            return transform.forward;
+        }
+
+        int Dano(Vector3 centro, float raio, float dano, float empurrao = 0f, float prender = 0f, bool puxar = false)
         {
             int n = 0;
             var vistos = new HashSet<IDamageable>();
@@ -199,7 +252,8 @@ namespace FaithClash.Combat
                 var boneco = col.GetComponentInParent<TrainingDummy>();
                 if (boneco != null)
                 {
-                    if (empurrao > 0f) boneco.Empurrar((boneco.transform.position - centro).normalized * empurrao);
+                    Vector3 dir = puxar ? (centro - boneco.transform.position) : (boneco.transform.position - centro);
+                    if (empurrao > 0f) boneco.Empurrar(dir.normalized * empurrao);
                     if (prender > 0f) boneco.Prender(prender);
                 }
                 combate?.RegisterComboHit();
@@ -210,39 +264,50 @@ namespace FaithClash.Combat
 
         void Anunciar(string nome) => TecnicaUsada?.Invoke(nome, Cores[(int)Atual]);
 
-        // ------------------------------------------------------------------ Fogo
-        void CorteIgneo()
+        void Disparar(Vector3 origem, Vector3 dir, ProjetilElemental.Opcoes o)
         {
-            Anunciar("Corte Ígneo");
-            Vector3 p = Frente(1.3f);
-            Efeitos.Rajada(p, Quaternion.LookRotation(Vector3.up, transform.forward), Cores[0], 90, new Vector2(4, 9),
-                new Vector2(0.15f, 0.4f), new Vector2(0.25f, 0.5f), ParticleSystemShapeType.Circle, 1.4f, 0f, true, 180f);
-            Efeitos.Clarao(p, Cores[0], 5f, 7f, 0.35f);
-            Dano(p, 2.4f, 22f, 2f);
+            var go = new GameObject("Projétil");
+            go.transform.SetPositionAndRotation(origem, Quaternion.LookRotation(dir));
+            go.AddComponent<ProjetilElemental>().Configurar(this, o);
         }
 
-        void ChamaExplosiva()
+        // ------------------------------------------------------------------ Katon (fogo)
+        void GoukakyuuNoJutsu()
         {
-            Anunciar("Chama Explosiva");
-            Vector3 p = Frente(2.2f);
-            Efeitos.Rajada(p, Quaternion.identity, Cores[0], 160, new Vector2(4, 12), new Vector2(0.3f, 0.8f), new Vector2(0.4f, 0.9f), raio: 0.5f, gravidade: -0.4f);
-            Efeitos.Rajada(p, Quaternion.identity, new Color(0.25f, 0.2f, 0.18f), 40, new Vector2(1, 3), new Vector2(0.6f, 1.4f), new Vector2(0.8f, 1.6f), raio: 0.8f, gravidade: -0.2f, aditivo: false);
-            Efeitos.Clarao(p, Cores[0], 12f, 14f, 0.6f);
-            Dano(p, 3.5f, 45f, 8f);
+            Anunciar("Katon: Goukakyuu no Jutsu");
+            Disparar(Frente(1.2f), DirecaoAlvo(), new ProjetilElemental.Opcoes
+            {
+                cor = Cores[0], velocidade = 14f, duracao = 1.3f, dano = 55f, empurrao = 9f, tamanho = 2.2f, raioImpacto = 4f, explodir = true, particulas = 260,
+            });
         }
 
-        // ------------------------------------------------------------------ Água
-        void RajadaDeAgua()
+        void HousenkaNoJutsu()
         {
-            Anunciar("Rajada de Água");
-            var go = new GameObject("Rajada de Água");
-            go.transform.SetPositionAndRotation(Frente(1f), transform.rotation);
-            go.AddComponent<ProjetilElemental>().Configurar(this, Cores[1], 16f, 1.1f, 25f, 6f);
+            Anunciar("Katon: Housenka no Jutsu");
+            Vector3 d0 = DirecaoAlvo();
+            for (int i = -2; i <= 2; i++)
+            {
+                Vector3 d = Quaternion.AngleAxis(i * 13f, Vector3.up) * d0;
+                Disparar(Frente(1f), d, new ProjetilElemental.Opcoes
+                {
+                    cor = Cores[0], velocidade = 17f, duracao = 0.9f, dano = 20f, empurrao = 4f, tamanho = 0.9f, raioImpacto = 1.8f, explodir = true, particulas = 90,
+                });
+            }
         }
 
-        void PrisaoDeAgua()
+        // ------------------------------------------------------------------ Suiton (água)
+        void SuiryuudanNoJutsu()
         {
-            Anunciar("Prisão de Água");
+            Anunciar("Suiton: Suiryuudan no Jutsu");
+            Disparar(Frente(1f), DirecaoAlvo(), new ProjetilElemental.Opcoes
+            {
+                cor = Cores[1], velocidade = 17f, duracao = 1.5f, dano = 45f, empurrao = 8f, tamanho = 1.5f, serpentear = true, particulas = 320,
+            });
+        }
+
+        void SuirouNoJutsu()
+        {
+            Anunciar("Suiton: Suirou no Jutsu");
             TrainingDummy alvo = null;
             float melhor = 7f;
             foreach (var d in TrainingDummy.Todos)
@@ -264,13 +329,13 @@ namespace FaithClash.Combat
             if (alvo != null) Dano(alvo.transform.position, 0.8f, 30f, 0f, 2.5f);
         }
 
-        // ------------------------------------------------------------------ Terra
-        void LancaDePedra()
+        // ------------------------------------------------------------------ Doton (terra)
+        void DoryuudanNoJutsu()
         {
-            Anunciar("Lança de Pedra");
+            Anunciar("Doton: Doryuudan no Jutsu");
             var mat = Efeitos.LitOpaco(new Color(0.45f, 0.35f, 0.22f), 0.15f);
-            Vector3 frente = transform.forward;
-            Vector3 lado = transform.right;
+            Vector3 frente = DirecaoAlvo(); frente.y = 0f; frente.Normalize();
+            Vector3 lado = Vector3.Cross(Vector3.up, frente);
             for (int i = 0; i < 7; i++)
             {
                 Vector3 p = transform.position + frente * (1.6f + i * 0.9f) + lado * UnityEngine.Random.Range(-0.5f, 0.5f);
@@ -282,8 +347,7 @@ namespace FaithClash.Combat
 
         void MuralhaDeTerra()
         {
-            Anunciar("Muralha de Terra");
-            animador?.Acao("AtaquePesado", 0.6f);
+            Anunciar("Doton: Doryuuheki");
             var mat = Efeitos.LitOpaco(new Color(0.45f, 0.35f, 0.22f), 0.15f);
             Vector3 centro = transform.position + transform.forward * 3f;
             for (int i = -6; i <= 6; i++)
@@ -310,19 +374,18 @@ namespace FaithClash.Combat
             return go;
         }
 
-        // ------------------------------------------------------------------ Ar
-        void Lufada()
+        // ------------------------------------------------------------------ Fuuton (vento)
+        void DaitoppaNoJutsu()
         {
-            Anunciar("Lufada");
+            Anunciar("Fuuton: Daitoppa");
             Vector3 p = Frente(1.5f);
-            Efeitos.Rajada(p, Quaternion.LookRotation(transform.forward), Color.white, 60, new Vector2(6, 12), new Vector2(0.05f, 0.15f), new Vector2(0.2f, 0.4f), ParticleSystemShapeType.Cone, 0.4f);
-            Dano(p, 2.2f, 12f, 7f);
+            Efeitos.Rajada(p, Quaternion.LookRotation(transform.forward), Color.white, 120, new Vector2(8, 16), new Vector2(0.06f, 0.2f), new Vector2(0.25f, 0.5f), ParticleSystemShapeType.Cone, 0.7f);
+            Dano(p + transform.forward * 1.5f, 3f, 14f, 9f);
         }
 
-        void GloboDeVento()
+        void Reppusho()
         {
-            Anunciar("Globo de Vento");
-            animador?.Acao("Defesa", 0.6f);
+            Anunciar("Fuuton: Reppushou");
             Vector3 p = transform.position + Vector3.up;
             var esfera = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             Destroy(esfera.GetComponent<Collider>());
@@ -339,15 +402,37 @@ namespace FaithClash.Combat
             Dano(p, 6f, 15f, 14f);
         }
 
-        // ------------------------------------------------------------------ especiais
-        void GolpeEspiritual()
+        // ------------------------------------------------------------------ técnicas amaldiçoadas (Jujutsu Kaisen)
+        /// <summary>Azul: atrai os inimigos para um ponto à frente.</summary>
+        void Azul()
         {
-            TecnicaUsada?.Invoke("Golpe Espiritual", new Color(1f, 0.9f, 0.6f));
-            animador?.Acao("AtaquePesado", 0.85f);
-            Vector3 p = Frente(2.5f);
-            Efeitos.Rajada(p, Quaternion.identity, new Color(1f, 0.9f, 0.6f), 200, new Vector2(5, 14), new Vector2(0.15f, 0.5f), new Vector2(0.5f, 1f), raio: 0.6f);
-            Efeitos.Clarao(p, new Color(1f, 0.9f, 0.6f), 14f, 16f, 0.7f);
-            Dano(p, 4.5f, 80f, 10f);
+            TecnicaUsada?.Invoke("Técnica Maldita: Azul", new Color(0.25f, 0.55f, 1f));
+            Vector3 p = Frente(3.2f);
+            Efeitos.Rajada(p, Quaternion.identity, new Color(0.25f, 0.55f, 1f), 200, new Vector2(1, 5), new Vector2(0.1f, 0.35f), new Vector2(0.6f, 1.2f), raio: 1.2f);
+            Efeitos.Clarao(p, new Color(0.25f, 0.55f, 1f), 10f, 12f, 0.9f);
+            Dano(p, 6f, 25f, 12f, 0.8f, true);
+        }
+
+        /// <summary>Roxo: esfera de energia que apaga tudo no caminho (gasta carga espiritual).</summary>
+        void Roxo()
+        {
+            TecnicaUsada?.Invoke("Técnica Reversa: Roxo", new Color(0.7f, 0.3f, 1f));
+            animador?.Acao("Martelo", 0.8f);
+            Disparar(Frente(1.3f), DirecaoAlvo(), new ProjetilElemental.Opcoes
+            {
+                cor = new Color(0.7f, 0.3f, 1f), velocidade = 22f, duracao = 1.2f, dano = 130f, empurrao = 14f, tamanho = 3f, raioImpacto = 6f, explodir = true, particulas = 320,
+            });
+        }
+
+        /// <summary>Faísca Negra (Kokusen): golpe pesado perfeito causa dano extra.</summary>
+        void FaiscaNegra()
+        {
+            TecnicaUsada?.Invoke("Faísca Negra!", new Color(1f, 0.15f, 0.2f));
+            Vector3 p = Frente(1.8f);
+            Efeitos.Rajada(p, Quaternion.identity, new Color(1f, 0.1f, 0.15f), 90, new Vector2(4, 12), new Vector2(0.08f, 0.25f), new Vector2(0.3f, 0.6f), raio: 0.4f);
+            Efeitos.Rajada(p, Quaternion.identity, new Color(0.05f, 0.0f, 0.05f), 40, new Vector2(2, 6), new Vector2(0.3f, 0.8f), new Vector2(0.3f, 0.7f), raio: 0.5f, aditivo: false);
+            Efeitos.Clarao(p, new Color(1f, 0.1f, 0.15f), 14f, 10f, 0.25f);
+            Dano(p, 2.2f, 60f, 6f);
         }
 
         void ExplosaoElemental()
@@ -359,7 +444,5 @@ namespace FaithClash.Combat
             Efeitos.Clarao(p, Color.white, 16f, 20f, 0.9f);
             Dano(p, 6f, 120f, 12f);
         }
-
-        internal MeleeCombat Combate => combate;
     }
 }

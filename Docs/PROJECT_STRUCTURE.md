@@ -21,6 +21,6 @@ Tudo do jogo fica em `Assets/_FaithClash/` (o `_` mantém a pasta no topo).
 - Assets pesados (fbx, imagens grandes, áudio) vão por Git LFS, via `.gitattributes`.
 - Entrada de dados somente pelo Input System (o projeto não usa o sistema antigo).
 - Comentários e documentação em português do Brasil; nomes de código em inglês.
-- Menus **Faith Clash**: *Instalar Pacotes Recomendados*, *Preparar Protagonista* (materiais, Humanoid, Animator e prefab) e *Criar Cena de Treino* (gera `Scenes/Treino.unity`).
+- Menus **Faith Clash**: *Instalar Pacotes Recomendados*, *Preparar Jogador* (Humanoid, 21 animações do Mixamo, Animator e prefab com katana) e *Criar Cena de Treino* (gera `Scenes/Treino.unity`).
 - Nomes de cenas, objetos, materiais e prefabs em português (ex.: `Treino`, `Jogador`, `Boneco de Treino 1`).
-- O protagonista é gerado por script em `Ferramentas/Blender/gerar_protagonista.py` (Blender 5.x): malha, esqueleto Humanoid e 12 animações. Reexecute o script para regenerar o FBX.
+- O jogador vem do personagem do Mixamo (`D:\Faith Clash\Jogador`). `Ferramentas/Blender/gerar_jogador.py` tira a cabeça original, coloca a cabeça do FaceBuilder (rosto das fotos) com cabelo cacheado modelado, sobrancelhas e barba separados e ajusta o tom de pele. `extrair_animacao.py` tira só as animações dos FBX do Mixamo (55 MB cada) para arquivos leves. A katana vem de `gerar_katana.py`.

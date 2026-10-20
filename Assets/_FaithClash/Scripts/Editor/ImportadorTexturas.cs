@@ -29,7 +29,12 @@ namespace FaithClash.EditorTools
                     _ => Vector4.zero,
                 };
             }
-            else if (caminho.EndsWith("Protagonista/Rosto.png"))
+            else if (caminho.Contains("/Characters/Jogador/") && caminho.EndsWith("_Normal.png"))
+            {
+                imp.textureType = TextureImporterType.NormalMap;
+                imp.mipmapEnabled = true;
+            }
+            else if (caminho.EndsWith("Jogador/Rosto.png"))
             {
                 imp.mipmapEnabled = true;
                 imp.wrapMode = TextureWrapMode.Clamp;

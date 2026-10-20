@@ -115,3 +115,6 @@ InitTestScene*.unity*
 
 # Editors
 .vscode/
+
+# Depuracao
+Ferramentas/poses_debug.png

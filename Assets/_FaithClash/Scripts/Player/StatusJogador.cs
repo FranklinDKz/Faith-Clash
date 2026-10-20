@@ -29,7 +29,7 @@ namespace FaithClash.Player
         {
             new Item { nome = "Poção de Vida", tecla = "Z", quantidade = 18, icone = "item_pocao" },
             new Item { nome = "Cristal de Fé", tecla = "X", quantidade = 7, icone = "item_cristal" },
-            new Item { nome = "Lanterna Sagrada", tecla = "C", quantidade = 3, icone = "item_lanterna" },
+            new Item { nome = "Lanterna Sagrada", tecla = "B", quantidade = 3, icone = "item_lanterna" },
             new Item { nome = "Frasco de Fúria", tecla = "V", quantidade = 2, icone = "item_frasco" },
         };
 
@@ -77,6 +77,8 @@ namespace FaithClash.Player
             }
         }
 
+        public void Avisar(string msg) => Aviso?.Invoke(msg);
+
         public bool GastarFe(float custo)
         {
             if (Fe < custo) { Aviso?.Invoke("Fé insuficiente"); return false; }
@@ -102,7 +104,7 @@ namespace FaithClash.Player
             if (k == null) return;
             if (k.zKey.wasPressedThisFrame) Usar(0);
             if (k.xKey.wasPressedThisFrame) Usar(1);
-            if (k.cKey.wasPressedThisFrame) Usar(2);
+            if (k.bKey.wasPressedThisFrame) Usar(2);
             if (k.vKey.wasPressedThisFrame) Usar(3);
         }
 
@@ -111,6 +113,13 @@ namespace FaithClash.Player
             var item = Itens[i];
             if (item.quantidade <= 0) { Aviso?.Invoke(item.nome + " esgotado"); return; }
             item.quantidade--;
+            GetComponent<AnimadorProtagonista>()?.Acao("PegarItem", 0.6f, 0.08f);
+            StartCoroutine(AplicarItemDepois(i, item));
+        }
+
+        System.Collections.IEnumerator AplicarItemDepois(int i, Item item)
+        {
+            yield return new WaitForSeconds(0.35f);
             Vector3 p = transform.position + Vector3.up;
             switch (i)
             {

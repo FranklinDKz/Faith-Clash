@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -22,10 +22,10 @@ namespace FaithClash.EditorTools
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
 
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PreparadorProtagonista.CaminhoPrefab);
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PreparadorJogador.CaminhoPrefab);
             if (prefab == null)
             {
-                Debug.LogError("[Faith Clash] Rode primeiro: Faith Clash > Preparar Protagonista");
+                Debug.LogError("[Faith Clash] Rode primeiro: Faith Clash > Preparar Jogador");
                 return;
             }
 

@@ -1,77 +1,33 @@
-# Catálogo de animações (Mixamo)
+# Catálogo de animações
 
-Cada animação foi **analisada no Blender** (duração, deslocamento, altura do quadril, velocidade das mãos e pés, se fecha em loop)
-e **renderizada em 6 poses** (`Ferramentas/analise/previews`). Os números ficam em `Ferramentas/analise/metricas/*.json`.
-Depois todas passaram pelo teste automático dentro da Unity (`Faith Clash > Ferramentas > Testar Animações`,
-resultado em `Ferramentas/analise/teste_animacoes.txt`): ele toca cada estado e mede a altura dos pés e das mãos em relação ao chão real.
+Todas as animações são **gratuitas** e vêm de pacotes públicos (veja `CREDITOS_ASSETS.md`). Cada uma é cortada por quadros e recebe um nome de estado em
+`PreparadorJogador.Clipes` (arquivo, quadro inicial/final, loop e quadro do impacto). A duração e o momento do impacto de cada golpe são gerados em
+`Resources/InfoGolpes.txt`, então o dano e o som saem exatamente no quadro certo da animação.
 
-Um segundo teste automático (`Faith Clash > Ferramentas > Testar Combate`, resultado em `Ferramentas/analise/teste_combate.txt` e fotos em `Ferramentas/analise/fotos`)
-injeta teclas e cliques e confere: nada toca sozinho, cadeias e ramos de combo, impacto no quadro certo da animação, modos 5/G/1-4, meditação (E), altura do pulo e tipos de pouso.
-
-As animações rodam na **velocidade original** do Mixamo. O deslocamento horizontal dos golpes vem do próprio clipe
-(`MovimentoDaAnimacao`, com colisão); na locomoção quem move é o `PlayerController`.
+Dois testes automáticos (menu Faith Clash > Ferramentas): **Testar Animações** mede pés e mãos contra o chão real de cada estado e **Testar Combate**
+simula teclas e cliques, confere cadeias, impactos, modos, meditação, pulo e pouso, e tira fotos de cada golpe (`Ferramentas/analise/fotos`).
 
 ## Locomoção
-| Clipe (arquivo) | Uso no jogo |
+| Estado | Origem |
 |---|---|
-| OffensiveIdle | Parado no modo Poder (postura de luta) |
-| OrcIdle | Parado no modo Espada |
-| HappyIdle | Catalogado (nada toca sozinho: parado fica sempre no idle do modo) |
-| StandardRun | Correr (Poder) |
-| Sprint | Correr rápido (Shift) |
-| GreatSwordRun | Correr com a espada |
-| RunningBackward / WalkingBackwards | Andar para trás com o alvo travado |
-| IdleToSprint / StartWalking / ChangeDirection / Turn 180° / Turn 90° | **Removidos do jogo** (tocavam sozinhos e dessincronizavam); ficam só catalogados |
-| InjuredWalking | Andar ferido (catalogado) |
-| Transition | Transição de postura (catalogado) |
+| IdlePoder / IdleEspada / IdleCombate | Kevin Iglesias Idle01 / UAL1 Sword_Idle / Motifect muay_thai_guard_stance |
+| Andar, Correr, Sprint | UAL1 Walk_Loop, Jog_Fwd_Loop, Sprint_Loop (velocidades naturais 0,97 / 5,36 / 8,25 m/s) |
+| CorrerTras (alvo travado) | Kevin Iglesias Run01_Backward |
+| Dash (C) | UAL2 Sword_Dash |
+| Rolamento (Ctrl) | UAL1 Roll |
+| Pulo | UAL1 Jump_Start, Jump_Loop (no ar), Jump_Land (pouso leve); UAL2 NinjaJump_Land (pouso pesado) |
 
-## Movimento especial (C, Ctrl, Espaço)
-| Clipe | Uso |
-|---|---|
-| CrouchedToSprinting | **Dash** (C) |
-| Running (mergulho + rolamento) | Rolamento (Ctrl) |
-| Jump (cortado em 5 partes) | **Decolagem**, **subida**, **topo**, **queda** (blend tree pela velocidade vertical) e **pouso leve** |
-| JumpingDown | Pouso pesado (queda alta; fica preso 0,7 s) |
-| FallingToRoll | Pouso com rolamento (queda muito alta ou em velocidade) |
-
-Removidos do jogo (catalogados): WallRun e RunningSlide (pareciam escalada/deslize quebrado), GreatSwordSlideAttack e SwordAndShieldAttack (ataque deslizante / aéreo).
+## Combate (tecla 5): taijutsu
+Jab, Direto (UAL1), Gancho (UAL2), Chute lateral (tkd roundhouse), Chute baixo (judo ankle sweep), Giro de costas (tkd spinning heel kick),
+Chute frontal (muay thai teep), Cotovelada (muay thai elbow cut), Joelhada (muay thai knee), Chute machado (tkd axe kick), Chute lado (tkd side kick),
+Chute costas (tkd back kick), Voadora e Voadora giratória (tkd jump kicks). Também no catálogo: Combinação muay thai, Chute muay.
 
 ## Espada (G)
-| Clipe | Uso |
-|---|---|
-| DrawAGreatSword2 / SheathAGreatSword2 | Sacar / guardar a katana |
-| GreatSwordSlash (3 cortes) | Combo: Corte 1, 2 e 3 |
-| SwordAndShieldSlash | 4º golpe (corte giratório) |
-| GreatSwordJumpAttack | Golpe pesado (segurar o botão esquerdo) |
-| StandingBlockIdle | Defesa (botão direito) |
+Corte 1 e 2 (UAL2 Sword_Regular_A/B + recuperação), Corte 3 (Sword_Regular_C), Corte giratório (Motifect), Golpe pesado (Sword_Heavy_Combo),
+Estocada correndo (UAL1 Sword_Attack), Corte para cima e diagonal, Contra-ataque, Sacar e Guardar (Motifect). Defesa: sword_block_high.
 
-## Combate: taijutsu (tecla 5)
-Os golpes **Jab, Direto, Gancho, Uppercut, Cotovelada, Joelhada, Chute lateral, Chute baixo, Chute machado e Giro de costas** foram criados no Blender
-(`Ferramentas/Blender/gerar_taijutsu.py`): poses-chave do quadril, tronco e alvos de IK das mãos e dos pés, resolvidas no esqueleto do Mixamo e assadas num único arquivo (`Taijutsu.fbx`).
-Os quadros de cada golpe estão em `PreparadorJogador.Recortes["Taijutsu"]`. Conferência visual: `Ferramentas/Blender/ver_golpe.sh`.
+## Poder (1–4)
+Gestos de Kevin Iglesias: Direct2H (Fogo), Omni (Vento), Direct1H R (Energia/Água), Call1H L (Terra), CastingDamage (Power-up). Com versões Load/Cast para segurar e soltar.
 
-| Clipe | Uso |
-|---|---|
-| Jab, Direto, Gancho, Chute lateral | Cadeia leve (clique) |
-| Chute baixo | Ramo: S no 3º golpe |
-| Giro de costas | Ramo: A/D no 4º golpe |
-| Uppercut, Cotovelada, Joelhada, Chute machado | Golpes fortes (segurar o clique), conforme o ponto da cadeia |
-| FlyingKneePunchCombo (golpe 3, joelhada voadora) | Correndo + clique |
-| Martelo 2 (chute giratório) | Correndo + segurar o clique |
-| FlyingKneePunchCombo (socos 1 e 2), GreatSwordKick | Catalogados (reserva) |
-
-## Poder: magias (teclas 1–4, só gestos, sem golpes de luta)
-| Clipe | Uso |
-|---|---|
-| Standing2HMagicAttack03 | Gesto do Katon (Goukakyuu) |
-| Standing2HMagicAttack04 | Gesto do Fuuton (Daitoppa) / Katon (Housenka) |
-| Standing2HCastSpell01 | Gesto do Suiton (Suiryuudan) / Azul |
-| SwordAndShieldCasting | Gesto do Doton / Suiton (Suirou) |
-| SwordAndShieldPowerUp | Roxo (R), Reppushou, frasco de fúria |
-| MagicHeal | Poção de vida, cristal de Fé e **meditação (E)** |
-| PickUpItem | Lanterna e outros itens |
-
-## Morte (sorteada)
-StandingReactDeathBackward, StandingReactDeathForward, FallingBackDeath, FallingForwardDeath, SwordAndShieldDeath, TwoHandedSwordDeath.
-
-> Alguns arquivos vieram duplicados (versões `(1)` e a leva antiga com prefixo `Ch06_nonPBR@`). As duplicadas ficam só no catálogo; o jogo usa uma de cada.
+## Itens, meditação, reações
+Consumir (UAL2), Pegar item (UAL1), Meditar (UAL1 Sitting_Enter → Sitting_Idle_Loop → Sitting_Exit), Dano (Hit_Chest/Hit_Head), Empurrado (Hit_Knockback), Morte (Death01).

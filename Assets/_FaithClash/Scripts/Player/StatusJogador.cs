@@ -142,27 +142,28 @@ namespace FaithClash.Player
                          || k.cKey.isPressed || k.leftCtrlKey.isPressed || (Mouse.current != null && (Mouse.current.leftButton.isPressed || Mouse.current.rightButton.isPressed));
             if (!segurando || moveu || controle == null || !controle.IsGrounded || controle.IsBusy || (combate != null && combate.IsAttacking))
             {
-                PararMeditacao();
+                PararMeditacao(!moveu && controle != null && controle.IsGrounded && !controle.IsBusy);   // soltou o E parado: levanta com calma
                 return;
             }
 
             GanharFe(fePorSegundoMeditando * Time.deltaTime);
             if (Fe >= feMaxima - 1f) { PararMeditacao(); Aviso?.Invoke("Fé restaurada"); return; }
-            if (Time.time >= proximoGesto)
+            if (proximoGesto == 0f)
             {
-                animador?.Acao("Curar", 2.6f, 0.2f);
-                proximoGesto = Time.time + 2.6f;
+                animador?.Acao("MeditarEntrar", 999f, 0.25f);   // senta e segue sozinho para o ciclo de meditação
+                proximoGesto = 1f;
                 SomJogo.Tocar("UI_Elemento", transform.position, 0.25f, 0.6f);
             }
             if (auraMeditacao != null) auraMeditacao.transform.position = transform.position + Vector3.up * 0.1f;
         }
 
-        void PararMeditacao()
+        void PararMeditacao(bool levantar = false)
         {
             if (!Meditando) return;
             Meditando = false;
             if (auraMeditacao != null) { auraMeditacao.Stop(true, ParticleSystemStopBehavior.StopEmitting); Destroy(auraMeditacao.gameObject, 2f); auraMeditacao = null; }
-            animador?.Encerrar(0.25f);
+            if (levantar) animador?.Acao("MeditarSair", 0.9f, 0.2f, 1.15f);
+            else animador?.Encerrar(0.25f);
         }
 
         void CriarAuraMeditacao()
@@ -185,7 +186,7 @@ namespace FaithClash.Player
             var item = Itens[i];
             if (item.quantidade <= 0) { Aviso?.Invoke(item.nome + " esgotado"); return; }
             item.quantidade--;
-            GetComponent<AnimadorProtagonista>()?.Acao(i <= 1 ? "Curar" : i == 3 ? "PowerUp" : "PegarItem", i <= 1 ? 1.4f : i == 3 ? 1.6f : 0.9f, 0.08f);
+            GetComponent<AnimadorProtagonista>()?.Acao(i <= 1 ? "Curar" : i == 3 ? "PowerUp" : "PegarItem", i <= 1 ? 1.33f : i == 3 ? 1.1f : 0.83f, 0.08f);
             StartCoroutine(AplicarItemDepois(i, item));
         }
 

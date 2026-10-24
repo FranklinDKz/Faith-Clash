@@ -125,7 +125,7 @@ namespace FaithClash.Player
                 dashReady = Time.time + dashCooldown;
                 transform.rotation = Quaternion.LookRotation(burstDir);
                 combate?.Cancelar();   // o dash cancela o golpe (esquiva estilo Naraka)
-                animador?.Acao("Dash", 0.5f, 0.04f);
+                animador?.Acao("Dash", 0.5f, 0.04f, 1.7f);
                 Dashed?.Invoke();
             }
 
@@ -137,7 +137,7 @@ namespace FaithClash.Player
                 slideReady = Time.time + slideCooldown;
                 transform.rotation = Quaternion.LookRotation(burstDir);
                 combate?.Cancelar();
-                animador?.Acao("Rolamento", 1.3f, 0.05f);
+                animador?.Acao("Rolamento", 1.3f, 0.05f, 1.13f);
                 DefineAltura(1.1f);
             }
             Vector3 alvoHoriz;

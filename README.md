@@ -60,9 +60,9 @@ As teclas seguem o esquema do Naraka: Bladepoint (clique = leve, segurar = pesad
 Teclas que o Naraka usa para outras coisas (itens, habilidades) ficam em Z X B V, F e R. Para mudar, edite `PlayerController`, `MeleeCombat` e `EstilosElementais`.
 
 **Três modos de combate que não se misturam:**
-- **Combate (tecla 5):** só taijutsu, sem espada nem poderes. Clique = cadeia **Jab → Direto → Gancho → Chute lateral**; **S** no 3º golpe vira Chute baixo, **A/D** no 4º vira Giro de costas.
-  Segurar o clique dá um golpe forte que muda conforme o ponto da cadeia: **Uppercut** (sozinho), **Cotovelada** (após 1), **Joelhada** (após 2), **Chute machado** (após 3 ou mais).
-  Correndo, o clique solta a Joelhada voadora e segurar solta o Chute giratório. Os golpes fortes têm chance de Faísca Negra (Kokusen). O golpe seguinte pode sair logo depois do impacto (cancelamento), e o Ctrl ou o C cancelam o golpe.
+- **Combate (tecla 5):** só taijutsu, sem espada nem poderes. Clique = cadeia **Jab → Direto → Gancho → Chute lateral**; **S** no 3º golpe vira Rasteira, **A/D** no 4º vira Chute giratório de calcanhar.
+  Segurar o clique dá um golpe forte que muda conforme o ponto da cadeia: **Chute frontal** (sozinho), **Cotovelada** (após 1), **Joelhada** (após 2), **Chute machado** (após 3 ou mais); com A/D, Chute lateral; com S, Chute para trás.
+  Correndo, o clique solta a Voadora e segurar solta a Voadora giratória. O golpe seguinte pode sair logo depois do impacto (cancelamento), e o Ctrl ou o C cancelam o golpe.
 - **Espada (katana, tecla G):** só corta. Combo de 4 cortes e golpe pesado com salto.
 - **Poder (teclas 1–4):** jutsus de Naruto e técnicas de Jujutsu Kaisen, **sem socos nem chutes**. Clique = técnica leve do estilo, segurar = técnica forte, F = habilidade do estilo, R = Roxo. Cada técnica tem o próprio gesto (animação) e som e gasta Fé.
 

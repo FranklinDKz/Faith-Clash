@@ -1,244 +1,280 @@
 ﻿== inicio: o que o Animator toca nos primeiros 1,5 s (deve ser só Locomocao) ==
   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-1,9)
-  pose IdlePoder t=0,0:  cotovelo=161° mão/ombro=0,45m cotovelo=159° mão/ombro=0,45m
-  pose IdlePoder t=0,2:  cotovelo=179° mão/ombro=0,46m cotovelo=173° mão/ombro=0,46m
-  pose IdlePoder t=0,4:  cotovelo=156° mão/ombro=0,45m cotovelo=138° mão/ombro=0,43m
-  pose IdlePoder t=0,6:  cotovelo=169° mão/ombro=0,46m cotovelo=154° mão/ombro=0,45m
-  pose Soco1 t=0,0:  cotovelo=104° mão/ombro=0,36m cotovelo=137° mão/ombro=0,43m
-  pose Soco1 t=0,2:  cotovelo=155° mão/ombro=0,45m cotovelo=144° mão/ombro=0,44m
-  pose Soco1 t=0,4:  cotovelo=162° mão/ombro=0,46m cotovelo=162° mão/ombro=0,45m
-  pose Soco1 t=0,6:  cotovelo=105° mão/ombro=0,36m cotovelo=152° mão/ombro=0,45m
-  pose Jab t=0,0:  cotovelo=155° mão/ombro=0,45m cotovelo=153° mão/ombro=0,45m
-  pose Jab t=0,2:  cotovelo=170° mão/ombro=0,46m cotovelo=58° mão/ombro=0,22m
-  pose Jab t=0,4:  cotovelo=177° mão/ombro=0,46m cotovelo=59° mão/ombro=0,23m
-  pose Jab t=0,6:  cotovelo=96° mão/ombro=0,34m cotovelo=60° mão/ombro=0,23m
-  pose Uppercut t=0,0:  cotovelo=160° mão/ombro=0,45m cotovelo=157° mão/ombro=0,45m
-  pose Uppercut t=0,2:  cotovelo=62° mão/ombro=0,24m cotovelo=108° mão/ombro=0,37m
-  pose Uppercut t=0,4:  cotovelo=60° mão/ombro=0,23m cotovelo=177° mão/ombro=0,46m
-  pose Uppercut t=0,6:  cotovelo=58° mão/ombro=0,22m cotovelo=138° mão/ombro=0,43m
-  animação: Uppercut   (vel.anim=1,00 y=0,04 velY=-4,0)
-  animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
 == 0) PARADO 6 s e CORRENDO 4 s: só pode aparecer Locomocao ==
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
 modo depois da tecla Digit5: Combate (esperado Combate) OK
 == 1) COMBATE: cadeia leve (4 toques, 0,35 s entre eles) ==
 [  0,53]   evento: golpe iniciado (passo 1)
-[  0,53]   animação: Jab   (vel.anim=1,00 y=0,04 velY=-4,1)
+[  0,54]   animação: Jab   (vel.anim=1,00 y=0,04 velY=-4,0)
 [  0,70]   evento: IMPACTO passo 1 acertou=True
-[  1,00]   evento: golpe iniciado (passo 2)
-[  1,00]   animação: Direto   (vel.anim=1,00 y=0,04 velY=-4,1)
-[  1,28]   evento: IMPACTO passo 2 acertou=True
-[  1,48]   evento: golpe iniciado (passo 3)
-[  1,48]   animação: Gancho   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  1,76]   evento: IMPACTO passo 3 acertou=True
-[  2,23]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  3,07]   boneco: vida 1171/1200  combo=3
+[  1,02]   evento: golpe iniciado (passo 2)
+[  1,03]   animação: Direto   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  1,23]   evento: IMPACTO passo 2 acertou=True
+[  1,60]   evento: golpe iniciado (passo 3)
+[  1,60]   animação: Gancho   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  1,83]   evento: IMPACTO passo 3 acertou=True
+[  2,12]   animação: GanchoRec   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  2,72]   animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  3,06]   boneco: vida 1171/1200  combo=3
 == 1) COMBATE: ramo S no 3º ==
-[  0,06]   evento: golpe iniciado (passo 1)
-[  0,07]   animação: Jab   (vel.anim=1,00 y=0,04 velY=-4,1)
-[  0,24]   evento: IMPACTO passo 1 acertou=True
-[  0,54]   evento: golpe iniciado (passo 2)
-[  0,54]   animação: Direto   (vel.anim=1,00 y=0,04 velY=-4,3)
-[  0,81]   evento: IMPACTO passo 2 acertou=True
-[  1,01]   evento: golpe iniciado (passo 3)
-[  1,02]   animação: ChuteBaixo   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  1,35]   evento: IMPACTO passo 3 acertou=True
-[  1,61]   evento: golpe iniciado (passo 4)
-[  1,61]   animação: ChuteLateral   (vel.anim=1,00 y=0,04 velY=-4,3)
-[  1,98]   evento: IMPACTO passo 4 acertou=True
-[  2,63]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  3,07]   boneco: vida 1156/1200  combo=7
+[  0,07]   evento: golpe iniciado (passo 4)
+[  0,07]   animação: ChuteLateral   (vel.anim=1,30 y=0,04 velY=-4,2)
+[  0,43]   evento: IMPACTO passo 4 acertou=True
+[  0,77]   evento: golpe iniciado (passo 1)
+[  0,77]   animação: Jab   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  0,94]   evento: IMPACTO passo 1 acertou=True
+[  1,26]   evento: golpe iniciado (passo 2)
+[  1,27]   animação: Direto   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  1,47]   evento: IMPACTO passo 2 acertou=True
+[  1,83]   evento: golpe iniciado (passo 3)
+[  1,83]   animação: Gancho   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  2,07]   evento: IMPACTO passo 3 acertou=True
+[  2,36]   animação: GanchoRec   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  2,95]   animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  3,07]   boneco: vida 1155/1200  combo=7
 == 1) COMBATE: ramo A no 4º ==
-[  0,06]   evento: golpe iniciado (passo 1)
-[  0,07]   animação: Jab   (vel.anim=1,00 y=0,04 velY=-4,1)
-[  0,24]   evento: IMPACTO passo 1 acertou=True
-[  0,53]   evento: golpe iniciado (passo 2)
-[  0,54]   animação: Direto   (vel.anim=1,00 y=0,04 velY=-4,1)
-[  0,81]   evento: IMPACTO passo 2 acertou=True
-[  1,01]   evento: golpe iniciado (passo 3)
-[  1,01]   animação: Gancho   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  1,29]   evento: IMPACTO passo 3 acertou=True
-[  1,50]   evento: golpe iniciado (passo 4)
-[  1,50]   animação: GiroCostas   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  2,07]   evento: IMPACTO passo 4 acertou=True
-[  2,46]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  3,06]   boneco: vida 1153/1200  combo=11
+[  0,07]   evento: golpe iniciado (passo 4)
+[  0,07]   animação: ChuteLateral   (vel.anim=1,30 y=0,04 velY=-4,1)
+[  0,43]   evento: IMPACTO passo 4 acertou=True
+[  0,76]   evento: golpe iniciado (passo 1)
+[  0,77]   animação: Jab   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  0,94]   evento: IMPACTO passo 1 acertou=True
+[  1,26]   evento: golpe iniciado (passo 2)
+[  1,27]   animação: Direto   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  1,47]   evento: IMPACTO passo 2 acertou=True
+[  1,83]   evento: golpe iniciado (passo 3)
+[  1,84]   animação: Gancho   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  2,07]   evento: IMPACTO passo 3 acertou=True
+[  2,36]   animação: GanchoRec   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  2,96]   animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  3,07]   boneco: vida 1155/1200  combo=11
 == 2) COMBATE: golpe forte depois de 0 golpes leves ==
-[  0,26]   evento: golpe iniciado (passo 0)
-[  0,27]   animação: Uppercut   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  0,57]   evento: IMPACTO passo 0 acertou=True
-[  1,16]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  2,00]   boneco: vida 1180/1200
+[  0,27]   evento: golpe iniciado (passo 0)
+[  0,27]   animação: ChuteMachado   (vel.anim=1,30 y=0,04 velY=-4,2)
+[  0,73]   evento: IMPACTO passo 0 acertou=True
+[  1,59]   animação: NoAr   (vel.anim=1,30 y=0,04 velY=-4,0)
+[  2,01]   boneco: vida 1110/1200
 == 2) COMBATE: golpe forte depois de 1 golpes leves ==
 [  0,06]   evento: golpe iniciado (passo 1)
-[  0,07]   animação: Jab   (vel.anim=1,00 y=0,04 velY=-4,1)
-[  0,24]   evento: IMPACTO passo 1 acertou=True
-[  0,68]   evento: golpe iniciado (passo 0)
-[  0,69]   animação: Cotovelada   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  0,99]   evento: IMPACTO passo 0 acertou=True
-[  1,48]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  2,42]   boneco: vida 1114/1200
-== 2) COMBATE: golpe forte depois de 2 golpes leves ==
-[  0,06]   evento: golpe iniciado (passo 1)
-[  0,07]   animação: Jab   (vel.anim=1,00 y=0,04 velY=-4,1)
-[  0,24]   evento: IMPACTO passo 1 acertou=True
-[  0,48]   evento: golpe iniciado (passo 2)
-[  0,49]   animação: Direto   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  0,76]   evento: IMPACTO passo 2 acertou=True
-[  1,10]   evento: golpe iniciado (passo 0)
-[  1,10]   animação: Joelhada   (vel.anim=1,00 y=0,04 velY=-4,3)
-[  1,40]   evento: IMPACTO passo 0 acertou=True
-[  1,99]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  2,83]   boneco: vida 1101/1200
-== 2) COMBATE: golpe forte depois de 3 golpes leves ==
-[  0,07]   evento: golpe iniciado (passo 1)
 [  0,07]   animação: Jab   (vel.anim=1,00 y=0,04 velY=-4,0)
 [  0,24]   evento: IMPACTO passo 1 acertou=True
-[  0,48]   evento: golpe iniciado (passo 2)
-[  0,49]   animação: Direto   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  0,76]   evento: IMPACTO passo 2 acertou=True
-[  0,96]   evento: golpe iniciado (passo 3)
-[  0,97]   animação: Gancho   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  1,24]   evento: IMPACTO passo 3 acertou=True
-[  1,52]   evento: golpe iniciado (passo 0)
-[  1,52]   animação: ChuteMachado   (vel.anim=1,00 y=0,04 velY=-4,8)
-[  2,05]   evento: IMPACTO passo 0 acertou=True
-[  2,71]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  0,68]   evento: golpe iniciado (passo 0)
+[  0,68]   animação: Cotovelada   (vel.anim=1,40 y=0,04 velY=-4,0)
+[  1,07]   evento: IMPACTO passo 0 acertou=True
+[  1,78]   animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  2,41]   boneco: vida 1174/1200
+== 2) COMBATE: golpe forte depois de 2 golpes leves ==
+[  0,06]   evento: golpe iniciado (passo 1)
+[  0,07]   animação: Jab   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  0,24]   evento: IMPACTO passo 1 acertou=True
+[  0,56]   evento: golpe iniciado (passo 2)
+[  0,57]   animação: Direto   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  0,77]   evento: IMPACTO passo 2 acertou=True
+[  1,13]   evento: golpe iniciado (passo 0)
+[  1,14]   animação: Joelhada   (vel.anim=1,40 y=0,04 velY=-4,2)
+[  1,57]   evento: IMPACTO passo 0 acertou=True
+[  2,28]   animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  2,83]   boneco: vida 1161/1200
+== 2) COMBATE: golpe forte depois de 3 golpes leves ==
+[  0,06]   evento: golpe iniciado (passo 1)
+[  0,07]   animação: Jab   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  0,24]   evento: IMPACTO passo 1 acertou=True
+[  0,56]   evento: golpe iniciado (passo 2)
+[  0,57]   animação: Direto   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  0,77]   evento: IMPACTO passo 2 acertou=True
+[  1,13]   evento: golpe iniciado (passo 3)
+[  1,13]   animação: Gancho   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  1,37]   evento: IMPACTO passo 3 acertou=True
+[  1,65]   animação: GanchoRec   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  1,75]   evento: golpe iniciado (passo 0)
+[  1,75]   animação: ChuteMachado   (vel.anim=1,30 y=0,04 velY=-4,0)
+[  2,21]   evento: IMPACTO passo 0 acertou=True
+[  3,08]   animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
 [  3,25]   boneco: vida 1141/1200
 == 2b) COMBATE: correndo + clique (joelhada voadora) ==
 [  0,77]   evento: golpe iniciado (passo 5)
-[  0,77]   animação: Soco3   (vel.anim=1,20 y=0,04 velY=-4,1)
-[  1,35]   evento: IMPACTO passo 5 acertou=True
-[  1,49]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  2,16]   boneco: vida 1180/1200
+[  0,77]   animação: Voadora   (vel.anim=1,50 y=0,04 velY=-4,0)
+[  1,75]   evento: IMPACTO passo 5 acertou=False
+[  2,16]   boneco: vida 1200/1200
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
   animação: SacarEspada   (vel.anim=1,00 y=0,04 velY=-4,0)
   animação: LocomocaoEspada   (vel.anim=1,00 y=0,04 velY=-4,0)
 modo depois da tecla G: Espada (esperado Espada) OK
 == 3) ESPADA: 4 cortes + pesado ==
-[  0,06]   evento: golpe iniciado (passo 1)
-[  0,07]   animação: Corte1   (vel.anim=1,25 y=0,04 velY=-4,0)
-[  0,63]   evento: IMPACTO passo 1 acertou=True
-[  0,84]   evento: golpe iniciado (passo 2)
-[  0,84]   animação: Corte2   (vel.anim=1,15 y=0,04 velY=-4,0)
-[  1,21]   evento: IMPACTO passo 2 acertou=False
-[  1,38]   evento: golpe iniciado (passo 3)
-[  1,38]   animação: Corte3   (vel.anim=1,20 y=0,04 velY=-4,1)
-[  1,70]   evento: IMPACTO passo 3 acertou=False
-[  2,03]   evento: golpe iniciado (passo 4)
-[  2,03]   animação: CorteGiratorio   (vel.anim=1,30 y=0,04 velY=-4,0)
-[  3,00]   evento: IMPACTO passo 4 acertou=True
-[  3,93]   animação: LocomocaoEspada   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  0,07]   evento: golpe iniciado (passo 1)
+[  0,07]   animação: Corte1   (vel.anim=1,00 y=0,04 velY=-4,2)
+[  0,30]   evento: IMPACTO passo 1 acertou=True
+[  0,56]   animação: Corte1Rec   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  0,82]   evento: golpe iniciado (passo 2)
+[  0,82]   animação: Corte2   (vel.anim=1,00 y=0,04 velY=-4,2)
+[  1,09]   evento: IMPACTO passo 2 acertou=True
+[  1,41]   animação: Corte2Rec   (vel.anim=1,00 y=0,04 velY=-4,3)
+[  1,66]   evento: golpe iniciado (passo 3)
+[  1,66]   animação: Corte3   (vel.anim=1,10 y=0,04 velY=-4,1)
+[  2,27]   evento: IMPACTO passo 3 acertou=True
+[  2,80]   evento: golpe iniciado (passo 4)
+[  2,80]   animação: CorteGiratorio   (vel.anim=1,15 y=0,04 velY=-4,0)
+[  3,33]   evento: IMPACTO passo 4 acertou=True
 [  4,02]   evento: golpe iniciado (passo 0)
-[  4,03]   animação: EspadaSalto   (vel.anim=1,15 y=0,04 velY=-4,0)
-[  4,90]   evento: IMPACTO passo 0 acertou=True
-[  5,95]   animação: LocomocaoEspada   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  6,56]   boneco: vida 1120/1200
+[  4,03]   animação: EspadaSalto   (vel.anim=1,10 y=0,04 velY=-4,0)
+[  4,48]   evento: IMPACTO passo 0 acertou=True
+[  6,06]   animação: LocomocaoEspada   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  6,56]   boneco: vida 1088/1200
   animação: EnvainharEspada   (vel.anim=1,00 y=0,04 velY=-4,0)
   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
 modo depois da tecla Digit1: Poder (esperado Poder) OK
 == 4) PODER Fogo: clique (leve), segurar (forte), F ==
 [  0,07]   animação: CastFogo   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  1,87]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  2,86]   Fé gasta no leve: 35
+[  1,67]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  2,86]   Fé gasta no leve: 31
 [  3,13]   animação: CastVento   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  4,84]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  4,70]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
 [  6,47]   Fé gasta no forte: 50
-[  6,47]   animação: CastVento   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  8,18]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  6,48]   animação: CastVento   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  8,04]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
 [  9,75]   boneco: vida 1065/1200
 == 4) PODER Água: clique (leve), segurar (forte), F ==
 [  0,07]   animação: CastEnergia   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  2,07]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  2,86]   Fé gasta no leve: 37
+[  1,27]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  2,86]   Fé gasta no leve: 30
 [  3,13]   animação: CastTerra   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  5,54]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  4,50]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
 [  6,47]   Fé gasta no forte: 50
-[  6,47]   animação: CastTerra   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  8,88]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  6,48]   animação: CastTerra   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  7,84]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
 [  9,75]   boneco: vida 1095/1200
 == 4) PODER Terra: clique (leve), segurar (forte), F ==
 [  0,07]   animação: CastTerra   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  2,47]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  2,86]   Fé gasta no leve: 43
+[  1,44]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  2,86]   Fé gasta no leve: 32
 [  3,13]   animação: CastTerra   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  5,53]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  4,50]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
 [  6,47]   Fé gasta no forte: 100
-[  6,47]   animação: CastTerra   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  8,88]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  6,48]   animação: CastTerra   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  7,85]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
 [  9,75]   boneco: vida 1124/1200
 == 4) PODER Ar: clique (leve), segurar (forte), F ==
 [  0,07]   animação: CastVento   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  1,77]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  2,86]   Fé gasta no leve: 4
-[  3,13]   animação: CastEnergia   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  5,13]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  6,47]   Fé gasta no forte: 66
-[  6,47]   animação: PowerUp   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  8,88]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  1,64]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  2,86]   Fé gasta no leve: 1
+[  3,14]   animação: CastEnergia   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  4,34]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  6,47]   Fé gasta no forte: 62
+[  6,48]   animação: PowerUp   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  7,58]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
 [  9,75]   boneco: vida 1146/1200
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
 modo depois da tecla Digit5: Combate (esperado Combate) OK
 == 5) MEDITAR: segurar E por 2 s, depois mover ==
-[  0,01]   animação: Curar   (vel.anim=1,00 y=0,06 velY=-4,2)
+[  0,01]   animação: MeditarEntrar   (vel.anim=1,00 y=0,05 velY=-4,3)
+[  1,31]   animação: MeditarLoop   (vel.anim=1,00 y=0,04 velY=-4,0)
 [  2,00]   Fé: 100 -> 348 (meditando=True)
-[  2,01]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  2,30]   depois de mover: meditando=False
+[  2,01]   animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  2,31]   depois de mover: meditando=False
 == 6) PULO (toque), PULO (segurando) e QUEDA de 3 m e de 8 m ==
 [  0,00]   -- pulo curto (toque) --
-[  0,01]   animação: PuloImpulso   (vel.anim=1,00 y=0,11 velY=8,6)
-[  0,18]   animação: NoAr   (vel.anim=1,00 y=0,94 velY=0,1)
-[  0,41]   animação: PousoLeve   (vel.anim=1,50 y=0,04 velY=-4,0)
-[  0,71]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  0,01]   animação: PuloImpulso   (vel.anim=2,60 y=0,11 velY=8,6)
+[  0,31]   animação: NoAr   (vel.anim=2,60 y=0,61 velY=-4,9)
+[  0,41]   animação: PousoLeve   (vel.anim=2,80 y=0,04 velY=-4,0)
+[  0,86]   animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
 [  2,20]   altura máxima do pulo: 0,90 m
 [  0,00]   -- pulo segurando o Espaço 0,6 s --
-[  0,01]   animação: PuloImpulso   (vel.anim=1,00 y=0,10 velY=8,6)
-[  0,18]   animação: NoAr   (vel.anim=1,00 y=1,19 velY=4,2)
-[  0,63]   animação: PousoLeve   (vel.anim=1,50 y=0,04 velY=-4,0)
-[  0,93]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  0,01]   animação: PuloImpulso   (vel.anim=2,60 y=0,10 velY=8,7)
+[  0,31]   animação: NoAr   (vel.anim=2,60 y=1,51 velY=0,8)
+[  0,63]   animação: PousoLeve   (vel.anim=2,80 y=0,04 velY=-4,0)
+[  1,08]   animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
 [  2,20]   altura máxima do pulo: 1,48 m
 [  0,00]   -- queda de 3 m --
-[  0,06]   animação: NoAr   (vel.anim=1,00 y=2,80 velY=-6,1)
-[  0,32]   animação: PousoPesado   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  1,32]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  3,20]   pé mais baixo em relação ao chão: 0,074 m
+[  0,06]   animação: NoAr   (vel.anim=2,80 y=2,79 velY=-6,2)
+[  0,32]   animação: PousoPesado   (vel.anim=1,27 y=0,04 velY=-4,0)
+[  1,32]   animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  3,20]   pé mais baixo em relação ao chão: 0,008 m
 [  0,00]   -- queda de 8 m --
-[  0,06]   animação: NoAr   (vel.anim=1,00 y=7,80 velY=-6,1)
-[  0,56]   animação: PousoRolamento   (vel.anim=1,00 y=0,04 velY=-25,1)
-[  1,96]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  3,20]   pé mais baixo em relação ao chão: -0,081 m
+[  0,06]   animação: NoAr   (vel.anim=1,27 y=7,81 velY=-6,0)
+[  0,57]   animação: Rolamento   (vel.anim=1,13 y=0,04 velY=-4,0)
+[  1,87]   animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  3,20]   pé mais baixo em relação ao chão: -0,007 m
 == 7) golpe + Ctrl (rolamento cancela) + C (dash) ==
-[  0,06]   evento: golpe iniciado (passo 1)
-[  0,07]   animação: Jab   (vel.anim=1,00 y=0,04 velY=-4,1)
-[  0,17]   animação: Rolamento   (vel.anim=1,60 y=0,04 velY=-4,0)
-[  1,47]   animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  0,07]   evento: golpe iniciado (passo 1)
+[  0,07]   animação: Jab   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  0,17]   animação: Rolamento   (vel.anim=1,13 y=0,04 velY=-4,0)
+[  1,47]   animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
 [  1,89]   evento: golpe iniciado (passo 1)
-[  1,90]   animação: Jab   (vel.anim=1,00 y=0,04 velY=-4,0)
-[  2,00]   animação: Dash   (vel.anim=1,00 y=0,04 velY=0,0)
-[  2,30]   animação: Locomocao   (vel.anim=1,60 y=0,04 velY=-4,0)
-[  3,26]   atacando agora? False
+[  1,89]   animação: Jab   (vel.anim=1,00 y=0,04 velY=-4,0)
+[  1,99]   animação: Dash   (vel.anim=1,70 y=0,04 velY=0,0)
+[  2,30]   animação: LocomocaoCombate   (vel.anim=2,19 y=0,04 velY=-4,0)
+[  3,25]   atacando agora? False
   evento: golpe iniciado (passo 1)
   evento: IMPACTO passo 1 acertou=True
   evento: golpe iniciado (passo 1)
   evento: IMPACTO passo 1 acertou=True
   evento: golpe iniciado (passo 1)
   evento: IMPACTO passo 1 acertou=True
+  animação: GanchoRec   (vel.anim=1,00 y=0,04 velY=-4,0)
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+  evento: golpe iniciado (passo 1)
+  evento: IMPACTO passo 1 acertou=True
+  animação: ChuteLateral   (vel.anim=1,30 y=0,04 velY=-11,8)
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+  evento: golpe iniciado (passo 1)
+  evento: IMPACTO passo 1 acertou=True
+  animação: ChuteBaixo   (vel.anim=1,40 y=0,04 velY=-4,0)
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+  evento: golpe iniciado (passo 1)
+  evento: IMPACTO passo 1 acertou=True
+  animação: GiroCostas   (vel.anim=1,30 y=0,04 velY=-4,2)
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+  evento: golpe iniciado (passo 1)
+  evento: IMPACTO passo 1 acertou=True
+  animação: ChuteFrontal   (vel.anim=1,30 y=0,04 velY=-5,9)
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
   evento: golpe iniciado (passo 1)
   evento: IMPACTO passo 1 acertou=True
   evento: golpe iniciado (passo 1)
   evento: IMPACTO passo 1 acertou=True
+  animação: Joelhada   (vel.anim=1,40 y=0,04 velY=-4,7)
+  animação: NoAr   (vel.anim=1,40 y=0,04 velY=-4,0)
   evento: golpe iniciado (passo 1)
   evento: IMPACTO passo 1 acertou=True
+  animação: ChuteMachado   (vel.anim=1,30 y=0,04 velY=-5,6)
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
   evento: golpe iniciado (passo 1)
   evento: IMPACTO passo 1 acertou=True
-  evento: golpe iniciado (passo 0)
-  evento: IMPACTO passo 0 acertou=True
+  animação: ChuteLado   (vel.anim=1,30 y=0,04 velY=-4,4)
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
   evento: golpe iniciado (passo 1)
   evento: IMPACTO passo 1 acertou=True
-  animação: ChuteMachado   (vel.anim=1,00 y=0,04 velY=-4,0)
-  animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
-  evento: golpe iniciado (passo 0)
-  evento: IMPACTO passo 0 acertou=True
-  evento: golpe iniciado (passo 0)
-  evento: IMPACTO passo 0 acertou=True
-  evento: golpe iniciado (passo 0)
-  evento: IMPACTO passo 0 acertou=True
-  animação: ChuteGiratorio   (vel.anim=1,00 y=0,04 velY=-5,7)
-  animação: Locomocao   (vel.anim=1,00 y=0,04 velY=-4,0)
+  animação: ChuteCostas   (vel.anim=1,30 y=0,04 velY=-4,1)
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+  evento: golpe iniciado (passo 1)
+  evento: IMPACTO passo 1 acertou=False
+  animação: Voadora   (vel.anim=1,50 y=0,04 velY=-4,0)
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+  evento: golpe iniciado (passo 1)
+  evento: IMPACTO passo 1 acertou=False
+  animação: VoadoraGiratoria   (vel.anim=1,30 y=0,04 velY=-4,7)
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+  evento: golpe iniciado (passo 1)
+  evento: IMPACTO passo 1 acertou=True
+  animação: Corte1Rec   (vel.anim=1,00 y=0,04 velY=-4,0)
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+  evento: golpe iniciado (passo 1)
+  evento: IMPACTO passo 1 acertou=True
+  animação: Corte2Rec   (vel.anim=1,00 y=0,04 velY=-4,0)
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+  evento: golpe iniciado (passo 1)
+  evento: IMPACTO passo 1 acertou=True
+  animação: Corte3   (vel.anim=1,10 y=0,04 velY=-4,0)
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+  evento: golpe iniciado (passo 1)
+  evento: IMPACTO passo 1 acertou=True
+  animação: CorteGiratorio   (vel.anim=1,15 y=0,04 velY=-4,1)
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+  evento: golpe iniciado (passo 1)
+  evento: IMPACTO passo 1 acertou=True
+  animação: EspadaSalto   (vel.anim=1,10 y=0,04 velY=-5,2)
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)
+  evento: golpe iniciado (passo 1)
+  evento: IMPACTO passo 1 acertou=True
+  animação: Estocada   (vel.anim=1,00 y=0,04 velY=-4,3)
+  animação: LocomocaoCombate   (vel.anim=1,00 y=0,04 velY=-4,0)

@@ -9,6 +9,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 #endif
 using FaithClash.Combat;
+using FaithClash.Core;
 using FaithClash.Player;
 
 namespace FaithClash.Training
@@ -60,29 +61,6 @@ namespace FaithClash.Training
 
             L("== inicio: o que o Animator toca nos primeiros 1,5 s (deve ser só Locomocao) ==");
             yield return Janela(1.5f);
-
-            // ------------------------------------------------ -1) ângulos do cotovelo em poses do clipe (diagnóstico de retarget)
-            animadorScript.enabled = false;
-            foreach (var clip in new[] { "IdlePoder", "Soco1", "Jab", "Uppercut" })
-            {
-                for (float tn = 0f; tn <= 0.61f; tn += 0.2f)
-                {
-                    animator.Play(clip == "IdlePoder" ? "Locomocao" : clip, 0, tn);
-                    animator.Update(0f);
-                    yield return null;
-                    string s = "";
-                    foreach (var lado in new[] { (HumanBodyBones.LeftUpperArm, HumanBodyBones.LeftLowerArm, HumanBodyBones.LeftHand), (HumanBodyBones.RightUpperArm, HumanBodyBones.RightLowerArm, HumanBodyBones.RightHand) })
-                    {
-                        Vector3 a = animator.GetBoneTransform(lado.Item1).position, b = animator.GetBoneTransform(lado.Item2).position, c = animator.GetBoneTransform(lado.Item3).position;
-                        float ang = Vector3.Angle(a - b, c - b);
-                        s += $" cotovelo={ang:0}° mão/ombro={(c - a).magnitude:0.00}m";
-                    }
-                    L($"  pose {clip} t={tn:0.0}: {s}");
-                }
-            }
-            animadorScript.enabled = true;
-            animator.Play("Locomocao", 0, 0f);
-            yield return Janela(0.3f);
 
             // ------------------------------------------------ 0) nada toca sozinho
             L("== 0) PARADO 6 s e CORRENDO 4 s: só pode aparecer Locomocao ==");
@@ -275,7 +253,7 @@ namespace FaithClash.Training
             rtFoto = new RenderTexture(220, 280, 24);
             texFoto = new Texture2D(220, 280, TextureFormat.RGB24, false);
             if (modo.Atual != FaithClash.Combat.Modo.Combate) yield return Modo(Key.Digit5, "Combate");
-            foreach (var golpe in new[] { "Jab", "Direto", "Gancho", "Uppercut", "Cotovelada", "Joelhada", "ChuteLateral", "ChuteBaixo", "ChuteMachado", "GiroCostas", "Soco3", "ChuteGiratorio" })
+            foreach (var golpe in new[] { "Jab", "Direto", "Gancho", "ChuteLateral", "ChuteBaixo", "GiroCostas", "ChuteFrontal", "Cotovelada", "Joelhada", "ChuteMachado", "ChuteLado", "ChuteCostas", "Voadora", "VoadoraGiratoria", "Corte1", "Corte2", "Corte3", "CorteGiratorio", "EspadaSalto", "Estocada" })
             {
                 PreparaBoneco(1.9f);
                 yield return Janela(0.5f);
@@ -300,6 +278,21 @@ namespace FaithClash.Training
                 }
                 yield return Janela(0.8f);
             }
+            foreach (var nome in new[] { "CastFogo", "CastVento", "CastEnergia", "CastTerra", "PowerUp", "Curar", "MeditarEntrar", "Dano", "Morte", "Dash", "Defesa", "SacarEspada", "PuloNinja", "PegarItem" })
+            {
+                Posicionar(new Vector3(0, 0.1f, -3f), 0f);
+                yield return Janela(0.6f);
+                float dur = Mathf.Min(InfoGolpes.Duracao(nome, 1.5f), 2.4f);
+                animadorScript.Acao(nome, dur);
+                for (int i = 0; i < 16; i++)
+                {
+                    Foto(nome, i);
+                    yield return new WaitForSeconds(dur / 16f);
+                }
+                yield return Janela(0.5f);
+                animadorScript.Encerrar();
+                yield return Janela(0.5f);
+            }
             Destroy(go);
         }
 
@@ -321,6 +314,7 @@ namespace FaithClash.Training
         // ------------------------------------------------------------------ utilidades
         IEnumerator Modo(Key tecla, string esperado)
         {
+            while (combate.IsAttacking) yield return null;   // só troca de modo depois do golpe terminar
             Tecla(tecla, true); yield return Janela(0.08f); Tecla(tecla, false);
             yield return Janela(1.2f);
             string atual = modo.Atual.ToString();

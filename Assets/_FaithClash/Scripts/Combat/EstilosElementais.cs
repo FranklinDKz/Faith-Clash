@@ -179,8 +179,13 @@ namespace FaithClash.Combat
         }
 
         // gesto (animação do Mixamo) de cada técnica: clipe, duração e momento da liberação (s)
-        static readonly (string clip, float dur, float imp) GestoFogo = ("CastFogo", 1.8f, 0.97f), GestoVento = ("CastVento", 1.7f, 0.9f),
-            GestoEnergia = ("CastEnergia", 2.0f, 1.15f), GestoTerra = ("CastTerra", 2.4f, 1.6f), GestoPoder = ("PowerUp", 2.4f, 1.2f);
+        // gesto de cada técnica: clipe, duração e momento da liberação (s) — lidos da própria animação (InfoGolpes)
+        static (string clip, float dur, float imp) Gesto(string clip) => (clip, InfoGolpes.Duracao(clip, 1.5f), InfoGolpes.Impacto(clip, 0.7f));
+        static (string clip, float dur, float imp) GestoFogo => Gesto("CastFogo");
+        static (string clip, float dur, float imp) GestoVento => Gesto("CastVento");
+        static (string clip, float dur, float imp) GestoEnergia => Gesto("CastEnergia");
+        static (string clip, float dur, float imp) GestoTerra => Gesto("CastTerra");
+        static (string clip, float dur, float imp) GestoPoder => Gesto("PowerUp");
 
         /// <summary>Clique no modo Poder: técnica leve do estilo (só o gesto de conjuração, sem golpes de luta).</summary>
         public bool TecnicaLeve()

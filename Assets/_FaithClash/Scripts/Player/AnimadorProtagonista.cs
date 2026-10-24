@@ -27,12 +27,11 @@ namespace FaithClash.Player
         // estados em que o deslocamento do clipe (root motion horizontal) move o personagem
         static readonly HashSet<string> EstadosComMovimento = new HashSet<string>
         {
-            "Corte1", "Corte2", "Corte3", "CorteGiratorio", "EspadaSalto",
-            "Soco1", "Soco2", "Soco3", "Chute", "ChuteGiratorio",
-            "Jab", "Direto", "Gancho", "Uppercut", "Cotovelada", "Joelhada", "ChuteLateral", "ChuteBaixo", "ChuteMachado", "GiroCostas",
-            "PousoRolamento",
+            "Corte1", "Corte2", "Corte3", "CorteGiratorio", "EspadaSalto", "Estocada", "CorteCima", "CorteDiagonal", "ContraAtaque",
+            "Cotovelada", "Joelhada", "ChuteFrontal", "ChuteMuay", "ChuteLateral", "ChuteLado", "ChuteCostas", "ChuteMachado", "GiroCostas",
+            "ChuteBaixo", "Voadora", "VoadoraGiratoria", "CombinacaoMuay",
         };
-        static readonly string[] Mortes = { "MorteTras", "MorteFrente", "MorteQueda", "MorteQuedaFrente", "MorteJoelhos", "MorteEspada" };
+        static readonly string[] Mortes = { "Morte" };
 
         // tempos (s) dos passos dentro do arquivo Passos_Correr / Passos_Andar (medidos pela análise dos sons)
         static readonly float[] PassosCorrer = { 0.12f, 0.42f, 0.68f, 1.23f, 1.52f, 1.83f, 2.43f, 2.75f, 3.06f, 3.37f };
@@ -139,7 +138,7 @@ namespace FaithClash.Player
 
         public void Pulou()
         {
-            Acao("PuloImpulso", 0.17f, 0.04f);
+            Acao("PuloImpulso", 0.3f, 0.04f, 2.6f);
             noAr = true;
         }
 
@@ -156,14 +155,14 @@ namespace FaithClash.Player
             Vector3 p = transform.position;
             if (alturaDaQueda > 4.5f || (alturaDaQueda > 2.4f && velHoriz > 6f))
             {
-                Acao("PousoRolamento", 1.4f, 0.05f);
+                Acao("Rolamento", 1.3f, 0.05f, 1.13f);
                 SomJogo.Tocar("Soco_Forte", p, 0.6f, 0.7f);
                 Poeira(p, 50, 3.5f);
                 TremorGlobal.Disparar(0.5f);
             }
             else if (alturaDaQueda > 2.0f)
             {
-                Acao("PousoPesado", 1.0f, 0.05f);
+                Acao("PousoPesado", 1.0f, 0.05f, 1.27f);
                 jogador?.Atordoar(0.7f);
                 SomJogo.Tocar("Passos_Andar", p, 0.8f, 0.8f, inicio: 0.5f, duracaoMax: 0.35f);
                 SomJogo.Tocar("Soco_Forte", p, 0.35f, 0.6f);
@@ -175,7 +174,7 @@ namespace FaithClash.Player
                 SomJogo.Tocar("Passos_Correr", p, 0.6f, 0.9f, inicio: 0.42f, duracaoMax: 0.25f);
                 if (velHoriz < 3.5f && !naAcao)
                 {
-                    Acao("PousoLeve", 0.3f, 0.05f, 1.5f);
+                    Acao("PousoLeve", 0.45f, 0.05f, 2.8f);
                     jogador?.Atordoar(0.12f);
                 }
                 else animator.CrossFadeInFixedTime(EstadoLoco(), 0.12f);
@@ -202,6 +201,7 @@ namespace FaithClash.Player
         string EstadoLoco()
         {
             if (modo != null && modo.Atual == Modo.Espada) return "LocomocaoEspada";
+            if (modo != null && modo.Atual == Modo.Combate) return "LocomocaoCombate";
             return "Locomocao";
         }
 
@@ -216,7 +216,8 @@ namespace FaithClash.Player
             float alvo = v.magnitude;
             velocidade = Mathf.Lerp(velocidade, alvo, 1f - Mathf.Exp(-10f * Time.deltaTime));
             animator.SetFloat(VelocidadeId, velocidade);
-            animator.SetFloat(EscalaPassadaId, velocidade < 1f ? 1f : Mathf.Lerp(1.35f, 1.6f, Mathf.InverseLerp(5.2f, 8.5f, velocidade)));
+            // as animações de andar/correr/sprint têm velocidade natural (0,97 / 5,36 / 8,25 m/s): acelera o ciclo só acima do sprint natural
+            animator.SetFloat(EscalaPassadaId, Mathf.Clamp(velocidade / 8.25f, 1f, 1.15f));
             animator.SetFloat(VelYId, velY, 0.06f, Time.deltaTime);
 
             if (naAcao)

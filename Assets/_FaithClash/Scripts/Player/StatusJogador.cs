@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using FaithClash.Combat;
 using FaithClash.Core;
+using FaithClash.Core;
 
 namespace FaithClash.Player
 {
@@ -113,14 +114,16 @@ namespace FaithClash.Player
             var item = Itens[i];
             if (item.quantidade <= 0) { Aviso?.Invoke(item.nome + " esgotado"); return; }
             item.quantidade--;
-            GetComponent<AnimadorProtagonista>()?.Acao("PegarItem", 0.6f, 0.08f);
+            GetComponent<AnimadorProtagonista>()?.Acao(i <= 1 ? "Curar" : i == 3 ? "PowerUp" : "PegarItem", i <= 1 ? 1.4f : i == 3 ? 1.6f : 0.9f, 0.08f);
             StartCoroutine(AplicarItemDepois(i, item));
         }
 
         System.Collections.IEnumerator AplicarItemDepois(int i, Item item)
         {
-            yield return new WaitForSeconds(0.35f);
+            yield return new WaitForSeconds(i <= 1 ? 0.7f : 0.4f);
             Vector3 p = transform.position + Vector3.up;
+            string[] sons = { "UI_Aviso", "Poder_Ativar", "UI_Clique", "Fogo_Magia" };
+            SomJogo.Tocar(sons[i], transform.position, 0.7f, i == 1 ? 1.25f : 1f, duracaoMax: 1.2f);
             switch (i)
             {
                 case 0:

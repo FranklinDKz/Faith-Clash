@@ -1,0 +1,747 @@
+[
+ {
+  "arquivo": "alexis_gaming_cam-katana-370403.mp3",
+  "duracao": 0.89,
+  "pico": 0.97,
+  "ataque_s": 0.43,
+  "energia_primeiros_0_5s": 0.9,
+  "brilho_hz": 5538,
+  "graves": 0.0,
+  "som_ativo": [
+   0.17,
+   0.83
+  ],
+  "picos": [
+   0.38
+  ]
+ },
+ {
+  "arquivo": "biww-big-fire-blast-whoosh-sound-effect-561961.mp3",
+  "duracao": 2.4,
+  "pico": 0.81,
+  "ataque_s": 0.66,
+  "energia_primeiros_0_5s": 0.4,
+  "brilho_hz": 2775,
+  "graves": 0.34,
+  "som_ativo": [
+   0.13,
+   1.88
+  ],
+  "picos": [
+   0.26,
+   0.41,
+   0.56,
+   0.71,
+   0.86
+  ]
+ },
+ {
+  "arquivo": "calango_fx_official-game-over-401236.mp3",
+  "duracao": 8.59,
+  "pico": 0.14,
+  "ataque_s": 1.8,
+  "energia_primeiros_0_5s": 0.1,
+  "brilho_hz": 1214,
+  "graves": 0.13,
+  "som_ativo": [
+   0.02,
+   6.89
+  ],
+  "picos": [
+   0.27,
+   0.42,
+   0.57,
+   0.72,
+   0.87,
+   1.03,
+   1.18,
+   1.77,
+   1.92,
+   2.08,
+   2.23,
+   2.39
+  ]
+ },
+ {
+  "arquivo": "daviddumaisaudio-large-underwater-explosion-190270.mp3",
+  "duracao": 6.6,
+  "pico": 0.75,
+  "ataque_s": 0.63,
+  "energia_primeiros_0_5s": 0.02,
+  "brilho_hz": 966,
+  "graves": 0.48,
+  "som_ativo": [
+   0.09,
+   5.29
+  ],
+  "picos": [
+   0.56,
+   0.71,
+   0.87,
+   1.11
+  ]
+ },
+ {
+  "arquivo": "dragon-studio-fire-spell-impact-393921.mp3",
+  "duracao": 2.9,
+  "pico": 0.8,
+  "ataque_s": 0.21,
+  "energia_primeiros_0_5s": 0.34,
+  "brilho_hz": 3991,
+  "graves": 0.23,
+  "som_ativo": [
+   0.07,
+   2.11
+  ],
+  "picos": [
+   0.15,
+   0.3,
+   0.45,
+   0.6,
+   0.76,
+   0.91,
+   1.06,
+   1.23
+  ]
+ },
+ {
+  "arquivo": "dragon-studio-large-underwater-explosion-423651.mp3",
+  "duracao": 3.31,
+  "pico": 1.0,
+  "ataque_s": 0.09,
+  "energia_primeiros_0_5s": 0.81,
+  "brilho_hz": 819,
+  "graves": 0.65,
+  "som_ativo": [
+   0.01,
+   1.83
+  ],
+  "picos": [
+   0.02,
+   0.17,
+   0.33,
+   0.53
+  ]
+ },
+ {
+  "arquivo": "dragon-studio-sword-clashhit-393837.mp3",
+  "duracao": 1.1,
+  "pico": 1.0,
+  "ataque_s": 0.06,
+  "energia_primeiros_0_5s": 1.0,
+  "brilho_hz": 7002,
+  "graves": 0.0,
+  "som_ativo": [
+   0.04,
+   0.67
+  ],
+  "picos": [
+   0.05
+  ]
+ },
+ {
+  "arquivo": "dragon-studio-sword-slice-2-393845.mp3",
+  "duracao": 2.19,
+  "pico": 0.92,
+  "ataque_s": 0.4,
+  "energia_primeiros_0_5s": 0.91,
+  "brilho_hz": 7311,
+  "graves": 0.02,
+  "som_ativo": [
+   0.13,
+   0.92
+  ],
+  "picos": [
+   0.36
+  ]
+ },
+ {
+  "arquivo": "dragon-studio-sword-slice-393847.mp3",
+  "duracao": 2.19,
+  "pico": 0.67,
+  "ataque_s": 0.27,
+  "energia_primeiros_0_5s": 1.0,
+  "brilho_hz": 7499,
+  "graves": 0.0,
+  "som_ativo": [
+   0.06,
+   0.55
+  ],
+  "picos": [
+   0.25
+  ]
+ },
+ {
+  "arquivo": "dragon-studio-violent-sword-slice-393839.mp3",
+  "duracao": 1.7,
+  "pico": 0.98,
+  "ataque_s": 0.12,
+  "energia_primeiros_0_5s": 0.91,
+  "brilho_hz": 4263,
+  "graves": 0.06,
+  "som_ativo": [
+   0.06,
+   1.07
+  ],
+  "picos": [
+   0.09
+  ]
+ },
+ {
+  "arquivo": "emilianodleon-button-ui-sound-effect-395762.mp3",
+  "duracao": 0.1,
+  "pico": 0.2,
+  "ataque_s": 0.03,
+  "energia_primeiros_0_5s": 1.0,
+  "brilho_hz": 861,
+  "graves": 0.15,
+  "som_ativo": [
+   0.01,
+   0.08
+  ],
+  "picos": [
+   0.03
+  ]
+ },
+ {
+  "arquivo": "faespencer-power-down-486988.mp3",
+  "duracao": 8.06,
+  "pico": 0.92,
+  "ataque_s": 2.46,
+  "energia_primeiros_0_5s": 0.08,
+  "brilho_hz": 368,
+  "graves": 0.93,
+  "som_ativo": [
+   0.04,
+   5.37
+  ],
+  "picos": [
+   0.11,
+   0.27,
+   0.42,
+   0.58,
+   0.73,
+   0.88,
+   1.04,
+   1.19,
+   1.35,
+   1.5,
+   1.65,
+   1.8
+  ]
+ },
+ {
+  "arquivo": "foxwagen-explosion-2-481365.mp3",
+  "duracao": 22.05,
+  "pico": 0.98,
+  "ataque_s": 0.4,
+  "energia_primeiros_0_5s": 0.4,
+  "brilho_hz": 505,
+  "graves": 0.66,
+  "som_ativo": [
+   0.02,
+   8.4
+  ],
+  "picos": [
+   0.04,
+   0.2,
+   0.35,
+   0.5,
+   0.66,
+   0.83,
+   1.16
+  ]
+ },
+ {
+  "arquivo": "freesound_community-ambient-game-67014.mp3",
+  "duracao": 43.73,
+  "pico": 0.16,
+  "ataque_s": 24.05,
+  "energia_primeiros_0_5s": 0.0,
+  "brilho_hz": 2045,
+  "graves": 0.01,
+  "som_ativo": [
+   0.61,
+   43.72
+  ],
+  "picos": [
+   8.72,
+   8.87,
+   9.03,
+   9.21,
+   9.37,
+   9.55,
+   9.7,
+   9.85,
+   10.01,
+   10.16,
+   10.31,
+   10.46
+  ]
+ },
+ {
+  "arquivo": "freesound_community-explosion-36210.mp3",
+  "duracao": 1.92,
+  "pico": 0.63,
+  "ataque_s": 0.19,
+  "energia_primeiros_0_5s": 0.47,
+  "brilho_hz": 901,
+  "graves": 0.51,
+  "som_ativo": [
+   0.04,
+   1.9
+  ],
+  "picos": [
+   0.05,
+   0.21,
+   0.36,
+   0.51,
+   0.67,
+   0.82,
+   0.98,
+   1.13,
+   1.28
+  ]
+ },
+ {
+  "arquivo": "freesound_community-explosion-sfx-43814.mp3",
+  "duracao": 0.7,
+  "pico": 0.92,
+  "ataque_s": 0.14,
+  "energia_primeiros_0_5s": 1.0,
+  "brilho_hz": 224,
+  "graves": 0.77,
+  "som_ativo": [
+   0.07,
+   0.55
+  ],
+  "picos": [
+   0.09
+  ]
+ },
+ {
+  "arquivo": "freesound_community-knife-slice-41231.mp3",
+  "duracao": 0.98,
+  "pico": 0.76,
+  "ataque_s": 0.35,
+  "energia_primeiros_0_5s": 0.96,
+  "brilho_hz": 3717,
+  "graves": 0.02,
+  "som_ativo": [
+   0.15,
+   0.73
+  ],
+  "picos": [
+   0.3
+  ]
+ },
+ {
+  "arquivo": "freesound_community-pasos-steps-40285.mp3",
+  "duracao": 4.06,
+  "pico": 0.61,
+  "ataque_s": 3.13,
+  "energia_primeiros_0_5s": 0.08,
+  "brilho_hz": 2047,
+  "graves": 0.09,
+  "som_ativo": [
+   0.06,
+   4.03
+  ],
+  "picos": [
+   0.06,
+   0.57,
+   1.09,
+   1.6,
+   2.11,
+   2.59,
+   3.12
+  ]
+ },
+ {
+  "arquivo": "freesound_community-power-down-7103.mp3",
+  "duracao": 1.82,
+  "pico": 0.54,
+  "ataque_s": 0.07,
+  "energia_primeiros_0_5s": 0.44,
+  "brilho_hz": 713,
+  "graves": 0.24,
+  "som_ativo": [
+   0.04,
+   1.8
+  ],
+  "picos": [
+   0.06,
+   0.66,
+   0.81
+  ]
+ },
+ {
+  "arquivo": "freesound_community-running-in-grass-6237.mp3",
+  "duracao": 1.99,
+  "pico": 0.04,
+  "ataque_s": 1.76,
+  "energia_primeiros_0_5s": 0.12,
+  "brilho_hz": 3723,
+  "graves": 0.12,
+  "som_ativo": [
+   0.04,
+   1.98
+  ],
+  "picos": [
+   0.44,
+   0.7,
+   0.96,
+   1.21,
+   1.47,
+   1.75
+  ]
+ },
+ {
+  "arquivo": "gregorquendel-sci-fi-sound-effect-designed-circuits-hum-24-200825.mp3",
+  "duracao": 6.6,
+  "pico": 0.59,
+  "ataque_s": 1.1,
+  "energia_primeiros_0_5s": 0.04,
+  "brilho_hz": 792,
+  "graves": 0.66,
+  "som_ativo": [
+   0.07,
+   6.1
+  ],
+  "picos": [
+   0.35,
+   0.5,
+   0.66,
+   0.87,
+   1.02,
+   1.18,
+   1.33,
+   1.48,
+   1.64,
+   2.08,
+   2.3,
+   3.23
+  ]
+ },
+ {
+  "arquivo": "liecio-static-drone-ambient-258064.mp3",
+  "duracao": 60.79,
+  "pico": 0.46,
+  "ataque_s": 37.84,
+  "energia_primeiros_0_5s": 0.0,
+  "brilho_hz": 1415,
+  "graves": 0.05,
+  "som_ativo": [
+   0.02,
+   60.79
+  ],
+  "picos": [
+   2.16,
+   2.56,
+   3.04,
+   3.92,
+   4.14,
+   4.31,
+   4.52,
+   4.78,
+   4.95,
+   5.14,
+   5.29,
+   5.51
+  ]
+ },
+ {
+  "arquivo": "ribhavagrawal-power-up-type-1-230548.mp3",
+  "duracao": 1.7,
+  "pico": 0.77,
+  "ataque_s": 0.16,
+  "energia_primeiros_0_5s": 0.99,
+  "brilho_hz": 696,
+  "graves": 0.02,
+  "som_ativo": [
+   0.05,
+   0.78
+  ],
+  "picos": [
+   0.06,
+   0.21,
+   0.36
+  ]
+ },
+ {
+  "arquivo": "submority-boom-geomorphism-cinematic-trailer-sound-effects-123876.mp3",
+  "duracao": 15.91,
+  "pico": 0.97,
+  "ataque_s": 0.11,
+  "energia_primeiros_0_5s": 0.47,
+  "brilho_hz": 278,
+  "graves": 0.76,
+  "som_ativo": [
+   0.02,
+   9.93
+  ],
+  "picos": [
+   0.05,
+   0.21,
+   0.36,
+   0.61,
+   0.78,
+   0.93,
+   1.18
+  ]
+ },
+ {
+  "arquivo": "thumblegray-running-on-the-floor.mp3",
+  "duracao": 5.17,
+  "pico": 0.6,
+  "ataque_s": 0.69,
+  "energia_primeiros_0_5s": 0.14,
+  "brilho_hz": 3220,
+  "graves": 0.14,
+  "som_ativo": [
+   0.11,
+   4.88
+  ],
+  "picos": [
+   0.12,
+   0.42,
+   0.68,
+   1.23,
+   1.52,
+   1.83,
+   2.43,
+   2.75,
+   3.06,
+   3.37,
+   3.7,
+   4.29
+  ]
+ },
+ {
+  "arquivo": "universfield-fist-fight-192117.mp3",
+  "duracao": 0.78,
+  "pico": 0.74,
+  "ataque_s": 0.24,
+  "energia_primeiros_0_5s": 1.0,
+  "brilho_hz": 3934,
+  "graves": 0.16,
+  "som_ativo": [
+   0.12,
+   0.36
+  ],
+  "picos": [
+   0.14
+  ]
+ },
+ {
+  "arquivo": "universfield-new-notification-138807.mp3",
+  "duracao": 3.53,
+  "pico": 0.28,
+  "ataque_s": 0.1,
+  "energia_primeiros_0_5s": 0.94,
+  "brilho_hz": 1105,
+  "graves": 0.06,
+  "som_ativo": [
+   0.05,
+   1.54
+  ],
+  "picos": [
+   0.08,
+   0.23,
+   0.38
+  ]
+ },
+ {
+  "arquivo": "universfield-power-punch-192118.mp3",
+  "duracao": 0.78,
+  "pico": 0.8,
+  "ataque_s": 0.2,
+  "energia_primeiros_0_5s": 1.0,
+  "brilho_hz": 4564,
+  "graves": 0.14,
+  "som_ativo": [
+   0.1,
+   0.49
+  ],
+  "picos": [
+   0.17
+  ]
+ },
+ {
+  "arquivo": "universfield-punch-02-123106.mp3",
+  "duracao": 1.1,
+  "pico": 0.96,
+  "ataque_s": 0.32,
+  "energia_primeiros_0_5s": 1.0,
+  "brilho_hz": 4764,
+  "graves": 0.14,
+  "som_ativo": [
+   0.25,
+   0.75
+  ],
+  "picos": [
+   0.27
+  ]
+ },
+ {
+  "arquivo": "universfield-punch-04-383965.mp3",
+  "duracao": 1.06,
+  "pico": 0.59,
+  "ataque_s": 0.18,
+  "energia_primeiros_0_5s": 1.0,
+  "brilho_hz": 3053,
+  "graves": 0.26,
+  "som_ativo": [
+   0.06,
+   0.38
+  ],
+  "picos": [
+   0.11
+  ]
+ },
+ {
+  "arquivo": "universfield-punch-140236.mp3",
+  "duracao": 1.52,
+  "pico": 0.87,
+  "ataque_s": 0.2,
+  "energia_primeiros_0_5s": 1.0,
+  "brilho_hz": 5686,
+  "graves": 0.14,
+  "som_ativo": [
+   0.07,
+   0.5
+  ],
+  "picos": [
+   0.17
+  ]
+ },
+ {
+  "arquivo": "universfield-ui-button-click-147358.mp3",
+  "duracao": 0.84,
+  "pico": 0.38,
+  "ataque_s": 0.11,
+  "energia_primeiros_0_5s": 1.0,
+  "brilho_hz": 761,
+  "graves": 0.13,
+  "som_ativo": [
+   0.09,
+   0.41
+  ],
+  "picos": [
+   0.11
+  ]
+ },
+ {
+  "arquivo": "universfield-water-splash-199583.mp3",
+  "duracao": 3.06,
+  "pico": 0.55,
+  "ataque_s": 0.64,
+  "energia_primeiros_0_5s": 0.1,
+  "brilho_hz": 4454,
+  "graves": 0.19,
+  "som_ativo": [
+   0.18,
+   1.61
+  ],
+  "picos": [
+   0.49,
+   0.64
+  ]
+ },
+ {
+  "arquivo": "yarzur_ofc-sfx16-beam-324574.mp3",
+  "duracao": 4.03,
+  "pico": 1.01,
+  "ataque_s": 0.22,
+  "energia_primeiros_0_5s": 0.41,
+  "brilho_hz": 1772,
+  "graves": 0.47,
+  "som_ativo": [
+   0.01,
+   3.27
+  ],
+  "picos": [
+   0.03,
+   0.22,
+   0.38,
+   0.53,
+   0.68
+  ]
+ },
+ {
+  "arquivo": "yarzur_ofc-sfx27-tense-close-up-cut-338378.mp3",
+  "duracao": 4.03,
+  "pico": 0.24,
+  "ataque_s": 3.59,
+  "energia_primeiros_0_5s": 0.0,
+  "brilho_hz": 450,
+  "graves": 0.56,
+  "som_ativo": [
+   0.22,
+   4.03
+  ],
+  "picos": [
+   1.99,
+   2.3,
+   2.48,
+   2.65,
+   2.81,
+   2.96,
+   3.11,
+   3.26,
+   3.42,
+   3.57,
+   3.73,
+   3.88
+  ]
+ },
+ {
+  "arquivo": "yarzur_ofc-sfx32-blocked-534304.mp3",
+  "duracao": 3.24,
+  "pico": 0.24,
+  "ataque_s": 0.03,
+  "energia_primeiros_0_5s": 1.0,
+  "brilho_hz": 1209,
+  "graves": 0.46,
+  "som_ativo": [
+   0.01,
+   0.58
+  ],
+  "picos": [
+   0.03
+  ]
+ },
+ {
+  "arquivo": "yarzur_ofc-sfx35-selectconfirm-534303.mp3",
+  "duracao": 3.24,
+  "pico": 0.15,
+  "ataque_s": 0.07,
+  "energia_primeiros_0_5s": 1.0,
+  "brilho_hz": 2890,
+  "graves": 0.04,
+  "som_ativo": [
+   0.01,
+   0.43
+  ],
+  "picos": [
+   0.03
+  ]
+ },
+ {
+  "arquivo": "yodguard-fire-magic-5-378639.mp3",
+  "duracao": 8.04,
+  "pico": 0.82,
+  "ataque_s": 0.35,
+  "energia_primeiros_0_5s": 0.92,
+  "brilho_hz": 1565,
+  "graves": 0.36,
+  "som_ativo": [
+   0.05,
+   0.92
+  ],
+  "picos": [
+   0.22,
+   0.38
+  ]
+ }
+]

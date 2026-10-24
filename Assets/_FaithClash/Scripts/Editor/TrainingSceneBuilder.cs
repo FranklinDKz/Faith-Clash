@@ -87,6 +87,8 @@ namespace FaithClash.EditorTools
                 dso.ApplyModifiedPropertiesWithoutUndo();
             }
 
+            CriarObstaculos(matParede);
+            new GameObject("Testador de Animações").AddComponent<TestadorAnimacoes>();
             new GameObject("Gerenciador de Treino").AddComponent<TrainingManager>();
             var hud = new GameObject("HUD").AddComponent<HUDJogo>();
             Ligar(hud, "jogador", jogador.transform);
@@ -97,6 +99,28 @@ namespace FaithClash.EditorTools
             Debug.Log("[Faith Clash] Cena de treino criada em " + CaminhoCena + ". Aperte Play!");
         }
 
+        /// <summary>Rampa, degraus e caixotes para testar colisão, gravidade e os pés no chão.</summary>
+        static void CriarObstaculos(Material mat)
+        {
+            var pai = new GameObject("Obstáculos de Teste").transform;
+            GameObject Cubo(string nome, Vector3 pos, Vector3 esc, Vector3 rot)
+            {
+                var c = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                c.name = nome;
+                c.transform.SetParent(pai);
+                c.transform.position = pos;
+                c.transform.localScale = esc;
+                c.transform.rotation = Quaternion.Euler(rot);
+                c.GetComponent<Renderer>().sharedMaterial = mat;
+                return c;
+            }
+            Cubo("Rampa", new Vector3(-12f, 0.9f, -4f), new Vector3(5f, 0.3f, 8f), new Vector3(-14f, 0f, 0f));
+            for (int i = 0; i < 5; i++)
+                Cubo("Degrau " + (i + 1), new Vector3(12f, 0.1f + i * 0.2f, -6f + i * 0.9f), new Vector3(5f, 0.2f + i * 0.4f, 0.9f), Vector3.zero);
+            Cubo("Caixote Baixo", new Vector3(0f, 0.3f, -9f), new Vector3(2f, 0.6f, 2f), Vector3.zero);
+            Cubo("Caixote Alto", new Vector3(4f, 0.9f, -10f), new Vector3(2f, 1.8f, 2f), new Vector3(0f, 25f, 0f));
+            Cubo("Plataforma", new Vector3(-6f, 0.6f, -14f), new Vector3(4f, 1.2f, 4f), Vector3.zero);
+        }
         static void Ligar(Object alvo, string campo, Object valor)
         {
             var so = new SerializedObject(alvo);

@@ -29,34 +29,41 @@ Inspirações: Jujutsu Kaisen, Naruto, Dragon Ball Z, Naraka: Bladepoint, Elden 
 | Livre | Mundo aberto, PvP no futuro | Planejado |
 | Online | Batalhas 1v1 e PvP livre | Futuro |
 
-## Controles (Modo Treino)
+## Controles (Modo Treino) — estilo Naraka: Bladepoint
 
 | Ação | Teclado / Mouse | Controle |
 |---|---|---|
 | Mover | WASD | Analógico esquerdo |
 | Câmera | Mouse | Analógico direito |
-| Correr rápido (sprint) | Shift | Clique no analógico esquerdo |
+| Correr rápido (sprint) | Shift (segurar) | Clique no analógico esquerdo |
 | Pular / corrida na parede (sprint + pulo contra a parede) | Espaço | A / X |
-| **Dash para frente** (estilo Naraka) | **C** | RB / R1 |
-| Deslize / esquiva | Ctrl | B / Bolinha |
-| Golpe leve (combo x4) | Botão esquerdo | X / Quadrado |
-| Golpe pesado | Botão direito | Y / Triângulo |
-| Travar no alvo / **trocar de alvo** / soltar (segurar) | **Q** | Clique no analógico direito |
+| **Dash para frente** | **C** | RB / R1 |
+| **Rolamento** (parado) / **Deslize** (correndo) | Ctrl | B / Bolinha |
+| **Golpe leve** (combo de 4) | Clique esquerdo | X / Quadrado |
+| **Golpe pesado** | **Segurar** o clique esquerdo | Y / Triângulo |
+| **Defender** | Botão direito (segurar) | LT / L2 |
+| Ataque correndo (espada) | Shift + clique esquerdo | — |
+| **Travar no alvo** / trocar de alvo / soltar (segurar) | Q | Clique no analógico direito |
 | Trocar de alvo | Roda do mouse | — |
-| Defender | F | LT / L2 |
-| **Alternar Espada ⇄ Poder** | **G** | — |
+| **Espada ⇄ Poder** | G | — |
 | Estilo Fogo / Água / Terra / Ar (entra no modo Poder) | 1 / 2 / 3 / 4 | — |
+| **Habilidade do estilo** (gesto + jutsu) | F | — |
 | Roxo (gasta carga espiritual) | R | — |
 | Itens | Z / X / B / V | — |
 | Dica de combo / combate / fechar | Tab | — |
 | Zerar estatísticas / Reiniciar | T / F5 | — |
 | Mostrar / esconder o mouse | ' (aspas) | — |
 
-**Dois modos de combate que não se misturam:**
-- **Espada (katana):** só corta. Combo de 4 cortes e golpe pesado com salto.
-- **Poder:** punhos e chutes (estilo Naruto) + jutsus (Katon, Suiton, Doton, Fuuton) no 3º e 4º golpe, e técnicas amaldiçoadas (Azul, Roxo, Faísca Negra) inspiradas em Jujutsu Kaisen.
+As teclas seguem o esquema do Naraka: Bladepoint (clique = leve, segurar = pesado, botão direito = defesa, Shift = sprint, Espaço = pulo/corrida na parede).
+Teclas que o Naraka usa para outras coisas (itens, habilidades) ficam em Z X B V, F e R. Para mudar, edite `PlayerController`, `MeleeCombat` e `EstilosElementais`.
 
-Sem alvo travado há uma assistência leve de mira nos ataques. Com alvo travado (Q) o personagem encara o inimigo e avança até ele.
+**Dois modos de combate que não se misturam:**
+- **Espada (katana):** só corta. Combo de 4 cortes, golpe pesado com salto e ataque correndo.
+- **Poder:** socos e chutes (estilo Naruto) + jutsus (Katon, Suiton, Doton, Fuuton) no 3º e 4º golpe ou na tecla F, e técnicas amaldiçoadas (Azul, Roxo, Faísca Negra) inspiradas em Jujutsu Kaisen. Cada jutsu tem seu gesto (animação) e seu som.
+
+Sem alvo travado há uma assistência leve de mira nos ataques. Com alvo travado (Q) o personagem encara o inimigo e cada golpe avança só o necessário para alcançá-lo.
+
+Catálogos: [animações](Docs/CATALOGO_ANIMACOES.md) e [sons](Docs/CATALOGO_SONS.md).
 
 ## Como rodar
 

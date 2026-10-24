@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using FaithClash.Core;
 using FaithClash.Training;
 
 namespace FaithClash.Combat
@@ -43,7 +44,7 @@ namespace FaithClash.Combat
             {
                 if (!soltou)
                 {
-                    if (!Travado) Alvo = Procurar(null, 0);
+                    if (!Travado) { Alvo = Procurar(null, 0); if (Alvo != null) SomJogo.Tocar("UI_Travar", null, 0.5f); }
                     else TrocarAlvo(1);
                 }
                 qDesde = -1f;
@@ -74,6 +75,7 @@ namespace FaithClash.Combat
             var novo = Procurar(antigo, lado) ?? Procurar(antigo, -lado);
             if (novo == null) { Alvo = null; return; }   // nenhum outro alvo: solta
             Alvo = novo;
+            SomJogo.Tocar("UI_Clique", null, 0.7f);
             float ang = Vector3.Angle(Vector3.ProjectOnPlane(antigo.position - transform.position, Vector3.up),
                                       Vector3.ProjectOnPlane(novo.position - transform.position, Vector3.up));
             AlvoTrocado?.Invoke(ang);

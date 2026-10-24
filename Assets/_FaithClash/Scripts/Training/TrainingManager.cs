@@ -15,7 +15,11 @@ namespace FaithClash.Training
         public float Dps { get; private set; }
         public int Hits { get; private set; }
 
-        void Awake() => Instance = this;
+        void Awake()
+        {
+            Instance = this;
+            var som = FaithClash.Core.SomJogo.Instancia;   // liga o som ambiente
+        }
 
         public void RegisterDamage(float amount)
         {

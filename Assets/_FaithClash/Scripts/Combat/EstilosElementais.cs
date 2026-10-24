@@ -18,7 +18,6 @@ namespace FaithClash.Combat
     /// </summary>
     public class EstilosElementais : MonoBehaviour
     {
-        [SerializeField] float tempoSegurar = 0.45f;
         [SerializeField] float custo3x = 60f, custo4x = 100f, custoSegurar = 150f;
         [SerializeField, Range(0f, 1f)] float chanceFaiscaNegra = 0.3f;
 
@@ -38,8 +37,6 @@ namespace FaithClash.Combat
         Transform mao;
         ParticleSystem aura;
         Light luzAura;
-        float segurandoDesde = -1f;
-        bool tecnicaSegurarUsada;
         readonly List<(Elemento e, float t)> historico = new List<(Elemento, float)>();
 
         public Elemento Atual { get; private set; } = Elemento.Fogo;
@@ -110,26 +107,25 @@ namespace FaithClash.Combat
                 if (k.rKey.wasPressedThisFrame)
                 {
                     if (!EmPoder) status?.Avisar("Guarde a espada (G) para usar poderes");
-                    else if (status != null && status.GastarCarga()) Roxo();
+                    else if (status != null && status.Cargas <= 0) status.Avisar("Sem cargas espirituais");
+                    else if (combate.IniciarAcaoEspecial("PowerUp", 2.4f, 1.2f, () => { if (status.GastarCarga()) Roxo(); }))
+                        SomJogo.Tocar("Roxo_Carga", transform.position, 0.9f, duracaoMax: 1.4f);
                 }
             }
 
-            var m = Mouse.current;
-            if (m == null) return;
-            if (m.leftButton.wasPressedThisFrame) { segurandoDesde = Time.time; tecnicaSegurarUsada = false; }
-            if (EmPoder && m.leftButton.isPressed && segurandoDesde > 0f && !tecnicaSegurarUsada && Time.time - segurandoDesde > tempoSegurar)
+            // F = habilidade ativa do estilo (como a tecla de habilidade do Naraka)
+            if (k != null && Cursor.lockState == CursorLockMode.Locked && k.fKey.wasPressedThisFrame)
             {
-                tecnicaSegurarUsada = true;
-                if (Atual == Elemento.Terra) TentarTecnica(custoSegurar, MuralhaDeTerra);
-                else if (Atual == Elemento.Ar) TentarTecnica(custoSegurar, Reppusho);
+                if (!EmPoder) status?.Avisar("Guarde a espada (G) para usar poderes");
+                else Conjurar();
             }
-            if (m.leftButton.wasReleasedThisFrame) segurandoDesde = -1f;
         }
 
         void Escolher(Elemento e)
         {
             modo?.Definir(Modo.Poder);
             Selecionar(e);
+            SomJogo.Tocar("UI_Elemento", null, 0.6f);
         }
 
         void LateUpdate()
@@ -205,6 +201,45 @@ namespace FaithClash.Combat
             }
         }
 
+        // gesto (animação do Mixamo) de cada técnica: clipe, duração e momento da liberação (s)
+        static (string clip, float dur, float imp) Gesto(Elemento e, int passo)
+        {
+            switch (e)
+            {
+                case Elemento.Fogo: return passo == 3 ? ("CastFogo", 1.8f, 0.97f) : ("CastVento", 1.7f, 0.9f);
+                case Elemento.Agua: return passo == 3 ? ("CastEnergia", 2.0f, 1.15f) : ("CastTerra", 2.4f, 1.6f);
+                case Elemento.Terra: return ("CastTerra", 2.4f, 1.6f);
+                default: return passo == 3 ? ("CastVento", 1.7f, 0.9f) : ("CastEnergia", 2.0f, 1.15f);
+            }
+        }
+
+        /// <summary>Usado pelo combate: o 3º/4º golpe do modo Poder vira o gesto da técnica, se houver Fé.</summary>
+        public bool TecnicaParaPasso(int passo, out string clip, out float dur, out float impacto)
+        {
+            clip = null; dur = 0f; impacto = 0f;
+            bool tem = passo == 3 || (passo == 4 && Atual != Elemento.Terra);
+            float custo = passo == 3 ? (Atual == Elemento.Ar ? custo3x * 0.5f : custo3x) : custo4x;
+            if (!tem || status == null || status.Fe < custo) return false;
+            (clip, dur, impacto) = Gesto(Atual, passo);
+            return true;
+        }
+
+        /// <summary>Habilidade ativa do estilo (tecla F): faz o gesto e libera a técnica no tempo certo.</summary>
+        void Conjurar()
+        {
+            Action tecnica; float custo; (string clip, float dur, float imp) g;
+            switch (Atual)
+            {
+                case Elemento.Fogo: tecnica = HousenkaNoJutsu; g = ("CastVento", 1.7f, 0.9f); break;
+                case Elemento.Agua: tecnica = SuirouNoJutsu; g = ("CastTerra", 2.4f, 1.6f); break;
+                case Elemento.Terra: tecnica = MuralhaDeTerra; g = ("CastTerra", 2.4f, 1.6f); break;
+                default: tecnica = Reppusho; g = ("PowerUp", 2.4f, 1.2f); break;
+            }
+            custo = custoSegurar;
+            if (status != null && status.Fe < custo) { status.Avisar("Fé insuficiente"); return; }
+            combate.IniciarAcaoEspecial(g.clip, g.dur, g.imp, () => TentarTecnica(custo, tecnica));
+        }
+
         void TentarTecnica(float custo, Action tecnica)
         {
             if (status != null && !status.GastarFe(custo)) return;
@@ -275,6 +310,9 @@ namespace FaithClash.Combat
         void GoukakyuuNoJutsu()
         {
             Anunciar("Katon: Goukakyuu no Jutsu");
+            SomJogo.Tocar("Fogo_Lancar", transform.position, 1f);
+            SomJogo.Tocar("Fogo_Impacto", Frente(5f), 0.9f, atraso: 0.35f);
+            TremorGlobal.Disparar(1.5f);
             Disparar(Frente(1.2f), DirecaoAlvo(), new ProjetilElemental.Opcoes
             {
                 cor = Cores[0], velocidade = 14f, duracao = 1.3f, dano = 55f, empurrao = 9f, tamanho = 2.2f, raioImpacto = 4f, explodir = true, particulas = 260,
@@ -284,6 +322,8 @@ namespace FaithClash.Combat
         void HousenkaNoJutsu()
         {
             Anunciar("Katon: Housenka no Jutsu");
+            SomJogo.Tocar("Fogo_Magia", transform.position, 0.9f, duracaoMax: 2.5f);
+            SomJogo.Tocar("Fogo_Impacto", Frente(5f), 0.6f, 1.2f, atraso: 0.5f);
             Vector3 d0 = DirecaoAlvo();
             for (int i = -2; i <= 2; i++)
             {
@@ -299,6 +339,8 @@ namespace FaithClash.Combat
         void SuiryuudanNoJutsu()
         {
             Anunciar("Suiton: Suiryuudan no Jutsu");
+            SomJogo.Tocar("Agua_Splash", transform.position, 1f);
+            SomJogo.Tocar("Agua_Impacto", Frente(6f), 0.8f, atraso: 0.45f, duracaoMax: 2.2f);
             Disparar(Frente(1f), DirecaoAlvo(), new ProjetilElemental.Opcoes
             {
                 cor = Cores[1], velocidade = 17f, duracao = 1.5f, dano = 45f, empurrao = 8f, tamanho = 1.5f, serpentear = true, particulas = 320,
@@ -308,6 +350,7 @@ namespace FaithClash.Combat
         void SuirouNoJutsu()
         {
             Anunciar("Suiton: Suirou no Jutsu");
+            SomJogo.Tocar("Agua_Explosao", transform.position, 0.8f, duracaoMax: 3f);
             TrainingDummy alvo = null;
             float melhor = 7f;
             foreach (var d in TrainingDummy.Todos)
@@ -333,6 +376,8 @@ namespace FaithClash.Combat
         void DoryuudanNoJutsu()
         {
             Anunciar("Doton: Doryuudan no Jutsu");
+            SomJogo.Tocar("Terra_Doryuudan", transform.position, 1f);
+            TremorGlobal.Disparar(1f);
             var mat = Efeitos.LitOpaco(new Color(0.45f, 0.35f, 0.22f), 0.15f);
             Vector3 frente = DirecaoAlvo(); frente.y = 0f; frente.Normalize();
             Vector3 lado = Vector3.Cross(Vector3.up, frente);
@@ -348,6 +393,8 @@ namespace FaithClash.Combat
         void MuralhaDeTerra()
         {
             Anunciar("Doton: Doryuuheki");
+            SomJogo.Tocar("Terra_Muralha", transform.position, 1f, 0.9f);
+            TremorGlobal.Disparar(1.4f);
             var mat = Efeitos.LitOpaco(new Color(0.45f, 0.35f, 0.22f), 0.15f);
             Vector3 centro = transform.position + transform.forward * 3f;
             for (int i = -6; i <= 6; i++)
@@ -378,6 +425,7 @@ namespace FaithClash.Combat
         void DaitoppaNoJutsu()
         {
             Anunciar("Fuuton: Daitoppa");
+            SomJogo.Tocar("Fogo_Lancar", transform.position, 0.7f, 1.35f, duracaoMax: 1.4f);
             Vector3 p = Frente(1.5f);
             Efeitos.Rajada(p, Quaternion.LookRotation(transform.forward), Color.white, 120, new Vector2(8, 16), new Vector2(0.06f, 0.2f), new Vector2(0.25f, 0.5f), ParticleSystemShapeType.Cone, 0.7f);
             Dano(p + transform.forward * 1.5f, 3f, 14f, 9f);
@@ -386,6 +434,8 @@ namespace FaithClash.Combat
         void Reppusho()
         {
             Anunciar("Fuuton: Reppushou");
+            SomJogo.Tocar("Ar_Reppushou", transform.position, 0.9f, 1.1f, duracaoMax: 2f);
+            TremorGlobal.Disparar(1.3f);
             Vector3 p = transform.position + Vector3.up;
             var esfera = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             Destroy(esfera.GetComponent<Collider>());
@@ -407,6 +457,7 @@ namespace FaithClash.Combat
         void Azul()
         {
             TecnicaUsada?.Invoke("Técnica Maldita: Azul", new Color(0.25f, 0.55f, 1f));
+            SomJogo.Tocar("Azul_Atrair", transform.position, 0.9f, duracaoMax: 3f);
             Vector3 p = Frente(3.2f);
             Efeitos.Rajada(p, Quaternion.identity, new Color(0.25f, 0.55f, 1f), 200, new Vector2(1, 5), new Vector2(0.1f, 0.35f), new Vector2(0.6f, 1.2f), raio: 1.2f);
             Efeitos.Clarao(p, new Color(0.25f, 0.55f, 1f), 10f, 12f, 0.9f);
@@ -417,7 +468,9 @@ namespace FaithClash.Combat
         void Roxo()
         {
             TecnicaUsada?.Invoke("Técnica Reversa: Roxo", new Color(0.7f, 0.3f, 1f));
-            animador?.Acao("Martelo", 0.8f);
+            SomJogo.Tocar("Roxo_Feixe", transform.position, 1f, duracaoMax: 2.5f);
+            SomJogo.Tocar("Roxo_Explosao", Frente(10f), 1f, atraso: 0.6f, duracaoMax: 5f);
+            TremorGlobal.Disparar(2.2f);
             Disparar(Frente(1.3f), DirecaoAlvo(), new ProjetilElemental.Opcoes
             {
                 cor = new Color(0.7f, 0.3f, 1f), velocidade = 22f, duracao = 1.2f, dano = 130f, empurrao = 14f, tamanho = 3f, raioImpacto = 6f, explodir = true, particulas = 320,
@@ -428,6 +481,9 @@ namespace FaithClash.Combat
         void FaiscaNegra()
         {
             TecnicaUsada?.Invoke("Faísca Negra!", new Color(1f, 0.15f, 0.2f));
+            SomJogo.Tocar("Soco_Forte", transform.position, 1f, 0.8f);
+            SomJogo.Tocar("Espada_Impacto", transform.position, 0.8f, 0.7f);
+            TremorGlobal.Disparar(1.8f);
             Vector3 p = Frente(1.8f);
             Efeitos.Rajada(p, Quaternion.identity, new Color(1f, 0.1f, 0.15f), 90, new Vector2(4, 12), new Vector2(0.08f, 0.25f), new Vector2(0.3f, 0.6f), raio: 0.4f);
             Efeitos.Rajada(p, Quaternion.identity, new Color(0.05f, 0.0f, 0.05f), 40, new Vector2(2, 6), new Vector2(0.3f, 0.8f), new Vector2(0.3f, 0.7f), raio: 0.5f, aditivo: false);
@@ -438,6 +494,8 @@ namespace FaithClash.Combat
         void ExplosaoElemental()
         {
             TecnicaUsada?.Invoke("Explosão Elemental", Color.white);
+            SomJogo.Tocar("Explosao_Elemental", Frente(5f), 1f, duracaoMax: 6f);
+            TremorGlobal.Disparar(3f);
             Vector3 p = Frente(2.5f);
             for (int i = 0; i < 4; i++)
                 Efeitos.Rajada(p, Quaternion.identity, Cores[i], 90, new Vector2(4, 14), new Vector2(0.2f, 0.6f), new Vector2(0.6f, 1.2f), raio: 0.8f);

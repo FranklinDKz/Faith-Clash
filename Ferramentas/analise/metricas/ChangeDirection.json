@@ -1,0 +1,1 @@
+{"clipe": "ChangeDirection", "frames": 66, "fps": 30, "duracao": 2.2, "deslocamento_xy": 0.07, "deslocamento_z": -0.0, "hips_z_min": 0.57, "hips_z_max": 0.9, "cabeca_z_min": 0.91, "pes_z_min": 0.139, "pes_z_max": 0.241, "vel_max_maos": 7.7, "vel_max_pes": 8.8, "picos_mao_direita": [0.4, 1.53, 2.1], "picos_pe": [0.03, 0.5, 1.53, 2.1], "dif_loop": 0.073, "vel_media_xy": 0.03}

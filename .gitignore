@@ -118,3 +118,6 @@ InitTestScene*.unity*
 
 # Depuracao
 Ferramentas/poses_debug.png
+
+# Previews gerados na analise (as metricas e o teste ficam versionados)
+Ferramentas/analise/previews/

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using FaithClash.Core;
 using FaithClash.Player;
 
 namespace FaithClash.Combat
@@ -15,7 +16,7 @@ namespace FaithClash.Combat
     public class ModoCombate : MonoBehaviour
     {
         [SerializeField] GameObject katana;
-        [SerializeField] float atrasoKatana = 0.3f;   // a katana aparece no meio da animação de sacar
+        [SerializeField] float atrasoKatana = 0.45f;   // a katana aparece no meio da animação de sacar
 
         AnimadorProtagonista animador;
         MeleeCombat combate;
@@ -57,13 +58,17 @@ namespace FaithClash.Combat
             if (mostrando != null) StopCoroutine(mostrando);
             if (m == Modo.Espada)
             {
-                animador?.Acao("SacarEspada", 0.65f, 0.08f);
+                animador?.Acao("SacarEspada", 0.8f, 0.08f);
+                SomJogo.Tocar("Espada_Sacar", transform.position, 0.9f, atraso: 0.25f);
                 mostrando = StartCoroutine(MostrarKatana(true));
             }
             else
             {
                 if (katana != null) katana.SetActive(false);
+                animador?.Acao("EnvainharEspada", 0.8f, 0.08f);
+                SomJogo.Tocar("Poder_Ativar", transform.position, 0.7f);
             }
+            if (m == Modo.Espada) SomJogo.Tocar("Poder_Desativar", transform.position, 0.5f, 1.3f);
             Mudou?.Invoke(m);
         }
 

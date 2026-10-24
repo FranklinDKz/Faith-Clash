@@ -1,0 +1,1 @@
+{"clipe": "FallingBackDeathV1", "frames": 67, "fps": 30, "duracao": 2.23, "deslocamento_xy": 0.61, "deslocamento_z": -0.7, "hips_z_min": 0.13, "hips_z_max": 0.83, "cabeca_z_min": 0.11, "pes_z_min": 0.028, "pes_z_max": 0.556, "vel_max_maos": 10.3, "vel_max_pes": 5.2, "picos_mao_direita": [0.7, 0.8], "picos_pe": [0.8, 1.4], "dif_loop": 0.93, "vel_media_xy": 0.27}

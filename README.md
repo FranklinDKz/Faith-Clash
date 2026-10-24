@@ -60,7 +60,8 @@ As teclas seguem o esquema do Naraka: Bladepoint (clique = leve, segurar = pesad
 Teclas que o Naraka usa para outras coisas (itens, habilidades) ficam em Z X B V, F e R. Para mudar, edite `PlayerController`, `MeleeCombat` e `EstilosElementais`.
 
 **Três modos de combate que não se misturam:**
-- **Combate (tecla 5):** só taijutsu, sem espada nem poderes. Clique = cadeia **Jab → Direto → Gancho → Chute lateral**; **S** no 3º golpe vira Rasteira, **A/D** no 4º vira Chute giratório de calcanhar.
+- **Combate (tecla 5):** só taijutsu, com **quatro estilos** escolhidos pela direção no primeiro golpe: boxe (neutro), chutes (**W**), capoeira (**A/D**) e muay thai (**S**). Ctrl + direção faz esquivas laterais e para trás.
+  Detalhes: só taijutsu, sem espada nem poderes. Clique = cadeia **Jab → Direto → Gancho → Chute lateral**; **S** no 3º golpe vira Rasteira, **A/D** no 4º vira Chute giratório de calcanhar.
   Segurar o clique dá um golpe forte que muda conforme o ponto da cadeia: **Chute frontal** (sozinho), **Cotovelada** (após 1), **Joelhada** (após 2), **Chute machado** (após 3 ou mais); com A/D, Chute lateral; com S, Chute para trás.
   Correndo, o clique solta a Voadora e segurar solta a Voadora giratória. O golpe seguinte pode sair logo depois do impacto (cancelamento), e o Ctrl ou o C cancelam o golpe.
 - **Espada (katana, tecla G):** só corta. Combo de 4 cortes e golpe pesado com salto.

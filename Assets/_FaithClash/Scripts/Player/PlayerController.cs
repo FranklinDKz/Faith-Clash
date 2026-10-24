@@ -125,6 +125,7 @@ namespace FaithClash.Player
                 dashReady = Time.time + dashCooldown;
                 transform.rotation = Quaternion.LookRotation(burstDir);
                 combate?.Cancelar();   // o dash cancela o golpe (esquiva estilo Naraka)
+                FaithClash.Core.CatalogoVFX.Tocar("poeira", transform.position + Vector3.up * 0.2f, Quaternion.LookRotation(-burstDir), null, 1.2f, 2f);
                 animador?.Acao("Dash", 0.5f, 0.04f, 1.7f);
                 Dashed?.Invoke();
             }
@@ -133,12 +134,30 @@ namespace FaithClash.Player
             if (cursorPreso && WasSlidePressed() && Time.time >= slideReady && !IsBusy && noChao && !Atordoado)
             {
                 burstDir = wish.sqrMagnitude > 0.01f ? new Vector3(wish.x, 0, wish.z).normalized : transform.forward;
-                slideTimer = rollTime;
                 slideReady = Time.time + slideCooldown;
-                transform.rotation = Quaternion.LookRotation(burstDir);
                 combate?.Cancelar();
-                animador?.Acao("Rolamento", 1.3f, 0.05f, 1.13f);
-                DefineAltura(1.1f);
+                // esquiva para o lado / para trás (estilo Naruto Storm / Naraka): passo rápido sem virar; para frente ou parado: rolamento
+                float pFrente = Vector3.Dot(burstDir, transform.forward), pLado = Vector3.Dot(burstDir, transform.right);
+                string esquiva = null;
+                if (wish.sqrMagnitude > 0.01f)
+                {
+                    if (pFrente < -0.6f) esquiva = "Mx_Standing_Dodge_Backward";
+                    else if (pLado > 0.7f) esquiva = "Mx_Standing_Dodge_Right";
+                    else if (pLado < -0.7f) esquiva = "Mx_Standing_Dodge_Left";
+                }
+                if (esquiva != null)
+                {
+                    slideTimer = 0.5f;
+                    animador?.Acao(esquiva, 0.55f, 0.05f, 1.9f);
+                    DefineAltura(alturaOriginal);
+                }
+                else
+                {
+                    slideTimer = rollTime;
+                    transform.rotation = Quaternion.LookRotation(burstDir);
+                    animador?.Acao("Rolamento", 1.3f, 0.05f, 1.13f);
+                    DefineAltura(1.1f);
+                }
             }
             Vector3 alvoHoriz;
             if (IsDashing)
@@ -150,7 +169,7 @@ namespace FaithClash.Player
             else if (IsDodging)
             {
                 slideTimer -= Time.deltaTime;
-                alvoHoriz = burstDir * (rollSpeed * Mathf.Lerp(0.4f, 1f, slideTimer / rollTime));
+                alvoHoriz = burstDir * (rollSpeed * Mathf.Lerp(0.4f, 1f, Mathf.Clamp01(slideTimer / rollTime)));
                 velHoriz = alvoHoriz;
                 if (slideTimer <= 0f) DefineAltura(alturaOriginal);
             }

@@ -31,3 +31,19 @@ Gestos de Kevin Iglesias: Direct2H (Fogo), Omni (Vento), Direct1H R (Energia/Ág
 
 ## Itens, meditação, reações
 Consumir (UAL2), Pegar item (UAL1), Meditar (UAL1 Sitting_Enter → Sitting_Idle_Loop → Sitting_Exit), Dano (Hit_Chest/Hit_Head), Empurrado (Hit_Knockback), Morte (Death01).
+
+## Mixamo (150 animações, prefixo `Mx_`)
+Baixadas pelo Mixamo (FBX, sem malha, 30 fps) em `Anim/Mixamo`. Os quadros de início, fim e impacto de cada golpe vêm da análise de velocidade das mãos e dos pés
+(`Ferramentas/Blender/gerar_cortes_mixamo.py` → `Anim/cortes_mixamo.csv`); golpes de vários acertos (combos) têm um impacto por acerto.
+
+- **Estilos de luta do modo Combate** (direção apertada no primeiro golpe): neutro = boxe; **W** = chutes (Mma Kick → Side Kick → Roundhouse → Spin Flip Kick);
+  **A/D** = capoeira (Martelo → Meia Lua de Compasso → Armada → Hurricane Kick); **S** = muay thai de perto (cotovelo → joelho → Knee Kick → Elbow Uppercut Combo).
+- **Golpes fortes** (segurar): Surprise Uppercut, Knee Jabs To Uppercut, Melee Combo Ver. 2; com 8+ acertos seguidos, Flying Knee Punch Combo. Correndo: Flying Kick e Run Jump Attack.
+- **Espada:** Two/One Hand Sword Combo, Dual Weapon Combo, High Spin Attack, Great Sword Jump Attack.
+- **Poder:** gestos fortes e habilidade do estilo (Magic Attack 05, Area Attack 01/02, Wide Arm / Magic Spell Casting, Strong Gesture); também no catálogo: Standing Yell (carregar poder), Great Sword Power Up, Flying, Floating.
+- **Esquiva (Ctrl):** para o lado ou para trás faz Standing Dodge Left/Right/Backward; para frente ou parado, rolamento.
+- Também importadas (catálogo): acrobacias (Stylish Flip, Run To Flip, Front Flip, Backflip, Big Jump, Corkscrew Evade), corridas (Sprint Forward/Left/Right/Backward, Idle To Sprint, Sprint Turn),
+  reações (Hit Reaction, Big/Medium/Light Hit To Head, Standing React Small/Large), mortes (Standing React Death x4, Falling Back Death, Dying), bloqueios (Standing Block Start/Idle/End, Center Block).
+
+## Efeitos visuais prontos
+`CatalogoVFX` (componente do jogador, preenchido pelo Preparar Jogador) liga 39 efeitos dos pacotes grátis da Asset Store às ações: impactos, jutsus (fogo, água, terra, vento, Azul, Roxo, Faísca Negra), poeira do dash e do pouso, aura do modo Poder, meditação.

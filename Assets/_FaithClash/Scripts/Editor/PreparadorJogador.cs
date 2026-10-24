@@ -35,9 +35,10 @@ namespace FaithClash.EditorTools
         {
             public readonly string Nome, Arquivo, Take;
             public readonly int Ini, Fim, Impacto;
+            public readonly int[] Impactos;   // golpes de vários acertos (combos): quadros de cada impacto
             public readonly bool Loop, MovimentoXZ;
-            public Clipe(string nome, string arquivo, string take, int ini, int fim, bool loop, int impacto = -1, bool movimentoXZ = false)
-            { Nome = nome; Arquivo = arquivo; Take = take; Ini = ini; Fim = fim; Loop = loop; Impacto = impacto; MovimentoXZ = movimentoXZ; }
+            public Clipe(string nome, string arquivo, string take, int ini, int fim, bool loop, int impacto = -1, bool movimentoXZ = false, int[] impactos = null)
+            { Nome = nome; Arquivo = arquivo; Take = take; Ini = ini; Fim = fim; Loop = loop; Impacto = impacto; MovimentoXZ = movimentoXZ; Impactos = impactos ?? (impacto >= 0 ? new[] { impacto } : new int[0]); }
         }
 
         static readonly Clipe[] Clipes =
@@ -122,11 +123,34 @@ namespace FaithClash.EditorTools
             ("Corte1", "Corte1Rec"), ("Corte2", "Corte2Rec"), ("Gancho", "GanchoRec"), ("MeditarEntrar", "MeditarLoop"), ("CastEntrar", "CastIdle"),
         };
 
+        const string CsvMixamo = PastaAnim + "/cortes_mixamo.csv";
+        static Clipe[] todos;
+
+        /// <summary>Tabela fixa + cortes das animações do Mixamo (CSV gerado por Ferramentas/Blender/gerar_cortes_mixamo.py).</summary>
+        static Clipe[] Todos
+        {
+            get
+            {
+                if (todos != null) return todos;
+                var lista = new List<Clipe>(Clipes);
+                if (File.Exists(CsvMixamo))
+                    foreach (var linha in File.ReadAllLines(CsvMixamo))
+                    {
+                        var p = linha.Split(';');
+                        if (p.Length < 7) continue;
+                        var hits = p[5].Length > 0 ? p[5].Split(',').Select(int.Parse).ToArray() : new int[0];
+                        lista.Add(new Clipe(p[0], p[1], null, int.Parse(p[2]), int.Parse(p[3]), p[4] == "1", hits.Length > 0 ? hits[0] : -1, p[6] == "1", hits));
+                    }
+                return todos = lista.ToArray();
+            }
+        }
+
         static readonly Dictionary<string, float> VelocidadeEstado = new Dictionary<string, float>();
 
         [MenuItem("Faith Clash/Preparar Jogador")]
         public static void Preparar()
         {
+            todos = null;
             AssetDatabase.Refresh();
             if (!File.Exists(Fbx)) { Debug.LogError("[Faith Clash] Modelo não encontrado: " + Fbx); return; }
             ConfigurarModelo();
@@ -206,7 +230,7 @@ namespace FaithClash.EditorTools
 
         static void ConfigurarAnimacoes()
         {
-            foreach (var grupo in Clipes.GroupBy(c => c.Arquivo))
+            foreach (var grupo in Todos.GroupBy(c => c.Arquivo))
             {
                 string caminho = PastaAnim + "/" + grupo.Key;
                 var imp = AssetImporter.GetAtPath(caminho) as ModelImporter;
@@ -255,7 +279,7 @@ namespace FaithClash.EditorTools
         static Dictionary<string, AnimationClip> TodosClipes()
         {
             var d = new Dictionary<string, AnimationClip>();
-            foreach (var arquivo in Clipes.Select(c => c.Arquivo).Distinct())
+            foreach (var arquivo in Todos.Select(c => c.Arquivo).Distinct())
                 foreach (var c in AssetDatabase.LoadAllAssetsAtPath(PastaAnim + "/" + arquivo).OfType<AnimationClip>())
                     if (!c.name.StartsWith("__preview__")) d[c.name] = c;
             return d;
@@ -266,11 +290,11 @@ namespace FaithClash.EditorTools
             var clips = TodosClipes();
             var sb = new StringBuilder();
             var ci = System.Globalization.CultureInfo.InvariantCulture;
-            foreach (var c in Clipes)
+            foreach (var c in Todos)
             {
                 if (!clips.TryGetValue(c.Nome, out var clip)) continue;
-                float impacto = c.Impacto >= 0 ? (c.Impacto - c.Ini) / 30f : -1f;
-                sb.AppendLine($"{c.Nome};{clip.length.ToString("0.000", ci)};{impacto.ToString("0.000", ci)}");
+                string impactos = c.Impactos.Length == 0 ? "-1" : string.Join(",", c.Impactos.Select(h => ((h - c.Ini) / 30f).ToString("0.000", ci)));
+                sb.AppendLine($"{c.Nome};{clip.length.ToString("0.000", ci)};{impactos}");
             }
             Directory.CreateDirectory(Path.GetDirectoryName(CaminhoInfo));
             File.WriteAllText(CaminhoInfo, sb.ToString());
@@ -319,7 +343,7 @@ namespace FaithClash.EditorTools
             sm.defaultState = sm.states.First(s => s.state.name == "Locomocao").state;
 
             var estados = new Dictionary<string, AnimatorState>();
-            foreach (var c in Clipes)
+            foreach (var c in Todos)
             {
                 if (c.Nome.StartsWith("Idle") || c.Nome == "Andar" || c.Nome == "Correr" || c.Nome == "Sprint" || c.Nome == "CorrerTras") continue;   // já nas árvores
                 if (!clips.TryGetValue(c.Nome, out var clip)) { Debug.LogWarning("[Faith Clash] Clipe ausente: " + c.Nome); continue; }
@@ -378,6 +402,7 @@ namespace FaithClash.EditorTools
             modelo.AddComponent<PesNoChao>();
 
             AnexarKatana(modelo, animator);
+            ConfigurarVFX(raiz);
 
             Ligar(pc, "animador", anim);
             Ligar(combate, "animador", anim);
@@ -419,6 +444,43 @@ namespace FaithClash.EditorTools
             k.transform.localPosition = posLocal;
             k.transform.localScale = Vector3.one / Mathf.Max(0.0001f, mao.lossyScale.x);
             k.SetActive(false);
+        }
+
+        // chave do jogo -> (nome do prefab, escala). Pacotes gratuitos da Asset Store (veja Docs/CREDITOS_ASSETS.md).
+        static readonly (string chave, string prefab, float escala)[] Efeitos =
+        {
+            ("impacto_leve", "CFXR3 Hit Misc A", 1f), ("impacto_forte", "CFXR _POW_", 1f), ("impacto_espada", "CFXR4 Sword Hit PLAIN (Cross)", 1f),
+            ("impacto_fogo", "CFXR3 Hit Fire B (Air)", 1f), ("impacto_gelo", "CFXR3 Hit Ice B (Air)", 1f), ("impacto_raio", "CFXR3 Hit Electric C (Air)", 1f),
+            ("corte_vermelho", "Charge slash red", 1f), ("corte_azul", "Charge slash blue", 1f), ("corte_area", "AoE slash orange", 1f),
+            ("fogo_sopro", "CFXR Fire Breath", 1f), ("fogo_grande", "VFX_Fire_01_Big", 1f), ("fogo_explosao", "CFXR3 Fire Explosion B", 1f), ("fogo_chao", "VFX_Fire_Floor_01", 1f),
+            ("agua_splash", "CFXR Water Splash (Smaller)", 1.5f), ("agua_ondas", "CFXR Water Ripples", 1.5f), ("agua_trilha", "VFX_Trail_Water", 1f),
+            ("terra_pedras", "Stones hit", 1f), ("terra_corte", "Stone slash", 1f), ("terra_explosao", "Ground AOE explosion", 1f),
+            ("vento_fumaca", "Smoke vortex", 1f), ("vento_faiscas", "Sparks explode white", 1f), ("raio_corte", "Electro slash", 1f), ("raio_aura", "Lightning aura", 1f),
+            ("roxo_circulo", "Magic circle", 1f), ("roxo_portal", "Portal red", 1f), ("azul_portal", "Portal blue", 1f), ("azul_plexus", "Plexus AoE", 1f),
+            ("poder_aura", "Buff", 1f), ("poder_estrela", "Star aura", 1f), ("cura_circulo", "Healing circle", 1f), ("meditar", "L_Recover_hold", 1f),
+            ("escudo", "Magic shield blue", 1f), ("teleporte", "Teleport", 1f), ("poeira", "Dust puff", 1f), ("poeira_chao", "Dust ground", 1f),
+            ("explosao_vermelha", "Red energy explosion", 1f), ("meteoros", "Meteors AOE", 1f), ("laser_area", "Laser AOE", 1f), ("congelar", "Freeze circle", 1f),
+        };
+
+        static void ConfigurarVFX(GameObject raiz)
+        {
+            var cat = raiz.AddComponent<CatalogoVFX>();
+            var so = new SerializedObject(cat);
+            var lista = so.FindProperty("itens");
+            lista.ClearArray();
+            int n = 0;
+            foreach (var (chave, nome, escala) in Efeitos)
+            {
+                var guid = AssetDatabase.FindAssets(nome + " t:Prefab").FirstOrDefault(g => Path.GetFileNameWithoutExtension(AssetDatabase.GUIDToAssetPath(g)) == nome);
+                if (guid == null) { Debug.LogWarning("[Faith Clash] VFX ausente: " + nome); continue; }
+                lista.InsertArrayElementAtIndex(n);
+                var e = lista.GetArrayElementAtIndex(n++);
+                e.FindPropertyRelative("chave").stringValue = chave;
+                e.FindPropertyRelative("prefab").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(guid));
+                e.FindPropertyRelative("escala").floatValue = escala;
+            }
+            so.ApplyModifiedPropertiesWithoutUndo();
+            Debug.Log("[Faith Clash] Efeitos visuais ligados: " + n + "/" + Efeitos.Length);
         }
 
         static void Ligar(Object alvo, string campo, Object valor)

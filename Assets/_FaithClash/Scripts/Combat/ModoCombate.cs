@@ -69,12 +69,14 @@ namespace FaithClash.Combat
             switch (m)
             {
                 case Modo.Espada:
+                    CatalogoVFX.Tocar("corte_azul", transform.position + Vector3.up, transform.rotation, null, 0.8f, 2f);
                     animador?.Acao("SacarEspada", 0.8f, 0.08f);
                     SomJogo.Tocar("Espada_Sacar", transform.position, 0.9f, atraso: 0.25f);
                     SomJogo.Tocar("Poder_Desativar", transform.position, 0.5f, 1.3f);
                     mostrando = StartCoroutine(MostrarKatana(true));
                     break;
                 case Modo.Poder:
+                    CatalogoVFX.Tocar("poder_aura", transform.position, Quaternion.identity, transform, 1f, 2.5f);
                     GuardarEspada(saiu);
                     SomJogo.Tocar("Poder_Ativar", transform.position, 0.7f);
                     break;

@@ -55,6 +55,8 @@ namespace FaithClash.Training
             var ctrl = (UnityEditor.Animations.AnimatorController)animator.runtimeAnimatorController;
             foreach (var s in ctrl.layers[0].stateMachine.states) nomes[Animator.StringToHash(s.state.name)] = s.state.name;
             Cursor.lockState = CursorLockMode.Locked;
+            Directory.CreateDirectory("Ferramentas/analise/fotos");
+            foreach (var f in Directory.GetFiles("Ferramentas/analise/fotos", "*.png")) File.Delete(f);
             combate.AttackStarted += p => L($"  evento: golpe iniciado (passo {p})");
             combate.AttackImpact += (p, ok) => L($"  evento: IMPACTO passo {p} acertou={ok}");
             status.Aviso += a => L("  aviso HUD: " + a);
@@ -141,7 +143,8 @@ namespace FaithClash.Training
                 Tecla(el.Item1, true); yield return Janela(0.1f); Tecla(el.Item1, false); yield return Janela(0.3f);
                 registrando = true; t0 = Time.time;
                 float fe0 = status.Fe;
-                yield return Clique(0.06f); yield return Janela(2.8f);
+                yield return Clique(0.06f);
+                for (int fi = 0; fi < 14; fi++) { Foto("Jutsu_" + el.Item2, fi); yield return new WaitForSeconds(0.2f); }
                 L($"  Fé gasta no leve: {fe0 - status.Fe:0}");
                 fe0 = status.Fe;
                 yield return Segurar(0.4f); yield return Janela(3.2f);
@@ -243,7 +246,6 @@ namespace FaithClash.Training
         IEnumerator FotosDosGolpes()
         {
             Directory.CreateDirectory("Ferramentas/analise/fotos");
-            foreach (var f in Directory.GetFiles("Ferramentas/analise/fotos", "*.png")) File.Delete(f);
             var go = new GameObject("CamFoto");
             camFoto = go.AddComponent<Camera>();
             camFoto.enabled = false;
@@ -253,7 +255,7 @@ namespace FaithClash.Training
             rtFoto = new RenderTexture(220, 280, 24);
             texFoto = new Texture2D(220, 280, TextureFormat.RGB24, false);
             if (modo.Atual != FaithClash.Combat.Modo.Combate) yield return Modo(Key.Digit5, "Combate");
-            foreach (var golpe in new[] { "Jab", "Direto", "Gancho", "ChuteLateral", "ChuteBaixo", "GiroCostas", "ChuteFrontal", "Cotovelada", "Joelhada", "ChuteMachado", "ChuteLado", "ChuteCostas", "Voadora", "VoadoraGiratoria", "Corte1", "Corte2", "Corte3", "CorteGiratorio", "EspadaSalto", "Estocada" })
+            foreach (var golpe in new[] { "Jab", "Direto", "Gancho", "ChuteLateral", "ChuteBaixo", "GiroCostas", "ChuteFrontal", "Cotovelada", "Joelhada", "ChuteMachado", "ChuteLado", "ChuteCostas", "Voadora", "VoadoraGiratoria", "Corte1", "Corte2", "Corte3", "CorteGiratorio", "EspadaSalto", "Estocada", "Mx_Mma_Kick", "Mx_Side_Kick", "Mx_Roundhouse_Kick", "Mx_Spin_Flip_Kick", "Mx_Martelo_3", "Mx_Meia_Lua_De_Compasso", "Mx_Armada", "Mx_Hurricane_Kick", "Mx_Illegal_Elbow_Punch", "Mx_Illegal_Knee", "Mx_Knee_Kick_Lead", "Mx_Elbow_Uppercut_Combo", "Mx_Surprise_Uppercut", "Mx_Knee_Jabs_To_Uppercut", "Mx_Standing_Melee_Combo_Attack_Ver_2", "Mx_Flying_Knee_Punch_Combo", "Mx_Flying_Kick", "Mx_Standing_Melee_Run_Jump_Attack", "Mx_Two_Hand_Sword_Combo", "Mx_One_Hand_Sword_Combo", "Mx_Dual_Weapon_Combo", "Mx_Great_Sword_High_Spin_Attack", "Mx_Great_Sword_Jump_Attack" })
             {
                 PreparaBoneco(1.9f);
                 yield return Janela(0.5f);
@@ -278,7 +280,7 @@ namespace FaithClash.Training
                 }
                 yield return Janela(0.8f);
             }
-            foreach (var nome in new[] { "CastFogo", "CastVento", "CastEnergia", "CastTerra", "PowerUp", "Curar", "MeditarEntrar", "Dano", "Morte", "Dash", "Defesa", "SacarEspada", "PuloNinja", "PegarItem" })
+            foreach (var nome in new[] { "CastFogo", "CastVento", "CastEnergia", "CastTerra", "PowerUp", "Curar", "MeditarEntrar", "Dano", "Morte", "Dash", "Defesa", "SacarEspada", "PuloNinja", "PegarItem", "Mx_Standing_2H_Magic_Attack_05", "Mx_Standing_2H_Magic_Area_Attack_01", "Mx_Standing_2H_Magic_Area_Attack_02", "Mx_Two_Hand_Spell_Casting", "Mx_Wide_Arm_Spell_Casting", "Mx_Magic_Spell_Casting", "Mx_Strong_Gesture", "Mx_Standing_Dodge_Left", "Mx_Standing_Dodge_Backward", "Mx_Standing_Yell", "Mx_Great_Sword_Power_Up", "Mx_Stylish_Flip", "Mx_Run_To_Flip", "Mx_Ninja_Idle", "Mx_Big_Hit_To_Head", "Mx_Standing_React_Death_Forward" })
             {
                 Posicionar(new Vector3(0, 0.1f, -3f), 0f);
                 yield return Janela(0.6f);
@@ -296,8 +298,21 @@ namespace FaithClash.Training
             Destroy(go);
         }
 
+        void CriarCamFoto()
+        {
+            var go = new GameObject("CamFoto");
+            camFoto = go.AddComponent<Camera>();
+            camFoto.enabled = false;
+            camFoto.clearFlags = CameraClearFlags.SolidColor;
+            camFoto.backgroundColor = new Color(0.35f, 0.4f, 0.48f);
+            camFoto.fieldOfView = 38f;
+            rtFoto = new RenderTexture(220, 280, 24);
+            texFoto = new Texture2D(220, 280, TextureFormat.RGB24, false);
+        }
+
         void Foto(string nome, int i)
         {
+            if (camFoto == null) { Directory.CreateDirectory("Ferramentas/analise/fotos"); CriarCamFoto(); }
             var p = jogador.transform;
             camFoto.transform.position = p.position + Vector3.right * 4.2f + Vector3.up * 1.15f + Vector3.back * 0.6f;
             camFoto.transform.LookAt(p.position + Vector3.up * 0.95f + Vector3.forward * 0.4f);

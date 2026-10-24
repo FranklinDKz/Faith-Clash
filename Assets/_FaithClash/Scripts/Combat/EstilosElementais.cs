@@ -207,10 +207,10 @@ namespace FaithClash.Combat
             Action tecnica; (string clip, float dur, float imp) g; float custo = custoForte;
             switch (Atual)
             {
-                case Elemento.Fogo: tecnica = HousenkaNoJutsu; g = GestoVento; break;
-                case Elemento.Agua: tecnica = SuirouNoJutsu; g = GestoTerra; break;
-                case Elemento.Terra: tecnica = MuralhaDeTerra; g = GestoTerra; custo = custoFinal; break;
-                default: tecnica = Azul; g = GestoEnergia; break;
+                case Elemento.Fogo: tecnica = HousenkaNoJutsu; g = Gesto("Mx_Standing_2H_Magic_Attack_05"); break;
+                case Elemento.Agua: tecnica = SuirouNoJutsu; g = Gesto("Mx_Standing_2H_Magic_Area_Attack_02"); break;
+                case Elemento.Terra: tecnica = MuralhaDeTerra; g = Gesto("Mx_Standing_2H_Magic_Area_Attack_01"); custo = custoFinal; break;
+                default: tecnica = Azul; g = Gesto("Mx_Two_Hand_Spell_Casting"); break;
             }
             return Usar(custo, tecnica, g);
         }
@@ -226,10 +226,10 @@ namespace FaithClash.Combat
             Action tecnica; float custo; (string clip, float dur, float imp) g;
             switch (Atual)
             {
-                case Elemento.Fogo: tecnica = HousenkaNoJutsu; g = GestoVento; break;
-                case Elemento.Agua: tecnica = SuirouNoJutsu; g = GestoTerra; break;
-                case Elemento.Terra: tecnica = MuralhaDeTerra; g = GestoTerra; break;
-                default: tecnica = Reppusho; g = GestoPoder; break;
+                case Elemento.Fogo: tecnica = HousenkaNoJutsu; g = Gesto("Mx_Wide_Arm_Spell_Casting"); break;
+                case Elemento.Agua: tecnica = SuirouNoJutsu; g = Gesto("Mx_Magic_Spell_Casting"); break;
+                case Elemento.Terra: tecnica = MuralhaDeTerra; g = Gesto("Mx_Standing_2H_Magic_Area_Attack_01"); break;
+                default: tecnica = Reppusho; g = Gesto("Mx_Strong_Gesture"); break;
             }
             custo = custoFinal;
             if (status != null && status.Fe < custo) { status.Avisar("Fé insuficiente"); return; }
@@ -311,7 +311,7 @@ namespace FaithClash.Combat
             TremorGlobal.Disparar(1.5f);
             Disparar(Frente(1.2f), DirecaoAlvo(), new ProjetilElemental.Opcoes
             {
-                cor = Cores[0], velocidade = 14f, duracao = 1.3f, dano = 55f, empurrao = 9f, tamanho = 2.2f, raioImpacto = 4f, explodir = true, particulas = 260,
+                cor = Cores[0], velocidade = 14f, duracao = 1.3f, dano = 55f, empurrao = 9f, tamanho = 2.2f, raioImpacto = 4f, explodir = true, particulas = 260, vfxRastro = "fogo_grande", vfxExplosao = "fogo_explosao",
             });
         }
 
@@ -326,7 +326,7 @@ namespace FaithClash.Combat
                 Vector3 d = Quaternion.AngleAxis(i * 13f, Vector3.up) * d0;
                 Disparar(Frente(1f), d, new ProjetilElemental.Opcoes
                 {
-                    cor = Cores[0], velocidade = 17f, duracao = 0.9f, dano = 20f, empurrao = 4f, tamanho = 0.9f, raioImpacto = 1.8f, explodir = true, particulas = 90,
+                    cor = Cores[0], velocidade = 17f, duracao = 0.9f, dano = 20f, empurrao = 4f, tamanho = 0.9f, raioImpacto = 1.8f, explodir = true, particulas = 90, vfxRastro = "fogo_chao", vfxExplosao = "impacto_fogo",
                 });
             }
         }
@@ -339,7 +339,7 @@ namespace FaithClash.Combat
             SomJogo.Tocar("Agua_Impacto", Frente(6f), 0.8f, atraso: 0.45f, duracaoMax: 2.2f);
             Disparar(Frente(1f), DirecaoAlvo(), new ProjetilElemental.Opcoes
             {
-                cor = Cores[1], velocidade = 17f, duracao = 1.5f, dano = 45f, empurrao = 8f, tamanho = 1.5f, serpentear = true, particulas = 320,
+                cor = Cores[1], velocidade = 17f, duracao = 1.5f, dano = 45f, empurrao = 8f, tamanho = 1.5f, serpentear = true, particulas = 320, vfxRastro = "agua_trilha", vfxExplosao = "agua_splash",
             });
         }
 
@@ -355,6 +355,8 @@ namespace FaithClash.Combat
                 if (dist < melhor && !d.Vida.IsDead) { melhor = dist; alvo = d; }
             }
             Vector3 p = alvo != null ? alvo.transform.position : Frente(2.5f);
+            CatalogoVFX.Tocar("congelar", p, Quaternion.identity, null, 1f, 3f);
+            CatalogoVFX.Tocar("agua_ondas", p, Quaternion.identity, null, 1.5f, 3f);
             var esfera = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             Destroy(esfera.GetComponent<Collider>());
             esfera.name = "Prisão de Água";
@@ -374,6 +376,7 @@ namespace FaithClash.Combat
             Anunciar("Doton: Doryuudan no Jutsu");
             SomJogo.Tocar("Terra_Doryuudan", transform.position, 1f);
             TremorGlobal.Disparar(1f);
+            CatalogoVFX.Tocar("terra_explosao", Frente(3f), Quaternion.identity, null, 1.2f, 3f);
             var mat = Efeitos.LitOpaco(new Color(0.45f, 0.35f, 0.22f), 0.15f);
             Vector3 frente = DirecaoAlvo(); frente.y = 0f; frente.Normalize();
             Vector3 lado = Vector3.Cross(Vector3.up, frente);
@@ -391,6 +394,7 @@ namespace FaithClash.Combat
             Anunciar("Doton: Doryuuheki");
             SomJogo.Tocar("Terra_Muralha", transform.position, 1f, 0.9f);
             TremorGlobal.Disparar(1.4f);
+            CatalogoVFX.Tocar("terra_pedras", transform.position + transform.forward * 3f, Quaternion.identity, null, 2f, 3f);
             var mat = Efeitos.LitOpaco(new Color(0.45f, 0.35f, 0.22f), 0.15f);
             Vector3 centro = transform.position + transform.forward * 3f;
             for (int i = -6; i <= 6; i++)
@@ -423,6 +427,7 @@ namespace FaithClash.Combat
             Anunciar("Fuuton: Daitoppa");
             SomJogo.Tocar("Fogo_Lancar", transform.position, 0.7f, 1.35f, duracaoMax: 1.4f);
             Vector3 p = Frente(1.5f);
+            CatalogoVFX.Tocar("vento_fumaca", p, Quaternion.LookRotation(transform.forward), null, 1.2f, 3f);
             Efeitos.Rajada(p, Quaternion.LookRotation(transform.forward), Color.white, 120, new Vector2(8, 16), new Vector2(0.06f, 0.2f), new Vector2(0.25f, 0.5f), ParticleSystemShapeType.Cone, 0.7f);
             Dano(p + transform.forward * 1.5f, 3f, 14f, 9f);
         }
@@ -433,6 +438,8 @@ namespace FaithClash.Combat
             SomJogo.Tocar("Ar_Reppushou", transform.position, 0.9f, 1.1f, duracaoMax: 2f);
             TremorGlobal.Disparar(1.3f);
             Vector3 p = transform.position + Vector3.up;
+            CatalogoVFX.Tocar("vento_faiscas", p, Quaternion.identity, null, 3f, 3f);
+            CatalogoVFX.Tocar("raio_aura", transform.position, Quaternion.identity, null, 1.5f, 2.5f);
             var esfera = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             Destroy(esfera.GetComponent<Collider>());
             esfera.name = "Globo de Vento";
@@ -455,6 +462,8 @@ namespace FaithClash.Combat
             TecnicaUsada?.Invoke("Técnica Maldita: Azul", new Color(0.25f, 0.55f, 1f));
             SomJogo.Tocar("Azul_Atrair", transform.position, 0.9f, duracaoMax: 3f);
             Vector3 p = Frente(3.2f);
+            CatalogoVFX.Tocar("azul_portal", p, Quaternion.LookRotation(-transform.forward), null, 1.3f, 3f);
+            CatalogoVFX.Tocar("azul_plexus", p, Quaternion.identity, null, 1.2f, 3f);
             Efeitos.Rajada(p, Quaternion.identity, new Color(0.25f, 0.55f, 1f), 200, new Vector2(1, 5), new Vector2(0.1f, 0.35f), new Vector2(0.6f, 1.2f), raio: 1.2f);
             Efeitos.Clarao(p, new Color(0.25f, 0.55f, 1f), 10f, 12f, 0.9f);
             Dano(p, 6f, 25f, 12f, 0.8f, true);
@@ -469,7 +478,7 @@ namespace FaithClash.Combat
             TremorGlobal.Disparar(2.2f);
             Disparar(Frente(1.3f), DirecaoAlvo(), new ProjetilElemental.Opcoes
             {
-                cor = new Color(0.7f, 0.3f, 1f), velocidade = 22f, duracao = 1.2f, dano = 130f, empurrao = 14f, tamanho = 3f, raioImpacto = 6f, explodir = true, particulas = 320,
+                cor = new Color(0.7f, 0.3f, 1f), velocidade = 22f, duracao = 1.2f, dano = 130f, empurrao = 14f, tamanho = 3f, raioImpacto = 6f, explodir = true, particulas = 320, vfxRastro = "roxo_portal", vfxExplosao = "explosao_vermelha",
             });
         }
 
@@ -481,6 +490,7 @@ namespace FaithClash.Combat
             SomJogo.Tocar("Espada_Impacto", transform.position, 0.8f, 0.7f);
             TremorGlobal.Disparar(1.8f);
             Vector3 p = Frente(1.8f);
+            CatalogoVFX.Tocar("raio_corte", p, Quaternion.LookRotation(transform.forward), null, 1.3f, 2f);
             Efeitos.Rajada(p, Quaternion.identity, new Color(1f, 0.1f, 0.15f), 90, new Vector2(4, 12), new Vector2(0.08f, 0.25f), new Vector2(0.3f, 0.6f), raio: 0.4f);
             Efeitos.Rajada(p, Quaternion.identity, new Color(0.05f, 0.0f, 0.05f), 40, new Vector2(2, 6), new Vector2(0.3f, 0.8f), new Vector2(0.3f, 0.7f), raio: 0.5f, aditivo: false);
             Efeitos.Clarao(p, new Color(1f, 0.1f, 0.15f), 14f, 10f, 0.25f);
@@ -493,6 +503,7 @@ namespace FaithClash.Combat
             SomJogo.Tocar("Explosao_Elemental", Frente(5f), 1f, duracaoMax: 6f);
             TremorGlobal.Disparar(3f);
             Vector3 p = Frente(2.5f);
+            CatalogoVFX.Tocar("meteoros", p, Quaternion.identity, null, 1.5f, 4f);
             for (int i = 0; i < 4; i++)
                 Efeitos.Rajada(p, Quaternion.identity, Cores[i], 90, new Vector2(4, 14), new Vector2(0.2f, 0.6f), new Vector2(0.6f, 1.2f), raio: 0.8f);
             Efeitos.Clarao(p, Color.white, 16f, 20f, 0.9f);

@@ -25,9 +25,10 @@ namespace FaithClash.Combat
             public float dano, duracao, impacto, alcance, raio, desloc;   // tempos em segundos com o clipe em velocidade 1; desloc = quanto o clipe "anda" para a frente (m)
             public float vel, empurrao, avanco;   // avanco = passo à frente que o código dá até o inimigo (m)
             public bool espelho;
-            public Golpe(string clip, float dano, float duracao, float impacto, float alcance, float raio, float desloc, float vel = 1f, float empurrao = 2f, float avanco = 0f, bool espelho = false)
+            public float[] impactos;   // golpes de vários acertos: momento de cada um (s, velocidade 1)
+            public Golpe(string clip, float dano, float duracao, float impacto, float alcance, float raio, float desloc, float vel = 1f, float empurrao = 2f, float avanco = 0f, bool espelho = false, float[] impactos = null)
             {
-                this.avanco = avanco;
+                this.avanco = avanco; this.impactos = impactos ?? new float[0];
                 this.clip = clip; this.dano = dano; this.duracao = duracao; this.impacto = impacto; this.alcance = alcance; this.raio = raio;
                 this.desloc = desloc; this.vel = vel; this.empurrao = empurrao; this.espelho = espelho;
             }
@@ -47,7 +48,7 @@ namespace FaithClash.Combat
 
         // Duração e impacto de cada golpe vêm da própria animação (InfoGolpes, gerado pelo Preparar Jogador).
         static Golpe G(string clip, float dano, float alcance, float raio, float vel = 1f, float empurrao = 3f, float avanco = 0f, float desloc = 0f) =>
-            new Golpe(clip, dano, InfoGolpes.Duracao(clip), InfoGolpes.Impacto(clip), alcance, raio, desloc, vel, empurrao, avanco);
+            new Golpe(clip, dano, InfoGolpes.Duracao(clip), InfoGolpes.Impacto(clip), alcance, raio, desloc, vel, empurrao, avanco, false, InfoGolpes.Impactos(clip));
 
         // ---- Espada
         static Golpe[] CombosEspada => new[]
@@ -82,6 +83,46 @@ namespace FaithClash.Combat
         static Golpe ChuteGiratorioPesado => G("VoadoraGiratoria", 30, 2.3f, 1.2f, 1.3f, 10f, 1.5f);
         static Golpe JoelhadaVoadora => G("Voadora", 24, 2.2f, 1.1f, 1.5f, 8f, 1.6f);
 
+        // ---- Estilos de luta do modo Combate (escolhidos pela direção apertada no primeiro golpe da cadeia):
+        //      neutro = boxe, W = chutes (taekwondo/muay thai), A/D = capoeira (giros), S = muay thai de perto (cotovelo e joelho)
+        static Golpe[] CadeiaChutes => new[]
+        {
+            G("Mx_Mma_Kick", 10, 2.0f, 1.0f, 1.2f, 4f, 0.9f),
+            G("Mx_Side_Kick", 13, 2.1f, 1.0f, 1.2f, 6f, 0.8f),
+            G("Mx_Roundhouse_Kick", 16, 2.1f, 1.1f, 1.2f, 7f, 0.8f),
+            G("Mx_Spin_Flip_Kick", 22, 2.3f, 1.2f, 1.2f, 9f, 0.8f),
+        };
+        static Golpe[] CadeiaCapoeira => new[]
+        {
+            G("Mx_Martelo_3", 10, 2.0f, 1.0f, 1.2f, 4f, 0.8f),
+            G("Mx_Meia_Lua_De_Compasso", 13, 2.1f, 1.1f, 1.2f, 6f, 0.8f),
+            G("Mx_Armada", 15, 2.1f, 1.1f, 1.2f, 7f, 0.8f),
+            G("Mx_Hurricane_Kick", 26, 2.3f, 1.4f, 1.2f, 9f, 0.6f),
+        };
+        static Golpe[] CadeiaMuay => new[]
+        {
+            G("Mx_Illegal_Elbow_Punch", 9, 1.6f, 0.9f, 1.2f, 3f, 0.6f),
+            G("Mx_Illegal_Knee", 12, 1.7f, 0.9f, 1.2f, 5f, 0.6f),
+            G("Mx_Knee_Kick_Lead", 14, 1.8f, 1.0f, 1.2f, 6f, 0.6f),
+            G("Mx_Elbow_Uppercut_Combo", 24, 1.8f, 1.1f, 1.2f, 8f, 0.6f),
+        };
+        static Golpe[][] CadeiasCombate => new[] { CadeiaCombate, CadeiaChutes, CadeiaCapoeira, CadeiaMuay };
+
+        // golpes fortes extras (segurar o clique) e finalizadores de vários acertos
+        static Golpe Finalizador1 => G("Mx_Surprise_Uppercut", 26, 2.0f, 1.1f, 1.2f, 9f, 0.7f);
+        static Golpe Finalizador2 => G("Mx_Knee_Jabs_To_Uppercut", 30, 1.9f, 1.1f, 1.3f, 9f, 0.6f);
+        static Golpe FinalizadorCombo => G("Mx_Standing_Melee_Combo_Attack_Ver_2", 40, 2.1f, 1.2f, 1.3f, 10f, 0.9f);
+        static Golpe FinalizadorSuper => G("Mx_Flying_Knee_Punch_Combo", 55, 2.2f, 1.2f, 1.3f, 12f, 1.5f);
+        static Golpe VoadoraMixamo => G("Mx_Flying_Kick", 26, 2.2f, 1.1f, 1.3f, 9f, 1.8f);
+        static Golpe SaltoMixamo => G("Mx_Standing_Melee_Run_Jump_Attack", 34, 2.3f, 1.3f, 1.3f, 10f, 1.8f);
+
+        // espada (Demon Slayer / Naraka): combos de vários cortes do Mixamo
+        static Golpe EspadaCombo2 => G("Mx_Two_Hand_Sword_Combo", 44, 2.6f, 1.4f, 1.25f, 8f, 1.0f);
+        static Golpe EspadaCombo1 => G("Mx_One_Hand_Sword_Combo", 40, 2.5f, 1.4f, 1.25f, 8f, 1.0f);
+        static Golpe EspadaDupla => G("Mx_Dual_Weapon_Combo", 52, 2.6f, 1.5f, 1.25f, 9f, 1.0f);
+        static Golpe EspadaGiro => G("Mx_Great_Sword_High_Spin_Attack", 38, 2.8f, 1.6f, 1.2f, 9f, 1.2f);
+        static Golpe EspadaSaltoMx => G("Mx_Great_Sword_Jump_Attack", 42, 2.8f, 1.5f, 1.2f, 9f, 2.0f);
+
         PlayerController controller;
         TravaAlvo trava;
         ModoCombate modo;
@@ -95,7 +136,8 @@ namespace FaithClash.Combat
         bool heavyDisparado, blockAnterior;
         float ignoraAte;       // o clique que captura o cursor (ou que inicia o Play) não vira golpe
         bool cursorPresoAntes;
-        bool ramoS, ramoLado;   // S / A / D apertados no momento do clique (valem mesmo se o golpe entrar na fila)
+        bool ramoS, ramoLado, ramoW;
+        int cadeiaEscolhida, hitIndex;   // S / A / D apertados no momento do clique (valem mesmo se o golpe entrar na fila)
 
         /// <summary>Acertos seguidos (contador "Combo" do HUD).</summary>
         public int ComboCount { get; private set; }
@@ -155,6 +197,7 @@ namespace FaithClash.Combat
                 var kb = Keyboard.current;
                 ramoS = kb.sKey.isPressed;
                 ramoLado = kb.aKey.isPressed || kb.dKey.isPressed;
+                ramoW = kb.wKey.isPressed;
             }
             bool podeDefender = !attacking && !controller.IsBusy && !controller.Atordoado;
             IsBlocking = podeDefender && cursorPreso &&
@@ -191,18 +234,23 @@ namespace FaithClash.Combat
             if (Time.time - lastAttackEnd > comboWindow) comboIndex = 0;
             if (EmEspada)
             {
-                if (controller.IsSprinting && controller.Velocity.sqrMagnitude > 16f) { Begin(CorridaEspada, false, 5); return; }
+                if (controller.IsSprinting && controller.Velocity.sqrMagnitude > 16f) { Begin(comboIndex > 0 ? EspadaSaltoMx : CorridaEspada, false, 5); return; }
                 var cadeiaEspada = CombosEspada;
                 int ie = comboIndex % cadeiaEspada.Length;
+                if (ie == 3 && ramoS) { Begin(EspadaCombo2, false, 4); return; }      // ramo: S no 4º corte = combo de dois cortes
                 Begin(cadeiaEspada[ie], false, ie + 1);
                 return;
             }
-            if (controller.IsSprinting && controller.Velocity.sqrMagnitude > 16f) { Begin(JoelhadaVoadora, false, 5); return; }
-            var cadeia = CadeiaCombate;
+            if (controller.IsSprinting && controller.Velocity.sqrMagnitude > 16f) { Begin(comboIndex > 0 ? VoadoraMixamo : JoelhadaVoadora, false, 5); return; }
+            if (comboIndex == 0) cadeiaEscolhida = ramoLado ? 2 : ramoS ? 3 : ramoW ? 1 : 0;
+            var cadeia = CadeiasCombate[cadeiaEscolhida];
             int i = comboIndex % cadeia.Length;
             Golpe g = cadeia[i];
-            if (i == 2 && ramoS) g = ChuteBaixo;          // ramo: S no 3º golpe
-            else if (i == 3 && ramoLado) g = GiroCostas;  // ramo: A/D no 4º golpe
+            if (cadeiaEscolhida == 0)
+            {
+                if (i == 2 && ramoS) g = ChuteBaixo;          // ramo: S no 3º golpe
+                else if (i == 3 && ramoLado) g = GiroCostas;  // ramo: A/D no 4º golpe
+            }
             Begin(g, false, i + 1);
         }
 
@@ -214,17 +262,25 @@ namespace FaithClash.Combat
                 return;
             }
             if (Time.time - lastAttackEnd > comboWindow) comboIndex = 0;
-            if (EmEspada) { Begin(PesadoEspada, true, 0); return; }
-            if (controller.IsSprinting && controller.Velocity.sqrMagnitude > 16f) { Begin(ChuteGiratorioPesado, true, 0); return; }
+            if (EmEspada)
+            {
+                if (ComboCount >= 6) { Begin(EspadaDupla, true, 0); return; }          // muitos acertos: combo duplo
+                if (ramoLado) { Begin(EspadaGiro, true, 0); return; }
+                if (ramoS) { Begin(EspadaCombo1, true, 0); return; }
+                Begin(PesadoEspada, true, 0);
+                return;
+            }
+            if (controller.IsSprinting && controller.Velocity.sqrMagnitude > 16f) { Begin(comboIndex > 0 ? SaltoMixamo : ChuteGiratorioPesado, true, 0); return; }
+            if (ComboCount >= 8) { Begin(FinalizadorSuper, true, 0); return; }          // 8+ acertos seguidos: finalizador
             if (ramoLado) { Begin(ChuteLado, true, 0); return; }       // ramo: A/D + segurar = chute lateral
             if (ramoS) { Begin(ChuteCostas, true, 0); return; }         // ramo: S + segurar = chute para trás
-            var pesados = PesadosCombate;
+            var pesados = new[] { PesadosCombate[0], Finalizador1, Finalizador2, comboIndex >= 4 ? FinalizadorCombo : PesadosCombate[3] };
             Begin(pesados[Mathf.Min(comboIndex, pesados.Length - 1)], true, 0);
         }
 
         void Begin(Golpe a, bool isHeavy, int step)
         {
-            current = a; heavy = isHeavy; attacking = true; impactDone = false; attackTimer = 0f; queuedLight = false; queuedHeavy = false;
+            current = a; heavy = isHeavy; attacking = true; impactDone = false; hitIndex = 0; attackTimer = 0f; queuedLight = false; queuedHeavy = false;
             currentStep = step; callbackImpacto = null;
             float escala = AjustaMira(a, out float falta);
             if (animador != null) { animador.Acao(a.clip, a.Duracao, 0.06f, a.vel, a.espelho); animador.EscalarMovimento(escala); }
@@ -239,7 +295,8 @@ namespace FaithClash.Combat
             if (attacking) return false;
             var todos = new List<Golpe>();
             todos.AddRange(CombosEspada); todos.AddRange(CadeiaCombate); todos.AddRange(PesadosCombate);
-            todos.AddRange(new[] { PesadoEspada, CorridaEspada, ChuteBaixo, GiroCostas, ChuteLado, ChuteCostas, ChuteGiratorioPesado, JoelhadaVoadora });
+            todos.AddRange(new[] { PesadoEspada, CorridaEspada, ChuteBaixo, GiroCostas, ChuteLado, ChuteCostas, ChuteGiratorioPesado, JoelhadaVoadora, Finalizador1, Finalizador2, FinalizadorCombo, FinalizadorSuper, VoadoraMixamo, SaltoMixamo, EspadaCombo1, EspadaCombo2, EspadaDupla, EspadaGiro, EspadaSaltoMx });
+            foreach (var c in new[] { CadeiaChutes, CadeiaCapoeira, CadeiaMuay }) todos.AddRange(c);
             foreach (var g in todos)
                 if (g.clip == clip) { Begin(g, false, 1); return true; }
             return false;
@@ -250,7 +307,7 @@ namespace FaithClash.Combat
         {
             if (attacking || controller.IsBusy || controller.Atordoado) return false;
             current = new Golpe(clip, 0, duracao, impacto, 0f, 0f, 0f);
-            heavy = false; attacking = true; impactDone = false; attackTimer = 0f; queuedLight = false; queuedHeavy = false; currentStep = 99;
+            heavy = false; attacking = true; impactDone = false; hitIndex = 0; attackTimer = 0f; queuedLight = false; queuedHeavy = false; currentStep = 99;
             callbackImpacto = noImpacto;
             AjustaMira(current, out _);
             animador?.Acao(clip, duracao);
@@ -315,17 +372,36 @@ namespace FaithClash.Combat
 
             // o impacto sai quando a ANIMAÇÃO chega no quadro do golpe (lê o tempo real do Animator; o cronômetro é só reserva)
             float tReal = animador != null ? animador.TempoDoClipe(current.clip, attackTimer) : attackTimer;
-            if (!impactDone && tReal >= current.impacto / current.vel)
+            if (!impactDone)
             {
-                impactDone = true;
-                bool acertou = current.raio > 0f && ResolveHit();
-                if (callbackImpacto != null) callbackImpacto();
-                else AttackImpact?.Invoke(currentStep, acertou);
+                var imps = current.impactos;
+                if (callbackImpacto != null || imps.Length < 2)
+                {
+                    if (tReal >= current.impacto / current.vel)
+                    {
+                        impactDone = true;
+                        bool acertou = current.raio > 0f && ResolveHit();
+                        if (callbackImpacto != null) callbackImpacto();
+                        else AttackImpact?.Invoke(currentStep, acertou);
+                    }
+                }
+                else   // golpe de vários acertos (combos do Mixamo): cada impacto no seu quadro, o dano se divide entre eles
+                {
+                    while (hitIndex < imps.Length && tReal >= imps[hitIndex] / current.vel)
+                    {
+                        bool ultimo = hitIndex == imps.Length - 1;
+                        bool acertou = ResolveHit(1f / imps.Length);
+                        if (hitIndex > 0 && acertou) SomImpacto();
+                        hitIndex++;
+                        if (ultimo) { impactDone = true; AttackImpact?.Invoke(currentStep, acertou); }
+                    }
+                }
             }
 
             float fim = current.Duracao;
             // cancelamento: depois do impacto o próximo golpe pode sair antes da recuperação acabar (combo fluido)
-            float janela = current.impacto / current.vel + (fim - current.impacto / current.vel) * 0.4f;
+            float ultimoImp = (current.impactos.Length > 0 ? current.impactos[current.impactos.Length - 1] : current.impacto) / current.vel;
+            float janela = ultimoImp + (fim - ultimoImp) * 0.4f;
             bool encadeia = (queuedLight || queuedHeavy) && impactDone && attackTimer >= janela && callbackImpacto == null;
             if (attackTimer >= fim || encadeia)
             {
@@ -338,7 +414,7 @@ namespace FaithClash.Combat
             }
         }
 
-        bool ResolveHit()
+        bool ResolveHit(float fatorDano = 1f)
         {
             Vector3 center = transform.position + Vector3.up + transform.forward * (current.alcance * 0.6f);
             bool any = false;
@@ -348,7 +424,7 @@ namespace FaithClash.Combat
                 if (col.transform.IsChildOf(transform)) continue;
                 var target = col.GetComponentInParent<IDamageable>();
                 if (target == null || target.IsDead) continue;
-                float dano = current.dano * DamageMultiplier;
+                float dano = current.dano * DamageMultiplier * fatorDano;
                 ponto = col.ClosestPoint(center);
                 target.TakeDamage(dano, ponto, gameObject);
                 var boneco = col.GetComponentInParent<TrainingDummy>();
@@ -362,6 +438,7 @@ namespace FaithClash.Combat
                 SomImpacto();
                 TremorGlobal.Disparar(heavy ? 1.2f : 0.55f);
                 Faiscas(ponto);
+                CatalogoVFX.Tocar(EmEspada ? "impacto_espada" : heavy ? "impacto_forte" : "impacto_leve", ponto, Quaternion.LookRotation(-transform.forward), null, heavy ? 1.2f : 0.8f, 2f);
                 float parar = heavy ? 0.09f : 0.05f;
                 pausaAte = Time.time + parar;
                 animador?.Pausar(parar);
@@ -393,7 +470,7 @@ namespace FaithClash.Combat
             }
             else
             {
-                bool chute = a.clip.StartsWith("Chute") || a.clip.StartsWith("Voadora") || a.clip == "Joelhada" || a.clip == "GiroCostas";
+                bool chute = a.clip.Contains("Kick") || a.clip.Contains("Knee") || a.clip.Contains("Armada") || a.clip.Contains("Meia") || a.clip.Contains("Martelo") || a.clip.StartsWith("Chute") || a.clip.StartsWith("Voadora") || a.clip == "Joelhada" || a.clip == "GiroCostas";
                 string n = heavy ? "Soco_Forte" : SomSoco[Mathf.Clamp(step - 1, 0, 2)];
                 SomJogo.Tocar(n, p, heavy ? 0.9f : 0.75f, chute ? 0.8f : 1f, 0.05f, atraso: atraso);
             }

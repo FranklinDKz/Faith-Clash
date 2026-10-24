@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 3083889153162093829}
   - component: {fileID: 1433650390354577098}
   - component: {fileID: 7083605705809450138}
+  - component: {fileID: 2645506605063077145}
   m_Layer: 0
   m_Name: Jogador
   m_TagString: Untagged
@@ -231,6 +232,136 @@ MonoBehaviour:
   m_EditorClassIdentifier: FaithClash.Runtime::FaithClash.Combat.ModoCombate
   katana: {fileID: 0}
   atrasoKatana: 0.45
+--- !u!114 &2645506605063077145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2145148289578216711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5268a5743877c74aac6665d3469ce28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FaithClash.Runtime::FaithClash.Core.CatalogoVFX
+  itens:
+  - chave: impacto_leve
+    prefab: {fileID: 1429954232896169633, guid: 83036083a4ebcd34f98131bd3cf6f4d2, type: 3}
+    escala: 1
+  - chave: impacto_forte
+    prefab: {fileID: 119183615461286708, guid: 141e1779869c79845bd243610f187f47, type: 3}
+    escala: 1
+  - chave: impacto_espada
+    prefab: {fileID: 8525990746615576120, guid: b85d21f3b8fed714bacf0c4fd50fa512, type: 3}
+    escala: 1
+  - chave: impacto_fogo
+    prefab: {fileID: 2504214343621411470, guid: 3ed0d324122d7b24eaec75c55c74aafc, type: 3}
+    escala: 1
+  - chave: impacto_gelo
+    prefab: {fileID: 5112403345868107898, guid: 6f34ef0d986e9db4199cf75805f79753, type: 3}
+    escala: 1
+  - chave: impacto_raio
+    prefab: {fileID: 1141330259687333427, guid: 6718dc24203da53468af9ada8fef7d6d, type: 3}
+    escala: 1
+  - chave: corte_vermelho
+    prefab: {fileID: 8145502431507700120, guid: 000832214335ffd4782827d2a4510f4a, type: 3}
+    escala: 1
+  - chave: corte_azul
+    prefab: {fileID: 3367314013316085171, guid: 8b20002c2b69a9d44ab5bae8e1d923cd, type: 3}
+    escala: 1
+  - chave: corte_area
+    prefab: {fileID: 689667626583958020, guid: 1336648bc1d8baf46a4515860950c9d4, type: 3}
+    escala: 1
+  - chave: fogo_sopro
+    prefab: {fileID: 8764043878647920493, guid: c4ed38c72957f2241ad144a1614956d9, type: 3}
+    escala: 1
+  - chave: fogo_grande
+    prefab: {fileID: 8829451551789304542, guid: e91fa0fac941e714e8c4d5709097019f, type: 3}
+    escala: 1
+  - chave: fogo_explosao
+    prefab: {fileID: 8194992990867289339, guid: 99bc28c0d45f51c4fbac01080b73edc7, type: 3}
+    escala: 1
+  - chave: fogo_chao
+    prefab: {fileID: 1255053967005034563, guid: 2ee7574cb1211da4ba89d1838327b5c4, type: 3}
+    escala: 1
+  - chave: agua_splash
+    prefab: {fileID: 8205706795460263314, guid: 326e86d5729c54e479798cacab220bb2, type: 3}
+    escala: 1.5
+  - chave: agua_ondas
+    prefab: {fileID: 5137123306192418792, guid: 5a8d99fb95262ea458a7b580f2a1611c, type: 3}
+    escala: 1.5
+  - chave: agua_trilha
+    prefab: {fileID: 1826059589380599827, guid: 07a0367c119e4ca408ec23af0e377799, type: 3}
+    escala: 1
+  - chave: terra_pedras
+    prefab: {fileID: 1758473627833946668, guid: 9b21333b068a5084ba09535839bee3c8, type: 3}
+    escala: 1
+  - chave: terra_corte
+    prefab: {fileID: 3153472991145048103, guid: 3407e378c048bb5438424b28c7740b48, type: 3}
+    escala: 1
+  - chave: terra_explosao
+    prefab: {fileID: 4994997792314849709, guid: 3dd50886582244645be87adb42aa8528, type: 3}
+    escala: 1
+  - chave: vento_fumaca
+    prefab: {fileID: 6526302276393259002, guid: f9d9793366789ae48a7e1b0692763acc, type: 3}
+    escala: 1
+  - chave: vento_faiscas
+    prefab: {fileID: 8500920156052182585, guid: 830e92a3f95c4b04caf8edd648aed9bd, type: 3}
+    escala: 1
+  - chave: raio_corte
+    prefab: {fileID: 1171201465392465800, guid: 4aa9f30a28a77224ba84b2a2c334c71b, type: 3}
+    escala: 1
+  - chave: raio_aura
+    prefab: {fileID: 7131401307255788800, guid: 4d9a3b35b3bc07649b697df7fb497b6d, type: 3}
+    escala: 1
+  - chave: roxo_circulo
+    prefab: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
+    escala: 1
+  - chave: roxo_portal
+    prefab: {fileID: 4617036660772024948, guid: 52c7d057cba585641bb68312c10d7791, type: 3}
+    escala: 1
+  - chave: azul_portal
+    prefab: {fileID: 5607819269926399345, guid: 45e0f06c750176947862c10346226439, type: 3}
+    escala: 1
+  - chave: azul_plexus
+    prefab: {fileID: 8974203713140315807, guid: 709b0bd6b0b625249a98409dd7a87343, type: 3}
+    escala: 1
+  - chave: poder_aura
+    prefab: {fileID: 7155335147208632822, guid: 97c43495f80a3244fad1301dfafbe252, type: 3}
+    escala: 1
+  - chave: poder_estrela
+    prefab: {fileID: 7053385775836331393, guid: 354b6251e950209409c75ab984acf000, type: 3}
+    escala: 1
+  - chave: cura_circulo
+    prefab: {fileID: 7986504087968017091, guid: 12a56ee4630040c4eb17ae9707ed4cef, type: 3}
+    escala: 1
+  - chave: meditar
+    prefab: {fileID: 100004, guid: d9751637d4fc2de40a234b45e10cb88d, type: 3}
+    escala: 1
+  - chave: escudo
+    prefab: {fileID: 1289543790355709915, guid: b99922c2f59b1a542bdd06ae8bee47ae, type: 3}
+    escala: 1
+  - chave: teleporte
+    prefab: {fileID: 7761031033666763820, guid: 1eb833340b41fb444b576c4dced8d4dc, type: 3}
+    escala: 1
+  - chave: poeira
+    prefab: {fileID: 5610010966355794069, guid: 803ecf87f61d9fb4f84ba6319ba95c9c, type: 3}
+    escala: 1
+  - chave: poeira_chao
+    prefab: {fileID: 8230022441722461589, guid: 41494896fc96c9748b81d3356632794e, type: 3}
+    escala: 1
+  - chave: explosao_vermelha
+    prefab: {fileID: 8378648546881499446, guid: 867c572a5be680d42a042d2349f10143, type: 3}
+    escala: 1
+  - chave: meteoros
+    prefab: {fileID: 7957833072274404953, guid: 3355f6bfa6db8b24281b827de929694c, type: 3}
+    escala: 1
+  - chave: laser_area
+    prefab: {fileID: 7478731271839673279, guid: 4d3c8045dd8857a4b8d34c2361c61045, type: 3}
+    escala: 1
+  - chave: congelar
+    prefab: {fileID: 4932088507883938021, guid: 0e5709a7ddb77924090c112cf73bb98a, type: 3}
+    escala: 1
 --- !u!1001 &414821021413526421
 PrefabInstance:
   m_ObjectHideFlags: 0

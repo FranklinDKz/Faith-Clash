@@ -13,6 +13,7 @@ namespace FaithClash.Combat
             public Color cor;
             public float velocidade, duracao, dano, empurrao, tamanho, raioImpacto;
             public bool serpentear, explodir, puxar;
+            public string vfxRastro, vfxExplosao;   // chaves do CatalogoVFX (efeitos prontos)
             public int particulas;
         }
 
@@ -50,6 +51,7 @@ namespace FaithClash.Combat
             luz.range = 6f * o.tamanho;
             luz.intensity = 4f;
             Destroy(rastro.gameObject, o.duracao + 1f);
+            if (!string.IsNullOrEmpty(o.vfxRastro)) CatalogoVFX.Tocar(o.vfxRastro, transform.position, transform.rotation, transform, 1f + o.tamanho * 0.3f, o.duracao + 1f);
         }
 
         void Update()
@@ -87,6 +89,7 @@ namespace FaithClash.Combat
                 return;
             }
             h.TakeDamage(o.dano, col.ClosestPoint(transform.position), dono != null ? dono.gameObject : null);
+            if (!string.IsNullOrEmpty(o.vfxExplosao)) CatalogoVFX.Tocar(o.vfxExplosao, col.ClosestPoint(transform.position), Quaternion.identity, null, 1f, 2.5f);
             var boneco = col.GetComponentInParent<TrainingDummy>();
             if (boneco != null)
                 boneco.Empurrar(o.puxar ? (transform.position - boneco.transform.position).normalized * o.empurrao : dirBase * o.empurrao);
@@ -97,6 +100,7 @@ namespace FaithClash.Combat
         void Explodir(Vector3 pos)
         {
             float raio = o.raioImpacto > 0f ? o.raioImpacto : 3f;
+            if (!string.IsNullOrEmpty(o.vfxExplosao)) CatalogoVFX.Tocar(o.vfxExplosao, pos, Quaternion.identity, null, 1f + raio * 0.25f, 3f);
             Efeitos.Rajada(pos, Quaternion.identity, o.cor, 150, new Vector2(4, 12), new Vector2(0.3f, 0.8f) * o.tamanho, new Vector2(0.4f, 0.9f), raio: 0.5f, gravidade: -0.3f);
             Efeitos.Clarao(pos, o.cor, 12f, 14f, 0.6f);
             foreach (var col in Physics.OverlapSphere(pos, raio, ~0, QueryTriggerInteraction.Ignore))

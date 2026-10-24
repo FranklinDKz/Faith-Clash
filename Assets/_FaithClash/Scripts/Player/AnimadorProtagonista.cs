@@ -96,7 +96,7 @@ namespace FaithClash.Player
             estadoAtual = estado;
             if (movimento != null)
             {
-                movimento.Ativo = EstadosComMovimento.Contains(estado);
+                movimento.Ativo = EstadosComMovimento.Contains(estado) || estado.StartsWith("Mx_");
                 movimento.Escala = 1f;
             }
         }
@@ -167,6 +167,7 @@ namespace FaithClash.Player
                 SomJogo.Tocar("Passos_Andar", p, 0.8f, 0.8f, inicio: 0.5f, duracaoMax: 0.35f);
                 SomJogo.Tocar("Soco_Forte", p, 0.35f, 0.6f);
                 Poeira(p, 40, 3f);
+                CatalogoVFX.Tocar("poeira_chao", p, Quaternion.identity, null, 1.2f, 3f);
                 TremorGlobal.Disparar(0.7f);
             }
             else

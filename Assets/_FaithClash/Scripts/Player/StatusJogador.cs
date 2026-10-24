@@ -40,6 +40,7 @@ namespace FaithClash.Player
         PlayerController controle;
         ParticleSystem auraMeditacao;
         float furiaAte, proximoGesto;
+        GameObject vfxMeditar;
         int acertosAcumulados;
         GameObject lanterna;
 
@@ -136,6 +137,8 @@ namespace FaithClash.Player
                 proximoGesto = 0f;
                 SomJogo.Tocar("Poder_Ativar", transform.position, 0.45f, 0.7f, duracaoMax: 1.4f);
                 CriarAuraMeditacao();
+                vfxMeditar = CatalogoVFX.Tocar("meditar", transform.position, Quaternion.identity, transform, 1f, 120f);
+                CatalogoVFX.Tocar("cura_circulo", transform.position, Quaternion.identity, null, 1f, 4f);
             }
 
             bool moveu = k.wKey.isPressed || k.aKey.isPressed || k.sKey.isPressed || k.dKey.isPressed || k.spaceKey.isPressed
@@ -161,6 +164,7 @@ namespace FaithClash.Player
         {
             if (!Meditando) return;
             Meditando = false;
+            if (vfxMeditar != null) Destroy(vfxMeditar);
             if (auraMeditacao != null) { auraMeditacao.Stop(true, ParticleSystemStopBehavior.StopEmitting); Destroy(auraMeditacao.gameObject, 2f); auraMeditacao = null; }
             if (levantar) animador?.Acao("MeditarSair", 0.9f, 0.2f, 1.15f);
             else animador?.Encerrar(0.25f);

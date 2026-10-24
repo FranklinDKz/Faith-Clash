@@ -36,16 +36,18 @@ Inspirações: Jujutsu Kaisen, Naruto, Dragon Ball Z, Naraka: Bladepoint, Elden 
 | Mover | WASD | Analógico esquerdo |
 | Câmera | Mouse | Analógico direito |
 | Correr rápido (sprint) | Shift (segurar) | Clique no analógico esquerdo |
-| Pular / corrida na parede (sprint + pulo contra a parede) | Espaço | A / X |
+| Pular (segurar = pulo mais alto; solta cedo = pulo curto) | Espaço | A / X |
 | **Dash para frente** | **C** | RB / R1 |
-| **Rolamento** (parado) / **Deslize** (correndo) | Ctrl | B / Bolinha |
-| **Golpe leve** (combo de 4) | Clique esquerdo | X / Quadrado |
-| **Golpe pesado** | **Segurar** o clique esquerdo | Y / Triângulo |
+| **Rolamento** (esquiva; cancela o golpe) | Ctrl | B / Bolinha |
+| **Golpe leve** (combo) / técnica leve no modo Poder | Clique esquerdo | X / Quadrado |
+| **Golpe pesado** / técnica forte no modo Poder | **Segurar** o clique esquerdo | Y / Triângulo |
 | **Defender** | Botão direito (segurar) | LT / L2 |
-| Ataque correndo (espada) | Shift + clique esquerdo | — |
+| Joelhada voadora (modo Combate) | Shift + clique esquerdo | — |
 | **Travar no alvo** / trocar de alvo / soltar (segurar) | Q | Clique no analógico direito |
 | Trocar de alvo | Roda do mouse | — |
 | **Espada ⇄ Poder** | G | — |
+| **Só combate** (sem espada nem poderes; de novo volta ao modo anterior) | **5** | — |
+| **Meditar** (segurar: recupera Fé; qualquer movimento interrompe) | **E** | — |
 | Estilo Fogo / Água / Terra / Ar (entra no modo Poder) | 1 / 2 / 3 / 4 | — |
 | **Habilidade do estilo** (gesto + jutsu) | F | — |
 | Roxo (gasta carga espiritual) | R | — |
@@ -54,12 +56,17 @@ Inspirações: Jujutsu Kaisen, Naruto, Dragon Ball Z, Naraka: Bladepoint, Elden 
 | Zerar estatísticas / Reiniciar | T / F5 | — |
 | Mostrar / esconder o mouse | ' (aspas) | — |
 
-As teclas seguem o esquema do Naraka: Bladepoint (clique = leve, segurar = pesado, botão direito = defesa, Shift = sprint, Espaço = pulo/corrida na parede).
+As teclas seguem o esquema do Naraka: Bladepoint (clique = leve, segurar = pesado, botão direito = defesa, Shift = sprint, Espaço = pulo).
 Teclas que o Naraka usa para outras coisas (itens, habilidades) ficam em Z X B V, F e R. Para mudar, edite `PlayerController`, `MeleeCombat` e `EstilosElementais`.
 
-**Dois modos de combate que não se misturam:**
-- **Espada (katana):** só corta. Combo de 4 cortes, golpe pesado com salto e ataque correndo.
-- **Poder:** socos e chutes (estilo Naruto) + jutsus (Katon, Suiton, Doton, Fuuton) no 3º e 4º golpe ou na tecla F, e técnicas amaldiçoadas (Azul, Roxo, Faísca Negra) inspiradas em Jujutsu Kaisen. Cada jutsu tem seu gesto (animação) e seu som.
+**Três modos de combate que não se misturam:**
+- **Combate (tecla 5):** só taijutsu, sem espada nem poderes. Clique = cadeia **Jab → Direto → Gancho → Chute lateral**; **S** no 3º golpe vira Chute baixo, **A/D** no 4º vira Giro de costas.
+  Segurar o clique dá um golpe forte que muda conforme o ponto da cadeia: **Uppercut** (sozinho), **Cotovelada** (após 1), **Joelhada** (após 2), **Chute machado** (após 3 ou mais).
+  Correndo, o clique solta a Joelhada voadora e segurar solta o Chute giratório. Os golpes fortes têm chance de Faísca Negra (Kokusen). O golpe seguinte pode sair logo depois do impacto (cancelamento), e o Ctrl ou o C cancelam o golpe.
+- **Espada (katana, tecla G):** só corta. Combo de 4 cortes e golpe pesado com salto.
+- **Poder (teclas 1–4):** jutsus de Naruto e técnicas de Jujutsu Kaisen, **sem socos nem chutes**. Clique = técnica leve do estilo, segurar = técnica forte, F = habilidade do estilo, R = Roxo. Cada técnica tem o próprio gesto (animação) e som e gasta Fé.
+
+**Meditar (E):** segure parado para recuperar Fé bem mais rápido (aura azul). Mover, pular, atacar ou levar dano interrompe.
 
 Sem alvo travado há uma assistência leve de mira nos ataques. Com alvo travado (Q) o personagem encara o inimigo e cada golpe avança só o necessário para alcançá-lo.
 

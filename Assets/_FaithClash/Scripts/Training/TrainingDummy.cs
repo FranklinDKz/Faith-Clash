@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using FaithClash.Combat;
 using FaithClash.Core;
 
 namespace FaithClash.Training
@@ -83,9 +84,11 @@ namespace FaithClash.Training
         void OnDamaged(float amount, Vector3 point, GameObject source)
         {
             if (TrainingManager.Instance != null) TrainingManager.Instance.RegisterDamage(amount);
+            NumeroDano.Criar(transform.position + Vector3.up * 1.8f, amount, amount >= 40f ? new Color(1f, 0.35f, 0.2f) : amount >= 18f ? new Color(1f, 0.8f, 0.3f) : Color.white);
             if (health.IsDead) return;
+            Vector3 dirGolpe = source != null ? Vector3.ProjectOnPlane(transform.position - source.transform.position, Vector3.up).normalized : Vector3.zero;
             StopAllCoroutines();
-            StartCoroutine(Flash());
+            StartCoroutine(Flash(dirGolpe));
         }
 
         void OnDied()
@@ -94,11 +97,16 @@ namespace FaithClash.Training
             StartCoroutine(Respawn());
         }
 
-        IEnumerator Flash()
+        IEnumerator Flash(Vector3 dirGolpe)
         {
             SetColor(Color.white);
             transform.localScale = new Vector3(1.1f, 0.95f, 1.1f);
+            // balança para longe do golpe e volta (reação ao impacto)
+            transform.rotation = Quaternion.Euler(dirGolpe.z * 10f, 0f, -dirGolpe.x * 10f);
             yield return new WaitForSeconds(0.1f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.identity, 0.6f);
+            yield return new WaitForSeconds(0.05f);
+            transform.rotation = Quaternion.identity;
             transform.localScale = Vector3.one;
             SetColor(baseColor);
         }

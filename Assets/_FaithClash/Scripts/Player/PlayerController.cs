@@ -6,8 +6,7 @@ namespace FaithClash.Player
 {
     /// <summary>
     /// Movimento do jogador (controles no estilo Naraka: Bladepoint):
-    /// WASD move, Shift corre (sprint), Espaço pula, C dá dash para frente, Ctrl desliza.
-    /// Pular contra uma parede em sprint inicia a corrida na parede.
+    /// WASD move, Shift corre (sprint), Espaço pula (segurar = pulo mais alto), C dá dash para frente, Ctrl rola.
     /// Física: CharacterController com colisão, gravidade, degraus, rampas e aderência ao chão.
     /// </summary>
     [RequireComponent(typeof(CharacterController))]
@@ -18,8 +17,11 @@ namespace FaithClash.Player
         [SerializeField] float sprintSpeed = 9f;
         [SerializeField] float turnSpeed = 14f;
         [SerializeField] float aceleracao = 38f;
-        [SerializeField] float jumpHeight = 1.4f;
-        [SerializeField] float gravity = -30f;
+        [SerializeField] float jumpHeight = 1.5f;
+        [SerializeField] float gravity = -26f;
+        [SerializeField] float multiplicadorQueda = 1.45f;     // cai mais rápido do que sobe (peso)
+        [SerializeField] float multiplicadorPuloCurto = 2.2f;  // soltar o Espaço cedo corta o pulo
+        [SerializeField] float controleNoAr = 0.45f;
         [SerializeField] float velocidadeTerminal = -45f;
         [SerializeField] float tempoCoiote = 0.12f;
         [SerializeField] float bufferPulo = 0.12f;
@@ -30,35 +32,30 @@ namespace FaithClash.Player
         [SerializeField] float dashTime = 0.3f;
         [SerializeField] float dashCooldown = 0.9f;
 
-        [Header("Deslize (Ctrl)")]
-        [SerializeField] float slideSpeed = 11f;
-        [SerializeField] float slideTime = 0.6f;
+        [Header("Rolamento (Ctrl)")]
         [SerializeField] float slideCooldown = 0.7f;
         [SerializeField] float rollSpeed = 6.5f;
         [SerializeField] float rollTime = 0.8f;
-
-        [Header("Corrida na parede")]
-        [SerializeField] float wallCheckDistance = 1.1f;
-        [SerializeField] float wallRunTime = 0.9f;
 
         [Header("Animação")]
         [SerializeField] AnimadorProtagonista animador;
 
         CharacterController cc;
         TravaAlvo trava;
+        MeleeCombat combate;
         Transform cam;
-        float verticalVelocity, tempoNoChao, ultimoNoChao, tempoNoAr, ultimoTempoNoAr, pularEm = -10f;
-        float dashTimer, dashReady, slideTimer, slideReady, wallTimer;
+        float verticalVelocity, tempoNoChao, ultimoNoChao, tempoNoAr, ultimoTempoNoAr, pularEm = -10f, apiceY;
+        float dashTimer, dashReady, slideTimer, slideReady, atordoadoAte, avancoAte, avancoVel;
+        Vector3 avancoDir;
         Vector3 burstDir, velHoriz;
-        bool rolando;
         bool noChaoAntes = true;
         float alturaOriginal;
         Vector3 centroOriginal;
 
         public bool IsDashing => dashTimer > 0f;
         public bool IsDodging => slideTimer > 0f;
-        public bool IsWallRunning => wallTimer > 0f;
-        public bool IsBusy => IsDodging || IsDashing || wallTimer > 0f;
+        public bool IsBusy => IsDodging || IsDashing;
+        public bool Atordoado => Time.time < atordoadoAte;
         /// <summary>Chão sólido sob o personagem (com tolerância de "coiote").</summary>
         public bool IsGrounded => cc.isGrounded || (Time.time - ultimoNoChao) < 0.05f;
         public bool IsSprinting { get; private set; }
@@ -68,6 +65,19 @@ namespace FaithClash.Player
         /// <summary>Definido pelo combate para reduzir a velocidade ao atacar ou defender.</summary>
         public float MoveMultiplier { get; set; } = 1f;
 
+        /// <summary>Prende o personagem no lugar (pouso pesado, itens, gestos de poder).</summary>
+        /// <summary>Passo à frente durante o golpe (o taijutsu fecha a distância até o inimigo): anda <paramref name="distancia"/> metros em <paramref name="tempo"/> s.</summary>
+        public void Avancar(Vector3 direcao, float distancia, float tempo)
+        {
+            if (distancia <= 0.01f || tempo <= 0.01f) return;
+            direcao.y = 0f;
+            avancoDir = direcao.normalized;
+            avancoVel = distancia / tempo;
+            avancoAte = Time.time + tempo;
+        }
+
+        public void Atordoar(float segundos) => atordoadoAte = Mathf.Max(atordoadoAte, Time.time + segundos);
+
         public event System.Action Dashed;
         public event System.Action Pulou;
         public event System.Action<float> Aterrissou;
@@ -76,6 +86,7 @@ namespace FaithClash.Player
         {
             cc = GetComponent<CharacterController>();
             trava = GetComponent<TravaAlvo>();
+            combate = GetComponent<MeleeCombat>();
             cam = Camera.main != null ? Camera.main.transform : null;
             alturaOriginal = cc.height;
             centroOriginal = cc.center;
@@ -92,7 +103,7 @@ namespace FaithClash.Player
             bool noChao = cc.isGrounded;
             if (noChao) { ultimoNoChao = Time.time; tempoNoAr = 0f; } else tempoNoAr += Time.deltaTime;
 
-            Vector2 input = cursorPreso ? ReadMove() : Vector2.zero;
+            Vector2 input = cursorPreso && !Atordoado ? ReadMove() : Vector2.zero;
             bool sprint = cursorPreso && ((Keyboard.current != null && Keyboard.current.leftShiftKey.isPressed)
                        || (Gamepad.current != null && Gamepad.current.leftStickButton.isPressed));
 
@@ -113,22 +124,22 @@ namespace FaithClash.Player
                 dashTimer = dashTime;
                 dashReady = Time.time + dashCooldown;
                 transform.rotation = Quaternion.LookRotation(burstDir);
+                combate?.Cancelar();   // o dash cancela o golpe (esquiva estilo Naraka)
                 animador?.Acao("Dash", 0.5f, 0.04f);
                 Dashed?.Invoke();
             }
 
-            // ---------- deslize (Ctrl)
-            if (cursorPreso && WasSlidePressed() && Time.time >= slideReady && !IsBusy && noChao)
+            // ---------- rolamento (Ctrl): esquiva no chão, cancela o golpe
+            if (cursorPreso && WasSlidePressed() && Time.time >= slideReady && !IsBusy && noChao && !Atordoado)
             {
                 burstDir = wish.sqrMagnitude > 0.01f ? new Vector3(wish.x, 0, wish.z).normalized : transform.forward;
-                rolando = !(sprint && wish.sqrMagnitude > 0.05f);   // parado/andando: rolamento; correndo: deslize
-                slideTimer = rolando ? rollTime : slideTime;
+                slideTimer = rollTime;
                 slideReady = Time.time + slideCooldown;
                 transform.rotation = Quaternion.LookRotation(burstDir);
-                animador?.Acao(rolando ? "Rolamento" : "Deslizar", rolando ? 1.3f : 1.2f, 0.05f);
-                DefineAltura(rolando ? 1.1f : 1.0f);
+                combate?.Cancelar();
+                animador?.Acao("Rolamento", 1.3f, 0.05f);
+                DefineAltura(1.1f);
             }
-
             Vector3 alvoHoriz;
             if (IsDashing)
             {
@@ -139,8 +150,7 @@ namespace FaithClash.Player
             else if (IsDodging)
             {
                 slideTimer -= Time.deltaTime;
-                float tot = rolando ? rollTime : slideTime;
-                alvoHoriz = burstDir * ((rolando ? rollSpeed : slideSpeed) * Mathf.Lerp(0.4f, 1f, slideTimer / tot));
+                alvoHoriz = burstDir * (rollSpeed * Mathf.Lerp(0.4f, 1f, slideTimer / rollTime));
                 velHoriz = alvoHoriz;
                 if (slideTimer <= 0f) DefineAltura(alturaOriginal);
             }
@@ -150,57 +160,51 @@ namespace FaithClash.Player
                 float vel = (IsSprinting ? sprintSpeed : runSpeed) * MoveMultiplier;
                 alvoHoriz = wish * vel;
                 // aceleração suave (sem "patinar" nem parar bruscamente)
-                float a = (noChao ? aceleracao : aceleracao * 0.35f) * Time.deltaTime;
+                float a = (noChao ? aceleracao : aceleracao * controleNoAr) * Time.deltaTime;
                 velHoriz = Vector3.MoveTowards(velHoriz, alvoHoriz, a);
                 AtualizaRotacao(wish);
                 if (animador != null) animador.Sprint = IsSprinting;
             }
 
-            // ---------- pulo (com buffer e tempo de coiote) e corrida na parede
-            if (cursorPreso && WasJumpPressed()) pularEm = Time.time;
+            // ---------- pulo (com buffer e tempo de coiote); segurar o Espaço = mais alto
+            if (cursorPreso && !Atordoado && WasJumpPressed()) pularEm = Time.time;
             bool podePular = noChao || (Time.time - ultimoNoChao) < tempoCoiote;
-            if (Time.time - pularEm < bufferPulo && !IsBusy)
+            if (Time.time - pularEm < bufferPulo && !IsBusy && podePular)
             {
-                if (IsSprinting && ParedeAFrente())
-                {
-                    wallTimer = wallRunTime;
-                    pularEm = -10f;
-                    animador?.Acao("CorridaParede", 0.95f, 0.08f);
-                }
-                else if (podePular)
-                {
-                    verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
-                    ultimoNoChao = -10f;
-                    pularEm = -10f;
-                    animador?.Pulou();
-                    Pulou?.Invoke();
-                    noChao = false;
-                }
+                verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                ultimoNoChao = -10f;
+                pularEm = -10f;
+                combate?.Cancelar();
+                animador?.Pulou();
+                Pulou?.Invoke();
+                noChao = false;
             }
 
-            if (wallTimer > 0f)
-            {
-                wallTimer -= Time.deltaTime;
-                verticalVelocity = Mathf.Lerp(5f, 0.5f, 1f - wallTimer / wallRunTime);
-                velHoriz = transform.forward * 1.2f;
-            }
-            else if (IsDashing)
+            bool segurandoPulo = cursorPreso && ((Keyboard.current != null && Keyboard.current.spaceKey.isPressed)
+                                 || (Gamepad.current != null && Gamepad.current.buttonSouth.isPressed));
+            if (IsDashing)
                 verticalVelocity = Mathf.Max(verticalVelocity, 0f);
             else if (noChao && verticalVelocity <= 0f)
                 verticalVelocity = -4f;   // gruda no chão (desce rampas e degraus sem "quicar")
             else
-                verticalVelocity = Mathf.Max(velocidadeTerminal, verticalVelocity + gravity * Time.deltaTime);
-
-            Velocity = velHoriz + Vector3.up * verticalVelocity;
+            {
+                float g = gravity;
+                if (verticalVelocity < 0f) g *= multiplicadorQueda;
+                else if (!segurandoPulo) g *= multiplicadorPuloCurto;
+                verticalVelocity = Mathf.Max(velocidadeTerminal, verticalVelocity + g * Time.deltaTime);
+            }
+            Vector3 extra = Time.time < avancoAte && !IsBusy ? avancoDir * avancoVel : Vector3.zero;
+            Velocity = velHoriz + extra + Vector3.up * verticalVelocity;
             var flags = cc.Move(Velocity * Time.deltaTime);
             if ((flags & CollisionFlags.Above) != 0 && verticalVelocity > 0f) verticalVelocity = 0f;
 
             bool agoraNoChao = cc.isGrounded;
-            if (!agoraNoChao) ultimoTempoNoAr = tempoNoAr;
+            if (!agoraNoChao) { ultimoTempoNoAr = tempoNoAr; apiceY = Mathf.Max(apiceY, transform.position.y); }
             if (agoraNoChao && !noChaoAntes)
             {
-                if (ultimoTempoNoAr > 0.2f) { animador?.Pousar(ultimoTempoNoAr); Aterrissou?.Invoke(ultimoTempoNoAr); }
+                if (ultimoTempoNoAr > 0.12f) { animador?.Pousar(apiceY - transform.position.y, velHoriz.magnitude); Aterrissou?.Invoke(ultimoTempoNoAr); }
             }
+            if (agoraNoChao) apiceY = transform.position.y;
             noChaoAntes = agoraNoChao;
         }
 
@@ -240,13 +244,6 @@ namespace FaithClash.Player
                 if (paraAlvo.sqrMagnitude > 0.01f)
                     transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(paraAlvo), turnSpeed * 0.6f * Time.deltaTime);
             }
-        }
-
-        bool ParedeAFrente()
-        {
-            Vector3 origem = transform.position + Vector3.up * 1f;
-            return Physics.Raycast(origem, transform.forward, out RaycastHit hit, wallCheckDistance, camadasChao, QueryTriggerInteraction.Ignore)
-                   && Mathf.Abs(Vector3.Dot(hit.normal, Vector3.up)) < 0.3f && !hit.transform.IsChildOf(transform);
         }
 
         static Vector2 ReadMove()

@@ -38,7 +38,7 @@ namespace FaithClash.Player
         void OnAnimatorIK(int camada)
         {
             if (animator == null || !animator.isHuman) return;
-            bool ativo = jogador != null && jogador.IsGrounded && !jogador.IsDashing && !jogador.IsWallRunning;
+            bool ativo = jogador != null && jogador.IsGrounded && !jogador.IsDashing;
             pesoGeral = Mathf.MoveTowards(pesoGeral, ativo ? 1f : 0f, Time.deltaTime * 6f);
 
             var objetivos = new[] { AvatarIKGoal.LeftFoot, AvatarIKGoal.RightFoot };

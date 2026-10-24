@@ -1,4 +1,4 @@
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using FaithClash.Combat;
 using FaithClash.Core;
@@ -6,9 +6,10 @@ using FaithClash.Core;
 namespace FaithClash.Player
 {
     /// <summary>
-    /// Liga o movimento do jogador ao Animator (animações do Mixamo).
-    /// Locomoção em blend trees (poder / espada / de costas), ações por tempo (golpes, dash, pulo, rolamento...),
-    /// pouso conforme a altura da queda, passos sincronizados com a distância andada e morte.
+    /// Liga o movimento do jogador ao Animator (animações do Mixamo e do taijutsu).
+    /// Locomoção em blend trees (poder / espada / de costas), ar em blend tree pela velocidade vertical (subida, topo, queda),
+    /// ações só quando o jogador pede (golpes, dash, pulo, rolamento...), pouso conforme a altura da queda, passos e morte.
+    /// Nada toca "sozinho": parado fica no idle, correndo fica na corrida.
     /// </summary>
     public class AnimadorProtagonista : MonoBehaviour
     {
@@ -17,13 +18,19 @@ namespace FaithClash.Player
 
         static readonly int VelocidadeId = Animator.StringToHash("Velocidade");
         static readonly int EscalaPassadaId = Animator.StringToHash("EscalaPassada");
+        static readonly int VelAcaoId = Animator.StringToHash("VelAcao");
+        static readonly int EspelhoId = Animator.StringToHash("Espelho");
+        static readonly int VelYId = Animator.StringToHash("VelY");
         static readonly int DefesaId = Animator.StringToHash("Defesa");
-        static readonly int PuloArId = Animator.StringToHash("PuloAr");
+        static readonly int NoArId = Animator.StringToHash("NoAr");
 
-        static readonly string[] EstadosComMovimento =
+        // estados em que o deslocamento do clipe (root motion horizontal) move o personagem
+        static readonly HashSet<string> EstadosComMovimento = new HashSet<string>
         {
-            "Corte1", "Corte2", "Corte3", "CorteGiratorio", "EspadaSalto", "AtaqueDeslizante", "AtaqueAereo",
-            "Soco1", "Soco2", "Soco3", "Chute", "ChuteGiratorio", "PousoRolamento",
+            "Corte1", "Corte2", "Corte3", "CorteGiratorio", "EspadaSalto",
+            "Soco1", "Soco2", "Soco3", "Chute", "ChuteGiratorio",
+            "Jab", "Direto", "Gancho", "Uppercut", "Cotovelada", "Joelhada", "ChuteLateral", "ChuteBaixo", "ChuteMachado", "GiroCostas",
+            "PousoRolamento",
         };
         static readonly string[] Mortes = { "MorteTras", "MorteFrente", "MorteQueda", "MorteQuedaFrente", "MorteJoelhos", "MorteEspada" };
 
@@ -36,9 +43,8 @@ namespace FaithClash.Player
         TravaAlvo trava;
         Health vida;
         string estadoLoco = "Locomocao";
-        float acaoAte, velocidade, ultimaMudanca, distanciaPasso, tempoParado;
+        float acaoAte, velocidade, distanciaPasso, pausaAte;
         bool naAcao, noAr, defendendo, morto;
-        Vector3 direcaoAnterior;
         string estadoAtual = "";
 
         public bool Defendendo { get => defendendo; set => defendendo = value; }
@@ -69,15 +75,21 @@ namespace FaithClash.Player
 
         void AoReceberDano(float dano, Vector3 ponto, GameObject origem)
         {
-            if (!morto) Acao("Dano", 0.5f, 0.05f);
+            // reação ao golpe recebido (não interrompe quem está defendendo)
+            if (!morto && !defendendo) Acao("Dano", 0.5f, 0.05f);
         }
 
-        /// <summary>Toca um estado do Animator pelo nome durante a duração informada.</summary>
-        public void Acao(string estado, float duracao, float fade = 0.06f)
+        /// <summary>
+        /// Toca um estado do Animator pelo nome durante a duração informada (em segundos já na velocidade usada).
+        /// <paramref name="velocidade"/> acelera/atrasa o clipe; <paramref name="espelho"/> troca esquerda por direita.
+        /// </summary>
+        public void Acao(string estado, float duracao, float fade = 0.06f, float velocidade = 1f, bool espelho = false)
         {
             if (animator == null || morto) return;
             int hash = Animator.StringToHash(estado);
             if (!animator.HasState(0, hash)) { Debug.LogWarning("[Animador] Estado ausente: " + estado); return; }
+            animator.SetFloat(VelAcaoId, velocidade);
+            animator.SetBool(EspelhoId, espelho);
             animator.CrossFadeInFixedTime(hash, fade, 0, 0f);
             naAcao = true;
             noAr = false;
@@ -85,16 +97,49 @@ namespace FaithClash.Player
             estadoAtual = estado;
             if (movimento != null)
             {
-                movimento.Ativo = System.Array.IndexOf(EstadosComMovimento, estado) >= 0;
+                movimento.Ativo = EstadosComMovimento.Contains(estado);
                 movimento.Escala = 1f;
             }
         }
 
+        /// <summary>Hit-stop: congela a animação por um instante quando o golpe acerta (a ação dura esse tempo a mais).</summary>
+        public void Pausar(float segundos)
+        {
+            if (animator == null) return;
+            animator.speed = 0.02f;
+            pausaAte = Time.time + segundos;
+            acaoAte += segundos;
+        }
+
         public void EscalarMovimento(float escala) { if (movimento != null) movimento.Escala = escala; }
+
+        /// <summary>Termina a ação atual na hora e volta à locomoção (usado ao cancelar golpes, meditação...).</summary>
+        public void Encerrar(float fade = 0.15f)
+        {
+            if (animator == null || morto) return;
+            naAcao = false;
+            if (movimento != null) movimento.Ativo = false;
+            animator.SetBool(EspelhoId, false);
+            animator.CrossFadeInFixedTime(jogador != null && !jogador.IsGrounded ? NoArId : Animator.StringToHash(EstadoLoco()), fade);
+        }
+
+        /// <summary>Tempo real (s, já na velocidade do golpe) desde o início do estado informado, lido do próprio Animator; se não estiver tocando, devolve <paramref name="reserva"/>.</summary>
+        public float TempoDoClipe(string estado, float reserva)
+        {
+            if (animator == null) return reserva;
+            int hash = Animator.StringToHash(estado);
+            var atual = animator.GetCurrentAnimatorStateInfo(0);
+            if (animator.IsInTransition(0))
+            {
+                var prox = animator.GetNextAnimatorStateInfo(0);
+                if (prox.shortNameHash == hash) return prox.normalizedTime * prox.length;
+            }
+            return atual.shortNameHash == hash ? atual.normalizedTime * atual.length : reserva;
+        }
 
         public void Pulou()
         {
-            Acao("Pulo", 0.55f, 0.05f);
+            Acao("PuloImpulso", 0.17f, 0.04f);
             noAr = true;
         }
 
@@ -104,18 +149,44 @@ namespace FaithClash.Player
             animator?.CrossFadeInFixedTime(EstadoLoco(), 0.1f);
         }
 
-        /// <summary>Pouso conforme o tempo de queda (queda alta = pouso pesado ou rolamento).</summary>
-        public void Pousar(float tempoDeQueda)
+        /// <summary>Pouso conforme a altura da queda (m) e a velocidade: leve, pesado (fica preso um instante) ou rolando.</summary>
+        public void Pousar(float alturaDaQueda, float velHoriz = 0f)
         {
             noAr = false;
-            Vector3 v = jogador.Velocity; v.y = 0f;
-            if (tempoDeQueda > 1.1f || (tempoDeQueda > 0.7f && v.magnitude > 6f)) { Acao("PousoRolamento", 1.4f, 0.05f); SomJogo.Tocar("Soco_Forte", transform.position, 0.6f, 0.7f); }
-            else if (tempoDeQueda > 0.65f) { Acao("PousoPesado", 1.0f, 0.05f); SomJogo.Tocar("Passos_Andar", transform.position, 0.8f, 0.8f, inicio: 0.5f, duracaoMax: 0.35f); }
+            Vector3 p = transform.position;
+            if (alturaDaQueda > 4.5f || (alturaDaQueda > 2.4f && velHoriz > 6f))
+            {
+                Acao("PousoRolamento", 1.4f, 0.05f);
+                SomJogo.Tocar("Soco_Forte", p, 0.6f, 0.7f);
+                Poeira(p, 50, 3.5f);
+                TremorGlobal.Disparar(0.5f);
+            }
+            else if (alturaDaQueda > 2.0f)
+            {
+                Acao("PousoPesado", 1.0f, 0.05f);
+                jogador?.Atordoar(0.7f);
+                SomJogo.Tocar("Passos_Andar", p, 0.8f, 0.8f, inicio: 0.5f, duracaoMax: 0.35f);
+                SomJogo.Tocar("Soco_Forte", p, 0.35f, 0.6f);
+                Poeira(p, 40, 3f);
+                TremorGlobal.Disparar(0.7f);
+            }
             else
             {
-                SomJogo.Tocar("Passos_Correr", transform.position, 0.6f, 0.9f, inicio: 0.42f, duracaoMax: 0.25f);
-                animator.CrossFadeInFixedTime(EstadoLoco(), 0.12f);
+                SomJogo.Tocar("Passos_Correr", p, 0.6f, 0.9f, inicio: 0.42f, duracaoMax: 0.25f);
+                if (velHoriz < 3.5f && !naAcao)
+                {
+                    Acao("PousoLeve", 0.3f, 0.05f, 1.5f);
+                    jogador?.Atordoar(0.12f);
+                }
+                else animator.CrossFadeInFixedTime(EstadoLoco(), 0.12f);
+                Poeira(p, 12, 1.5f);
             }
+        }
+
+        static void Poeira(Vector3 p, int qtd, float raio)
+        {
+            Efeitos.Rajada(p + Vector3.up * 0.05f, Quaternion.Euler(-90f, 0f, 0f), new Color(0.7f, 0.65f, 0.55f, 0.6f), qtd, new Vector2(0.8f, raio), new Vector2(0.12f, 0.3f), new Vector2(0.4f, 0.8f),
+                ParticleSystemShapeType.Circle, 0.3f, -0.05f, false);
         }
 
         void Morrer()
@@ -137,30 +208,32 @@ namespace FaithClash.Player
         void Update()
         {
             if (animator == null || jogador == null || morto) return;
+            if (pausaAte > 0f && Time.time >= pausaAte) { pausaAte = 0f; animator.speed = 1f; }
 
             Vector3 v = jogador.Velocity;
+            float velY = v.y;
             v.y = 0f;
             float alvo = v.magnitude;
-            float anterior = velocidade;
             velocidade = Mathf.Lerp(velocidade, alvo, 1f - Mathf.Exp(-10f * Time.deltaTime));
             animator.SetFloat(VelocidadeId, velocidade);
             animator.SetFloat(EscalaPassadaId, velocidade < 1f ? 1f : Mathf.Lerp(1.35f, 1.6f, Mathf.InverseLerp(5.2f, 8.5f, velocidade)));
+            animator.SetFloat(VelYId, velY, 0.06f, Time.deltaTime);
 
             if (naAcao)
             {
                 if (Time.time < acaoAte) return;
                 naAcao = false;
                 if (movimento != null) movimento.Ativo = false;
-                animator.CrossFadeInFixedTime(noAr ? PuloArId : Animator.StringToHash(EstadoLoco()), 0.14f);
+                animator.SetBool(EspelhoId, false);
+                animator.CrossFadeInFixedTime(noAr ? NoArId : Animator.StringToHash(EstadoLoco()), 0.14f);
             }
 
-            bool chao = jogador.IsGrounded;
-            if (!chao && !noAr)
+            // no ar (pulo ou queda): a blend tree escolhe subida / topo / queda pela velocidade vertical
+            if (!jogador.IsGrounded)
             {
-                noAr = true;   // caiu de uma borda
-                animator.CrossFadeInFixedTime(PuloArId, 0.12f);
+                if (!noAr) { noAr = true; animator.CrossFadeInFixedTime(NoArId, 0.12f); }
+                return;
             }
-            if (!chao) return;
             noAr = false;
 
             // anda de costas: só com o alvo travado e o jogador se afastando dele
@@ -178,41 +251,10 @@ namespace FaithClash.Player
                 animator.CrossFadeInFixedTime(Animator.StringToHash(loco), 0.2f);
             }
 
-            // arranque
-            if (anterior < 0.8f && alvo > 3.5f && !recuando)
-            {
-                Acao(Sprint ? "ParadoParaCorrida" : "IniciarAndar", Sprint ? 0.6f : 0.7f, 0.08f);
-                return;
-            }
-
-            // mudança brusca de direção correndo
-            if (alvo > 4.5f)
-            {
-                Vector3 dir = v.normalized;
-                if (direcaoAnterior != Vector3.zero && Vector3.Angle(direcaoAnterior, dir) > 140f && Time.time - ultimaMudanca > 0.9f)
-                {
-                    ultimaMudanca = Time.time;
-                    direcaoAnterior = dir;
-                    bool espada = modo != null && modo.Atual == Modo.Espada;
-                    Acao(espada ? "Virar180Espada" : "Virar180Poder", espada ? 0.55f : 0.6f, 0.05f);
-                    return;
-                }
-                direcaoAnterior = dir;
-            }
-            else direcaoAnterior = Vector3.zero;
-
             // defesa
             bool emDefesa = animator.GetCurrentAnimatorStateInfo(0).shortNameHash == DefesaId;
             if (defendendo && !emDefesa) animator.CrossFadeInFixedTime(DefesaId, 0.1f);
             else if (!defendendo && emDefesa) animator.CrossFadeInFixedTime(Animator.StringToHash(loco), 0.12f);
-
-            // descanso: depois de um tempo parado sem fazer nada, relaxa
-            if (alvo < 0.1f && !defendendo)
-            {
-                tempoParado += Time.deltaTime;
-                if (tempoParado > 12f && (modo == null || modo.Atual == Modo.Poder)) { tempoParado = 0f; Acao("IdleDescanso", 3f, 0.4f); }
-            }
-            else tempoParado = 0f;
 
             Passos(alvo);
         }

@@ -32,9 +32,10 @@ namespace FaithClash.Combat
                 new Vector2(0.35f, 0.6f) * o.tamanho, new Vector2(0.3f, 0.6f));
             rastro.transform.SetParent(transform, false);
             rastro.transform.localPosition = Vector3.zero;
+            rastro.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);   // só dá para mudar a duração com o sistema parado
             var main = rastro.main;
-            main.loop = true;
             main.duration = 1f;
+            main.loop = true;
             main.startSize = new ParticleSystem.MinMaxCurve(0.3f * o.tamanho, 0.7f * o.tamanho);
             var em = rastro.emission;
             em.rateOverTime = o.particulas > 0 ? o.particulas : 120f;

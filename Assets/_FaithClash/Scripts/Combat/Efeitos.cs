@@ -75,7 +75,7 @@ namespace FaithClash.Combat
         /// <summary>Explosão de partículas genérica.</summary>
         public static ParticleSystem Rajada(Vector3 pos, Quaternion rot, Color cor, int quantidade, Vector2 velocidade,
             Vector2 tamanho, Vector2 vida, ParticleSystemShapeType forma = ParticleSystemShapeType.Sphere,
-            float raio = 0.3f, float gravidade = 0f, bool aditivo = true, float arco = 360f)
+            float raio = 0.3f, float gravidade = 0f, bool aditivo = true, float arco = 360f, bool autoDestruir = true)
         {
             var go = new GameObject("Efeito");
             go.transform.SetPositionAndRotation(pos, rot);
@@ -117,7 +117,7 @@ namespace FaithClash.Combat
             r.sharedMaterial = aditivo ? MaterialAditivo : MaterialAlfa;
 
             ps.Play();
-            Object.Destroy(go, vida.y + 0.5f);
+            if (autoDestruir) Object.Destroy(go, vida.y + 0.5f);
             return ps;
         }
 

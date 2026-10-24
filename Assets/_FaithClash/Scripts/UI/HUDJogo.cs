@@ -59,12 +59,11 @@ namespace FaithClash.UI
         static readonly string[] IconesElementos = { "elemento_fogo", "elemento_agua", "elemento_terra", "elemento_ar" };
         static readonly string[][] Dicas =
         {
-            new[] { "DICA DE COMBO — ESTILO FOGO", "Aperte [1] (modo Poder). [G] alterna Espada / Poder.\n3x Mouse Esquerdo: <color=#FF9A3C>Katon: Goukakyuu.</color>\n4x: Housenka.  [F]: habilidade do estilo.", "Dano explosivo e agressivo. R: Roxo." },
-            new[] { "DICA DE COMBO — ESTILO ÁGUA", "Aperte [2] para ativar o Estilo Água.\n3x Mouse Esquerdo: Suiton: Suiryuudan.\n4x Mouse Esquerdo: Suiton: Suirou.", "Controle o inimigo com pressão e aprisionamento." },
-            new[] { "DICA DE COMBO — ESTILO TERRA", "Aperte [3] para ativar o Estilo Terra.\n3x Mouse Esquerdo: Doton: Doryuudan.\nSegure Mouse Esquerdo: Doton: Doryuuheki.", "Excelente para controle de área e defesa." },
-            new[] { "DICA DE COMBO — ESTILO AR", "Aperte [4] para ativar o Estilo Ar.\n3x: Fuuton: Daitoppa.  4x: Azul (atrai).\nSegure <color=#F2C14E>Mouse Esquerdo:</color> Fuuton: Reppushou, um globo de vento que empurra tudo ao redor.", "Ideal para afastar inimigos e abrir espaço." },
+            new[] { "DICA — ESTILO FOGO", "Aperte [1] (modo Poder). Mouse Esquerdo: <color=#FF9A3C>Katon: Goukakyuu.</color>\nSegurar: Housenka.  [F]: habilidade do estilo.", "Dano explosivo e agressivo. R: Roxo." },
+            new[] { "DICA — ESTILO ÁGUA", "Aperte [2] para ativar o Estilo Água.\nMouse Esquerdo: Suiton: Suiryuudan.\nSegurar: Suiton: Suirou (prende o alvo).", "Controle o inimigo com pressão e aprisionamento." },
+            new[] { "DICA — ESTILO TERRA", "Aperte [3] para ativar o Estilo Terra.\nMouse Esquerdo: Doton: Doryuudan.\nSegurar: Doton: Doryuuheki (muralha).", "Excelente para controle de área e defesa." },
+            new[] { "DICA — ESTILO AR", "Aperte [4] para ativar o Estilo Ar.\nMouse Esquerdo: Fuuton: Daitoppa.  Segurar: Azul (atrai).\n<color=#F2C14E>[F]:</color> Fuuton: Reppushou, um globo de vento que empurra tudo ao redor.", "Ideal para afastar inimigos e abrir espaço." },
         };
-
         void Awake()
         {
             if (jogador == null)
@@ -313,9 +312,10 @@ namespace FaithClash.UI
                 avisoTxt.color = c;
             }
 
-            bool emEspada = modoCombate != null && modoCombate.Atual == Modo.Espada;
-            if (armaTxt != null) armaTxt.text = emEspada ? "Katana  [G] trocar" : "Poder  [G] trocar";
-            if (armaIcone != null) armaIcone.color = emEspada ? Color.white : new Color(1f, 1f, 1f, 0.45f);
+            var modoAtual = modoCombate != null ? modoCombate.Atual : Modo.Poder;
+            bool emEspada = modoAtual != Modo.Poder;   // espada e combate: sem poderes (orbes apagados)
+            if (armaTxt != null) armaTxt.text = modoAtual == Modo.Espada ? "Katana  [G] trocar  [5] combate" : modoAtual == Modo.Combate ? "Combate  [5] sair  [G] espada" : "Poder  [G] espada  [5] combate";
+            if (armaIcone != null) armaIcone.color = modoAtual == Modo.Espada ? Color.white : new Color(1f, 1f, 1f, 0.45f);
             for (int i = 0; i < 4; i++)
             {
                 if (orbes[i] == null || orbesBrilho[i] == null) continue;
@@ -357,7 +357,7 @@ namespace FaithClash.UI
             else if (modoDica == 1)
             {
                 dicaTitulo.text = "Dica de Combate";
-                dicaCorpo.text = "Q: travar no alvo (Q de novo troca). C: dash.\nMouse: clique = golpe leve, segurar = pesado, direito = defender.\nG: Espada ou Poder.  Ctrl: rolar / deslizar.";
+                dicaCorpo.text = "Q: travar no alvo (Q de novo troca). C: dash. Ctrl: rolar.\nMouse: clique = golpe leve, segurar = pesado, direito = defender.\n[5]: só combate (taijutsu).  [G]: espada / poder.  Segurar [E]: meditar (recupera Fé).";
                 dicaRodape.text = "[Tab] Fechar";
                 dicaIcone.sprite = Sprite("elemento_ar");
             }

@@ -12,13 +12,13 @@ namespace FaithClash.Combat
 
     /// <summary>
     /// Modo Poder: jutsus inspirados em Naruto e técnicas amaldiçoadas inspiradas em Jujutsu Kaisen.
-    /// 1-Fogo (Katon), 2-Água (Suiton), 3-Terra (Doton), 4-Ar (Fuuton). Os jutsus saem no 3º e 4º golpe do combo
-    /// ou segurando o botão esquerdo (Terra/Ar). R solta o Roxo (Técnica Reversa) gastando uma carga espiritual.
-    /// O golpe pesado tem chance de Faísca Negra (Kokusen). Água → Fogo → Terra → Ar em sequência causa a Explosão Elemental.
+    /// 1-Fogo (Katon), 2-Água (Suiton), 3-Terra (Doton), 4-Ar (Fuuton). Clique = técnica leve do estilo, segurar o clique = técnica forte,
+    /// F = habilidade do estilo. Cada técnica usa só o gesto de conjuração (nunca socos ou chutes). R solta o Roxo (Técnica Reversa) gastando uma carga espiritual.
+    /// No modo Combate, o golpe pesado tem chance de Faísca Negra (Kokusen). Água → Fogo → Terra → Ar em sequência causa a Explosão Elemental.
     /// </summary>
     public class EstilosElementais : MonoBehaviour
     {
-        [SerializeField] float custo3x = 60f, custo4x = 100f, custoSegurar = 150f;
+        [SerializeField] float custoLeve = 60f, custoForte = 100f, custoFinal = 150f;
         [SerializeField, Range(0f, 1f)] float chanceFaiscaNegra = 0.3f;
 
         public static readonly Color[] Cores =
@@ -106,7 +106,7 @@ namespace FaithClash.Combat
                 if (k.digit4Key.wasPressedThisFrame) Escolher(Elemento.Ar);
                 if (k.rKey.wasPressedThisFrame)
                 {
-                    if (!EmPoder) status?.Avisar("Guarde a espada (G) para usar poderes");
+                    if (!EmPoder) status?.Avisar("Entre no modo Poder (1-4) para usar poderes");
                     else if (status != null && status.Cargas <= 0) status.Avisar("Sem cargas espirituais");
                     else if (combate.IniciarAcaoEspecial("PowerUp", 2.4f, 1.2f, () => { if (status.GastarCarga()) Roxo(); }))
                         SomJogo.Tocar("Roxo_Carga", transform.position, 0.9f, duracaoMax: 1.4f);
@@ -116,7 +116,7 @@ namespace FaithClash.Combat
             // F = habilidade ativa do estilo (como a tecla de habilidade do Naraka)
             if (k != null && Cursor.lockState == CursorLockMode.Locked && k.fKey.wasPressedThisFrame)
             {
-                if (!EmPoder) status?.Avisar("Guarde a espada (G) para usar poderes");
+                if (!EmPoder) status?.Avisar("Entre no modo Poder (1-4) para usar poderes");
                 else Conjurar();
             }
         }
@@ -171,71 +171,62 @@ namespace FaithClash.Combat
             else aura.Play();
         }
 
+        // Faísca Negra: golpe pesado do modo Combate que acerta tem chance de causar o efeito perfeito
         void AoImpacto(int passo, bool acertou)
         {
-            if (!EmPoder) return;
-
-            if (passo == 0)
-            {
-                if (acertou && UnityEngine.Random.value < chanceFaiscaNegra) FaiscaNegra();
-                return;
-            }
-            if (passo == 3)
-            {
-                switch (Atual)
-                {
-                    case Elemento.Fogo: TentarTecnica(custo3x, GoukakyuuNoJutsu); break;
-                    case Elemento.Agua: TentarTecnica(custo3x, SuiryuudanNoJutsu); break;
-                    case Elemento.Terra: TentarTecnica(custo3x, DoryuudanNoJutsu); break;
-                    case Elemento.Ar: TentarTecnica(custo3x * 0.5f, DaitoppaNoJutsu); break;
-                }
-            }
-            else if (passo == 4)
-            {
-                switch (Atual)
-                {
-                    case Elemento.Fogo: TentarTecnica(custo4x, HousenkaNoJutsu); break;
-                    case Elemento.Agua: TentarTecnica(custo4x, SuirouNoJutsu); break;
-                    case Elemento.Ar: TentarTecnica(custo4x, Azul); break;
-                }
-            }
+            if (passo != 0 || !acertou || modo == null || modo.Atual != Modo.Combate) return;
+            if (UnityEngine.Random.value < chanceFaiscaNegra) FaiscaNegra();
         }
 
         // gesto (animação do Mixamo) de cada técnica: clipe, duração e momento da liberação (s)
-        static (string clip, float dur, float imp) Gesto(Elemento e, int passo)
+        static readonly (string clip, float dur, float imp) GestoFogo = ("CastFogo", 1.8f, 0.97f), GestoVento = ("CastVento", 1.7f, 0.9f),
+            GestoEnergia = ("CastEnergia", 2.0f, 1.15f), GestoTerra = ("CastTerra", 2.4f, 1.6f), GestoPoder = ("PowerUp", 2.4f, 1.2f);
+
+        /// <summary>Clique no modo Poder: técnica leve do estilo (só o gesto de conjuração, sem golpes de luta).</summary>
+        public bool TecnicaLeve()
         {
-            switch (e)
+            Action tecnica; (string clip, float dur, float imp) g; float custo = custoLeve;
+            switch (Atual)
             {
-                case Elemento.Fogo: return passo == 3 ? ("CastFogo", 1.8f, 0.97f) : ("CastVento", 1.7f, 0.9f);
-                case Elemento.Agua: return passo == 3 ? ("CastEnergia", 2.0f, 1.15f) : ("CastTerra", 2.4f, 1.6f);
-                case Elemento.Terra: return ("CastTerra", 2.4f, 1.6f);
-                default: return passo == 3 ? ("CastVento", 1.7f, 0.9f) : ("CastEnergia", 2.0f, 1.15f);
+                case Elemento.Fogo: tecnica = GoukakyuuNoJutsu; g = GestoFogo; break;
+                case Elemento.Agua: tecnica = SuiryuudanNoJutsu; g = GestoEnergia; break;
+                case Elemento.Terra: tecnica = DoryuudanNoJutsu; g = GestoTerra; break;
+                default: tecnica = DaitoppaNoJutsu; g = GestoVento; custo = custoLeve * 0.5f; break;
             }
+            return Usar(custo, tecnica, g);
         }
 
-        /// <summary>Usado pelo combate: o 3º/4º golpe do modo Poder vira o gesto da técnica, se houver Fé.</summary>
-        public bool TecnicaParaPasso(int passo, out string clip, out float dur, out float impacto)
+        /// <summary>Segurar o clique no modo Poder: técnica forte do estilo.</summary>
+        public bool TecnicaForte()
         {
-            clip = null; dur = 0f; impacto = 0f;
-            bool tem = passo == 3 || (passo == 4 && Atual != Elemento.Terra);
-            float custo = passo == 3 ? (Atual == Elemento.Ar ? custo3x * 0.5f : custo3x) : custo4x;
-            if (!tem || status == null || status.Fe < custo) return false;
-            (clip, dur, impacto) = Gesto(Atual, passo);
-            return true;
+            Action tecnica; (string clip, float dur, float imp) g; float custo = custoForte;
+            switch (Atual)
+            {
+                case Elemento.Fogo: tecnica = HousenkaNoJutsu; g = GestoVento; break;
+                case Elemento.Agua: tecnica = SuirouNoJutsu; g = GestoTerra; break;
+                case Elemento.Terra: tecnica = MuralhaDeTerra; g = GestoTerra; custo = custoFinal; break;
+                default: tecnica = Azul; g = GestoEnergia; break;
+            }
+            return Usar(custo, tecnica, g);
         }
 
+        bool Usar(float custo, Action tecnica, (string clip, float dur, float imp) g)
+        {
+            if (status != null && status.Fe < custo) { status.Avisar("Fé insuficiente"); return false; }
+            return combate.IniciarAcaoEspecial(g.clip, g.dur, g.imp, () => TentarTecnica(custo, tecnica));
+        }
         /// <summary>Habilidade ativa do estilo (tecla F): faz o gesto e libera a técnica no tempo certo.</summary>
         void Conjurar()
         {
             Action tecnica; float custo; (string clip, float dur, float imp) g;
             switch (Atual)
             {
-                case Elemento.Fogo: tecnica = HousenkaNoJutsu; g = ("CastVento", 1.7f, 0.9f); break;
-                case Elemento.Agua: tecnica = SuirouNoJutsu; g = ("CastTerra", 2.4f, 1.6f); break;
-                case Elemento.Terra: tecnica = MuralhaDeTerra; g = ("CastTerra", 2.4f, 1.6f); break;
-                default: tecnica = Reppusho; g = ("PowerUp", 2.4f, 1.2f); break;
+                case Elemento.Fogo: tecnica = HousenkaNoJutsu; g = GestoVento; break;
+                case Elemento.Agua: tecnica = SuirouNoJutsu; g = GestoTerra; break;
+                case Elemento.Terra: tecnica = MuralhaDeTerra; g = GestoTerra; break;
+                default: tecnica = Reppusho; g = GestoPoder; break;
             }
-            custo = custoSegurar;
+            custo = custoFinal;
             if (status != null && status.Fe < custo) { status.Avisar("Fé insuficiente"); return; }
             combate.IniciarAcaoEspecial(g.clip, g.dur, g.imp, () => TentarTecnica(custo, tecnica));
         }

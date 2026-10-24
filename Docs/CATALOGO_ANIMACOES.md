@@ -5,6 +5,9 @@ e **renderizada em 6 poses** (`Ferramentas/analise/previews`). Os números ficam
 Depois todas passaram pelo teste automático dentro da Unity (`Faith Clash > Ferramentas > Testar Animações`,
 resultado em `Ferramentas/analise/teste_animacoes.txt`): ele toca cada estado e mede a altura dos pés e das mãos em relação ao chão real.
 
+Um segundo teste automático (`Faith Clash > Ferramentas > Testar Combate`, resultado em `Ferramentas/analise/teste_combate.txt` e fotos em `Ferramentas/analise/fotos`)
+injeta teclas e cliques e confere: nada toca sozinho, cadeias e ramos de combo, impacto no quadro certo da animação, modos 5/G/1-4, meditação (E), altura do pulo e tipos de pouso.
+
 As animações rodam na **velocidade original** do Mixamo. O deslocamento horizontal dos golpes vem do próprio clipe
 (`MovimentoDaAnimacao`, com colisão); na locomoção quem move é o `PlayerController`.
 
@@ -13,15 +16,12 @@ As animações rodam na **velocidade original** do Mixamo. O deslocamento horizo
 |---|---|
 | OffensiveIdle | Parado no modo Poder (postura de luta) |
 | OrcIdle | Parado no modo Espada |
-| HappyIdle | Descanso (depois de 12 s parado no modo Poder) |
+| HappyIdle | Catalogado (nada toca sozinho: parado fica sempre no idle do modo) |
 | StandardRun | Correr (Poder) |
 | Sprint | Correr rápido (Shift) |
 | GreatSwordRun | Correr com a espada |
 | RunningBackward / WalkingBackwards | Andar para trás com o alvo travado |
-| IdleToSprint / StartWalking | Arranque do parado para a corrida |
-| ChangeDirection | Reversão de direção em corrida |
-| GreatSword180Turn | Virada de 180° (modo Espada) |
-| SwordAndShield180Turn / SwordAndShieldTurn | Virada de 180° / 90° (modo Poder) |
+| IdleToSprint / StartWalking / ChangeDirection / Turn 180° / Turn 90° | **Removidos do jogo** (tocavam sozinhos e dessincronizavam); ficam só catalogados |
 | InjuredWalking | Andar ferido (catalogado) |
 | Transition | Transição de postura (catalogado) |
 
@@ -29,12 +29,12 @@ As animações rodam na **velocidade original** do Mixamo. O deslocamento horizo
 | Clipe | Uso |
 |---|---|
 | CrouchedToSprinting | **Dash** (C) |
-| RunningSlide | Deslize (Ctrl correndo) |
-| Running (mergulho + rolamento) | Rolamento (Ctrl parado) |
-| Jump / Jumping | Pulo / no ar |
-| JumpingDown | Pouso pesado (queda alta) |
+| Running (mergulho + rolamento) | Rolamento (Ctrl) |
+| Jump (cortado em 5 partes) | **Decolagem**, **subida**, **topo**, **queda** (blend tree pela velocidade vertical) e **pouso leve** |
+| JumpingDown | Pouso pesado (queda alta; fica preso 0,7 s) |
 | FallingToRoll | Pouso com rolamento (queda muito alta ou em velocidade) |
-| WallRun | Corrida na parede (sprint + pulo contra a parede) |
+
+Removidos do jogo (catalogados): WallRun e RunningSlide (pareciam escalada/deslize quebrado), GreatSwordSlideAttack e SwordAndShieldAttack (ataque deslizante / aéreo).
 
 ## Espada (G)
 | Clipe | Uso |
@@ -43,22 +43,32 @@ As animações rodam na **velocidade original** do Mixamo. O deslocamento horizo
 | GreatSwordSlash (3 cortes) | Combo: Corte 1, 2 e 3 |
 | SwordAndShieldSlash | 4º golpe (corte giratório) |
 | GreatSwordJumpAttack | Golpe pesado (segurar o botão esquerdo) |
-| GreatSwordSlideAttack | Ataque correndo (Shift + clique) |
-| SwordAndShieldAttack | Ataque aéreo (catalogado) |
 | StandingBlockIdle | Defesa (botão direito) |
 
-## Poder: punhos, chutes e magias
+## Combate: taijutsu (tecla 5)
+Os golpes **Jab, Direto, Gancho, Uppercut, Cotovelada, Joelhada, Chute lateral, Chute baixo, Chute machado e Giro de costas** foram criados no Blender
+(`Ferramentas/Blender/gerar_taijutsu.py`): poses-chave do quadril, tronco e alvos de IK das mãos e dos pés, resolvidas no esqueleto do Mixamo e assadas num único arquivo (`Taijutsu.fbx`).
+Os quadros de cada golpe estão em `PreparadorJogador.Recortes["Taijutsu"]`. Conferência visual: `Ferramentas/Blender/ver_golpe.sh`.
+
 | Clipe | Uso |
 |---|---|
-| FlyingKneePunchCombo (3 golpes) | Soco 1, 2 e 3 |
-| GreatSwordKick | 4º golpe (chute) |
-| Martelo 2 (chute giratório) | Golpe pesado do modo Poder |
+| Jab, Direto, Gancho, Chute lateral | Cadeia leve (clique) |
+| Chute baixo | Ramo: S no 3º golpe |
+| Giro de costas | Ramo: A/D no 4º golpe |
+| Uppercut, Cotovelada, Joelhada, Chute machado | Golpes fortes (segurar o clique), conforme o ponto da cadeia |
+| FlyingKneePunchCombo (golpe 3, joelhada voadora) | Correndo + clique |
+| Martelo 2 (chute giratório) | Correndo + segurar o clique |
+| FlyingKneePunchCombo (socos 1 e 2), GreatSwordKick | Catalogados (reserva) |
+
+## Poder: magias (teclas 1–4, só gestos, sem golpes de luta)
+| Clipe | Uso |
+|---|---|
 | Standing2HMagicAttack03 | Gesto do Katon (Goukakyuu) |
-| Standing2HMagicAttack04 | Gesto do Fuuton / Katon (Housenka) |
+| Standing2HMagicAttack04 | Gesto do Fuuton (Daitoppa) / Katon (Housenka) |
 | Standing2HCastSpell01 | Gesto do Suiton (Suiryuudan) / Azul |
 | SwordAndShieldCasting | Gesto do Doton / Suiton (Suirou) |
 | SwordAndShieldPowerUp | Roxo (R), Reppushou, frasco de fúria |
-| MagicHeal | Poção de vida e cristal de Fé |
+| MagicHeal | Poção de vida, cristal de Fé e **meditação (E)** |
 | PickUpItem | Lanterna e outros itens |
 
 ## Morte (sorteada)

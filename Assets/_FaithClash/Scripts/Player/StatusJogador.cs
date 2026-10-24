@@ -3,11 +3,10 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using FaithClash.Combat;
 using FaithClash.Core;
-using FaithClash.Core;
 
 namespace FaithClash.Player
 {
-    /// <summary>Nível, Fé (energia), cargas espirituais e itens rápidos (Z, X, C, V) do jogador.</summary>
+    /// <summary>Nível, Fé (energia), cargas espirituais, itens rápidos (Z, X, B, V) e meditação (segurar E) para recuperar Fé.</summary>
     public class StatusJogador : MonoBehaviour
     {
         [Serializable]
@@ -24,6 +23,7 @@ namespace FaithClash.Player
         [SerializeField] float feMaxima = 980f;
         [SerializeField] float feInicial = 620f;
         [SerializeField] float regeneracaoFe = 14f;
+        [SerializeField] float fePorSegundoMeditando = 110f;
         [SerializeField] int acertosPorCarga = 8;
 
         public Item[] Itens =
@@ -36,7 +36,10 @@ namespace FaithClash.Player
 
         Health vida;
         MeleeCombat combate;
-        float furiaAte;
+        AnimadorProtagonista animador;
+        PlayerController controle;
+        ParticleSystem auraMeditacao;
+        float furiaAte, proximoGesto;
         int acertosAcumulados;
         GameObject lanterna;
 
@@ -46,6 +49,7 @@ namespace FaithClash.Player
         public float FeMaxima => feMaxima;
         public int Cargas { get; private set; } = 1;
         public int Escudos { get; private set; } = 2;
+        public bool Meditando { get; private set; }
         public bool FuriaAtiva => Time.time < furiaAte;
         public Health Vida => vida;
 
@@ -55,18 +59,24 @@ namespace FaithClash.Player
         {
             vida = GetComponent<Health>();
             combate = GetComponent<MeleeCombat>();
+            animador = GetComponent<AnimadorProtagonista>();
+            controle = GetComponent<PlayerController>();
             Fe = feInicial;
         }
 
         void OnEnable()
         {
             if (combate != null) combate.HitLanded += AoAcertar;
+            if (vida != null) vida.Damaged += AoSerAtingido;
         }
 
         void OnDisable()
         {
             if (combate != null) combate.HitLanded -= AoAcertar;
+            if (vida != null) vida.Damaged -= AoSerAtingido;
         }
+
+        void AoSerAtingido(float dano, Vector3 ponto, GameObject origem) => PararMeditacao();
 
         void AoAcertar(float dano)
         {
@@ -103,14 +113,75 @@ namespace FaithClash.Player
 
             var k = Keyboard.current;
             if (k == null) return;
+            Meditar(k);
             if (k.zKey.wasPressedThisFrame) Usar(0);
             if (k.xKey.wasPressedThisFrame) Usar(1);
             if (k.bKey.wasPressedThisFrame) Usar(2);
             if (k.vKey.wasPressedThisFrame) Usar(3);
         }
 
+        // ------------------------------------------------------------------ meditação (segurar E)
+        /// <summary>Segurar E: fica parado em concentração e recupera Fé bem mais rápido. Qualquer movimento, golpe, pulo ou dano interrompe.</summary>
+        void Meditar(Keyboard k)
+        {
+            bool segurando = k.eKey.isPressed && Cursor.lockState == CursorLockMode.Locked;
+            bool podeIniciar = controle != null && controle.IsGrounded && !controle.IsBusy && !controle.Atordoado
+                               && (combate == null || (!combate.IsAttacking && !combate.IsBlocking)) && (animador == null || !animador.OcupadoComAcao)
+                               && (vida == null || !vida.IsDead);
+            if (!Meditando)
+            {
+                if (!segurando || !podeIniciar) return;
+                if (Fe >= feMaxima - 1f) { if (k.eKey.wasPressedThisFrame) Aviso?.Invoke("Fé cheia"); return; }
+                Meditando = true;
+                proximoGesto = 0f;
+                SomJogo.Tocar("Poder_Ativar", transform.position, 0.45f, 0.7f, duracaoMax: 1.4f);
+                CriarAuraMeditacao();
+            }
+
+            bool moveu = k.wKey.isPressed || k.aKey.isPressed || k.sKey.isPressed || k.dKey.isPressed || k.spaceKey.isPressed
+                         || k.cKey.isPressed || k.leftCtrlKey.isPressed || (Mouse.current != null && (Mouse.current.leftButton.isPressed || Mouse.current.rightButton.isPressed));
+            if (!segurando || moveu || controle == null || !controle.IsGrounded || controle.IsBusy || (combate != null && combate.IsAttacking))
+            {
+                PararMeditacao();
+                return;
+            }
+
+            GanharFe(fePorSegundoMeditando * Time.deltaTime);
+            if (Fe >= feMaxima - 1f) { PararMeditacao(); Aviso?.Invoke("Fé restaurada"); return; }
+            if (Time.time >= proximoGesto)
+            {
+                animador?.Acao("Curar", 2.6f, 0.2f);
+                proximoGesto = Time.time + 2.6f;
+                SomJogo.Tocar("UI_Elemento", transform.position, 0.25f, 0.6f);
+            }
+            if (auraMeditacao != null) auraMeditacao.transform.position = transform.position + Vector3.up * 0.1f;
+        }
+
+        void PararMeditacao()
+        {
+            if (!Meditando) return;
+            Meditando = false;
+            if (auraMeditacao != null) { auraMeditacao.Stop(true, ParticleSystemStopBehavior.StopEmitting); Destroy(auraMeditacao.gameObject, 2f); auraMeditacao = null; }
+            animador?.Encerrar(0.25f);
+        }
+
+        void CriarAuraMeditacao()
+        {
+            if (auraMeditacao != null) return;
+            auraMeditacao = Efeitos.Rajada(transform.position, Quaternion.Euler(-90f, 0f, 0f), new Color(0.45f, 0.75f, 1f), 1, new Vector2(0.4f, 1.3f),
+                new Vector2(0.05f, 0.14f), new Vector2(0.8f, 1.6f), ParticleSystemShapeType.Circle, 0.9f, -0.35f, autoDestruir: false);
+            auraMeditacao.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            var main = auraMeditacao.main;
+            main.duration = 1f;
+            main.loop = true;
+            var em = auraMeditacao.emission;
+            em.SetBursts(new ParticleSystem.Burst[0]);
+            em.rateOverTime = 60f;
+            auraMeditacao.Play();
+        }
         void Usar(int i)
         {
+            PararMeditacao();
             var item = Itens[i];
             if (item.quantidade <= 0) { Aviso?.Invoke(item.nome + " esgotado"); return; }
             item.quantidade--;

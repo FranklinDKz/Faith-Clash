@@ -121,3 +121,6 @@ Ferramentas/poses_debug.png
 
 # Previews gerados na analise (as metricas e o teste ficam versionados)
 Ferramentas/analise/previews/
+
+# Fotos individuais do teste de combate (ficam só as folhas de contato *_folha.png)
+Ferramentas/analise/fotos/*_[0-9][0-9].png

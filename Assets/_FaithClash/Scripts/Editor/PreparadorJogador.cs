@@ -34,42 +34,33 @@ namespace FaithClash.EditorTools
             // ---- parado / locomoção
             { "OffensiveIdle", new[] { ("IdlePoder", 0, -1, true) } },
             { "OrcIdle", new[] { ("IdleEspada", 0, -1, true) } },
-            { "HappyIdle", new[] { ("IdleDescanso", 0, -1, true) } },
             { "StandardRun_Antiga", new[] { ("Correr", 0, 22, true) } },
             { "Sprint_Antiga", new[] { ("Sprint", 0, 16, true) } },
             { "GreatSwordRun", new[] { ("CorrerEspada", 0, 18, true) } },
             { "RunningBackward", new[] { ("CorrerTras", 0, 19, true) } },
             { "WalkingBackwards", new[] { ("AndarTras", 0, 36, true) } },
             { "InjuredWalking", new[] { ("AndarFerido", 0, 30, true) } },
-            { "IdleToSprint_Antiga", new[] { ("ParadoParaCorrida", 0, 24, false) } },
-            { "StartWalking_Antiga", new[] { ("IniciarAndar", 0, 40, false) } },
-            { "ChangeDirection", new[] { ("MudarDirecao", 0, 65, false) } },
-            { "Transition", new[] { ("Transicao", 0, -1, false) } },
             // ---- movimento especial
             { "CrouchedToSprinting_Antiga", new[] { ("Dash", 0, 15, false) } },
-            { "RunningSlide_Antiga", new[] { ("Deslizar", 0, 46, false) } },
             { "Running", new[] { ("Rolamento", 0, 64, false) } },
-            { "Jump_Antiga", new[] { ("Pulo", 0, 40, false) } },
-            { "Jumping_Antiga", new[] { ("PuloAr", 0, 35, true) } },
+            // pulo: o clipe do Mixamo é cortado em decolagem, subida, topo, queda e pouso leve (o ar é uma blend tree pela velocidade vertical)
+            { "Jump_Antiga", new[] { ("PuloImpulso", 21, 26, false), ("PuloSubida", 26, 29, true), ("PuloTopo", 30, 33, true), ("PuloQueda", 38, 41, true), ("PousoLeve", 39, 52, false) } },
             { "JumpingDown", new[] { ("PousoPesado", 0, 60, false) } },
             { "FallingToRoll", new[] { ("PousoRolamento", 0, -1, false) } },
-            { "WallRun_Antiga", new[] { ("CorridaParede", 0, 28, true) } },
-            { "GreatSword180Turn", new[] { ("Virar180Espada", 0, 24, false) } },
-            { "SwordAndShield180Turn", new[] { ("Virar180Poder", 0, 26, false) } },
-            { "SwordAndShieldTurn_Antiga", new[] { ("Virar90", 0, 29, false) } },
             // ---- espada
             { "DrawAGreatSword2", new[] { ("SacarEspada", 0, 24, false) } },
             { "SheathAGreatSword2", new[] { ("EnvainharEspada", 0, 34, false) } },
             { "GreatSwordSlash", new[] { ("Corte1", 0, 36, false), ("Corte2", 37, 64, false), ("Corte3", 65, 106, false) } },
             { "SwordAndShieldSlash", new[] { ("CorteGiratorio", 0, 73, false) } },
             { "GreatSwordJumpAttack", new[] { ("EspadaSalto", 0, 65, false) } },
-            { "GreatSwordSlideAttack", new[] { ("AtaqueDeslizante", 0, 64, false) } },
-            { "SwordAndShieldAttack", new[] { ("AtaqueAereo", 0, 70, false) } },
             { "StandingBlockIdle", new[] { ("Defesa", 0, 83, true) } },
             // ---- poder (punhos, chutes e magias)
             { "FlyingKneePunchCombo", new[] { ("Soco1", 0, 28, false), ("Soco2", 29, 56, false), ("Soco3", 57, 80, false) } },
             { "GreatSwordKick", new[] { ("Chute", 0, 45, false) } },
             { "Martelo2_Antiga", new[] { ("ChuteGiratorio", 0, 39, false) } },
+            // taijutsu gerado no Blender (Ferramentas/Blender/gerar_taijutsu.py): um arquivo com todos os golpes em sequência
+            { "Taijutsu", new[] { ("Jab", 0, 17, false), ("Direto", 20, 40, false), ("Gancho", 43, 64, false), ("Uppercut", 67, 91, false), ("Cotovelada", 94, 115, false),
+                ("Joelhada", 118, 142, false), ("ChuteLateral", 145, 174, false), ("ChuteBaixo", 177, 203, false), ("ChuteMachado", 206, 239, false), ("GiroCostas", 242, 269, false) } },
             { "Standing2HMagicAttack03", new[] { ("CastFogo", 0, 54, false) } },
             { "Standing2HMagicAttack04", new[] { ("CastVento", 0, 51, false) } },
             { "Standing2HCastSpell01", new[] { ("CastEnergia", 0, 60, false) } },
@@ -89,19 +80,20 @@ namespace FaithClash.EditorTools
         // estados soltos do Animator (nome do estado = nome do clipe). velocidade 1 = exatamente como veio do Mixamo
         static readonly string[] EstadosSoltos =
         {
-            "ParadoParaCorrida", "IniciarAndar", "MudarDirecao", "Transicao", "Dash", "Deslizar", "Rolamento", "Pulo", "PuloAr", "PousoPesado", "PousoRolamento",
-            "CorridaParede", "Virar180Espada", "Virar180Poder", "Virar90", "SacarEspada", "EnvainharEspada", "Corte1", "Corte2", "Corte3",
-            "CorteGiratorio", "EspadaSalto", "AtaqueDeslizante", "AtaqueAereo", "Defesa", "Soco1", "Soco2", "Soco3", "Chute", "ChuteGiratorio",
+            "Dash", "Rolamento", "PuloImpulso", "PousoLeve", "PousoPesado", "PousoRolamento",
+            "SacarEspada", "EnvainharEspada", "Corte1", "Corte2", "Corte3", "CorteGiratorio", "EspadaSalto", "Defesa",
+            "Soco1", "Soco2", "Soco3", "Chute", "ChuteGiratorio",
+            "Jab", "Direto", "Gancho", "Uppercut", "Cotovelada", "Joelhada", "ChuteLateral", "ChuteBaixo", "ChuteMachado", "GiroCostas",
             "CastFogo", "CastVento", "CastEnergia", "CastTerra", "PowerUp", "Curar", "PegarItem",
-            "MorteTras", "MorteFrente", "MorteQueda", "MorteQuedaFrente", "MorteJoelhos", "MorteEspada", "Dano", "IdleDescanso", "AndarFerido",
+            "MorteTras", "MorteFrente", "MorteQueda", "MorteQuedaFrente", "MorteJoelhos", "MorteEspada", "Dano", "AndarFerido",
         };
-
         static readonly Dictionary<string, float> VelocidadeEstado = new Dictionary<string, float> { { "Rolamento", 1.6f } };
 
         [MenuItem("Faith Clash/Preparar Jogador")]
         public static void Preparar()
         {
             if (!File.Exists(Fbx)) { Debug.LogError("[Faith Clash] FBX não encontrado: " + Fbx); return; }
+            AssetDatabase.Refresh();   // importa arquivos novos (ex.: Taijutsu.fbx gerado no Blender)
             ConfigurarModelo();
             ConfigurarAnimacoes();
             var controller = CriarAnimator();
@@ -249,6 +241,12 @@ namespace FaithClash.EditorTools
             var ctrl = AnimatorController.CreateAnimatorControllerAtPath(CaminhoController);
             ctrl.AddParameter("Velocidade", AnimatorControllerParameterType.Float);
             ctrl.AddParameter("EscalaPassada", AnimatorControllerParameterType.Float);
+            ctrl.AddParameter("VelY", AnimatorControllerParameterType.Float);
+            ctrl.AddParameter("Espelho", AnimatorControllerParameterType.Bool);
+            ctrl.AddParameter("VelAcao", AnimatorControllerParameterType.Float);
+            var ps = ctrl.parameters;
+            for (int p = 0; p < ps.Length; p++) if (ps[p].name == "VelAcao") ps[p].defaultFloat = 1f;
+            ctrl.parameters = ps;
             var clips = TodosClipes();
             Debug.Log("[Faith Clash] Clipes (" + clips.Count + "): " + string.Join(", ", clips.Keys.OrderBy(k => k)));
             var sm = ctrl.layers[0].stateMachine;
@@ -257,10 +255,10 @@ namespace FaithClash.EditorTools
             camadas[0].iKPass = true;
             ctrl.layers = camadas;
 
-            void Arvore(string nome, (string clipe, float limiar)[] itens)
+            void Arvore(string nome, (string clipe, float limiar)[] itens, string parametro = "Velocidade", string velocidadeParam = "EscalaPassada")
             {
                 var st = ctrl.CreateBlendTreeInController(nome, out BlendTree arvore);
-                arvore.blendParameter = "Velocidade";
+                arvore.blendParameter = parametro;
                 arvore.useAutomaticThresholds = false;
                 foreach (var (clipe, limiar) in itens)
                 {
@@ -268,12 +266,14 @@ namespace FaithClash.EditorTools
                     else Debug.LogWarning("[Faith Clash] Clipe ausente: " + clipe);
                 }
                 var estado = sm.states.First(s => s.state.name == nome).state;
-                estado.speedParameterActive = true;
-                estado.speedParameter = "EscalaPassada";
+                estado.iKOnFeet = false;
+                if (velocidadeParam != null) { estado.speedParameterActive = true; estado.speedParameter = velocidadeParam; }
             }
             Arvore("Locomocao", new[] { ("IdlePoder", 0f), ("Correr", 5.2f), ("Sprint", 8.5f) });
             Arvore("LocomocaoEspada", new[] { ("IdleEspada", 0f), ("CorrerEspada", 5.2f), ("Sprint", 8.5f) });
             Arvore("LocomocaoTras", new[] { ("IdlePoder", 0f), ("AndarTras", 2.4f), ("CorrerTras", 5.2f) });
+            // no ar: subida / topo / queda escolhidos pela velocidade vertical do personagem
+            Arvore("NoAr", new[] { ("PuloQueda", -8f), ("PuloTopo", 0f), ("PuloSubida", 8f) }, "VelY", null);
             sm.defaultState = sm.states.First(s => s.state.name == "Locomocao").state;
 
             foreach (var nome in EstadosSoltos)
@@ -282,6 +282,10 @@ namespace FaithClash.EditorTools
                 var st = sm.AddState(nome);
                 st.motion = clip;
                 st.speed = VelocidadeEstado.TryGetValue(nome, out var v) ? v : 1f;
+                st.speedParameterActive = true;      // velocidade de cada golpe é ajustada pelo script (combos mais rápidos ou lentos)
+                st.speedParameter = "VelAcao";
+                st.mirrorParameterActive = true;     // golpes espelhados: esquerda vira direita
+                st.mirrorParameter = "Espelho";
                 st.iKOnFeet = false;
             }
             EditorUtility.SetDirty(ctrl);

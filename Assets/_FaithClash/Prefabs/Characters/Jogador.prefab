@@ -82,8 +82,11 @@ MonoBehaviour:
   sprintSpeed: 9
   turnSpeed: 14
   aceleracao: 38
-  jumpHeight: 1.4
-  gravity: -30
+  jumpHeight: 1.5
+  gravity: -26
+  multiplicadorQueda: 1.45
+  multiplicadorPuloCurto: 2.2
+  controleNoAr: 0.45
   velocidadeTerminal: -45
   tempoCoiote: 0.12
   bufferPulo: 0.12
@@ -93,13 +96,9 @@ MonoBehaviour:
   dashSpeed: 19
   dashTime: 0.3
   dashCooldown: 0.9
-  slideSpeed: 11
-  slideTime: 0.6
   slideCooldown: 0.7
   rollSpeed: 6.5
   rollTime: 0.8
-  wallCheckDistance: 1.1
-  wallRunTime: 0.9
   animador: {fileID: 4206430916425000933}
 --- !u!114 &2309399056177308983
 MonoBehaviour:
@@ -130,9 +129,9 @@ MonoBehaviour:
   hitMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  comboWindow: 0.7
+  comboWindow: 0.65
   comboCounterReset: 2.5
-  tempoPesado: 0.28
+  tempoPesado: 0.26
   maxHomingDistance: 7
   assistDistancia: 7
   assistAngulo: 50
@@ -168,6 +167,7 @@ MonoBehaviour:
   feMaxima: 980
   feInicial: 620
   regeneracaoFe: 14
+  fePorSegundoMeditando: 110
   acertosPorCarga: 8
   Itens:
   - nome: "Po\xE7\xE3o de Vida"
@@ -198,9 +198,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ab1d6ddcf549bb468c485f9114b4f8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: FaithClash.Runtime::FaithClash.Combat.EstilosElementais
-  custo3x: 60
-  custo4x: 100
-  custoSegurar: 150
+  custoLeve: 60
+  custoForte: 100
+  custoFinal: 150
   chanceFaiscaNegra: 0.3
 --- !u!114 &5588646751675594520
 MonoBehaviour:
@@ -442,8 +442,9 @@ MonoBehaviour:
   camadasChao:
     serializedVersion: 2
     m_Bits: 4294967295
-  alturaDoPe: 0.085
-  alcanceAcima: 0.55
-  alcanceAbaixo: 0.6
-  distanciaAtivacao: 0.22
-  suavizacao: 14
+  alcanceAcima: 0.6
+  alcanceAbaixo: 0.8
+  distanciaAtivacao: 0.18
+  alturaMinTornozelo: 0.075
+  alturaMinPonta: 0.025
+  suavizacao: 16

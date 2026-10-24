@@ -88,7 +88,9 @@ namespace FaithClash.EditorTools
             }
 
             CriarObstaculos(matParede);
-            new GameObject("Testador de Animações").AddComponent<TestadorAnimacoes>();
+            var testadores = new GameObject("Testador de Animações");
+            testadores.AddComponent<TestadorAnimacoes>();
+            testadores.AddComponent<TestadorCombate>();
             new GameObject("Gerenciador de Treino").AddComponent<TrainingManager>();
             var hud = new GameObject("HUD").AddComponent<HUDJogo>();
             Ligar(hud, "jogador", jogador.transform);

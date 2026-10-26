@@ -1,0 +1,208 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4845871892004362568
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2399878333693608987}
+  - component: {fileID: 2523010489854633885}
+  - component: {fileID: 2117916316619472896}
+  - component: {fileID: 820262920296924281}
+  - component: {fileID: 986211923363897521}
+  m_Layer: 0
+  m_Name: Inimigo_Adam
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2399878333693608987
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4845871892004362568}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1.18, y: 1.18, z: 1.18}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 5333629706733818994}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!143 &2523010489854633885
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4845871892004362568}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 1.8
+  m_Radius: 0.4
+  m_SlopeLimit: 45
+  m_StepOffset: 0.35
+  m_SkinWidth: 0.04
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0.92, z: 0}
+--- !u!114 &2117916316619472896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4845871892004362568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d53cdac38aac9e343a0a52fdaf30b9be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FaithClash.Runtime::FaithClash.Core.Health
+  maxHealth: 2400
+--- !u!114 &820262920296924281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4845871892004362568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 081acc060263bec4daa855da01aad062, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FaithClash.Runtime::FaithClash.Training.TrainingDummy
+  body: {fileID: 0}
+  respawnDelay: 2
+  nome: Colosso Corrompido
+  subtitulo: "Tit\xE3 de Ferro"
+  nivel: 32
+--- !u!114 &986211923363897521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4845871892004362568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e61b75c385add6f4995228af106e394d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FaithClash.Runtime::FaithClash.Training.InimigoIA
+  animator: {fileID: 5333629706740824978}
+  ataques:
+  - clip: Mx_Illegal_Elbow_Punch
+    dano: 60
+    alcance: 2
+    velocidade: 0.9
+  - clip: Mx_Cross_Punch
+    dano: 55
+    alcance: 2
+    velocidade: 0.9
+  - clip: Mx_Standing_Melee_Kick
+    dano: 65
+    alcance: 2.2
+    velocidade: 0.9
+  mortes:
+  - Mx_Standing_React_Death_Backward
+  - Mx_Standing_React_Death_Forward
+  - Mx_Falling_Back_Death
+  velAndar: 2
+  velCorrer: 4.6
+  distanciaVisao: 16
+  distanciaCorrer: 6
+  intervaloAtaque: 2.2
+  giro: 7
+--- !u!1001 &5333629706733424370
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2399878333693608987}
+    m_Modifications:
+    - target: {fileID: 100000, guid: f12f2d44b2688054986e54861cc211dc, type: 3}
+      propertyPath: m_Name
+      value: Modelo
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: f12f2d44b2688054986e54861cc211dc, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: f12f2d44b2688054986e54861cc211dc, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: f12f2d44b2688054986e54861cc211dc, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: f12f2d44b2688054986e54861cc211dc, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: f12f2d44b2688054986e54861cc211dc, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: f12f2d44b2688054986e54861cc211dc, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: f12f2d44b2688054986e54861cc211dc, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: f12f2d44b2688054986e54861cc211dc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: f12f2d44b2688054986e54861cc211dc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: f12f2d44b2688054986e54861cc211dc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: f12f2d44b2688054986e54861cc211dc, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 85fc790fcfd1365448dd6e25edcf6e8b, type: 2}
+    - target: {fileID: 9500000, guid: f12f2d44b2688054986e54861cc211dc, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: f12f2d44b2688054986e54861cc211dc, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f12f2d44b2688054986e54861cc211dc, type: 3}
+--- !u!4 &5333629706733818994 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400000, guid: f12f2d44b2688054986e54861cc211dc, type: 3}
+  m_PrefabInstance: {fileID: 5333629706733424370}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &5333629706740824978 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 9500000, guid: f12f2d44b2688054986e54861cc211dc, type: 3}
+  m_PrefabInstance: {fileID: 5333629706733424370}
+  m_PrefabAsset: {fileID: 0}

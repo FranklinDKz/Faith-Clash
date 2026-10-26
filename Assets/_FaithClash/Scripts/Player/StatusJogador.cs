@@ -40,7 +40,8 @@ namespace FaithClash.Player
         PlayerController controle;
         ParticleSystem auraMeditacao;
         float furiaAte, proximoGesto;
-        GameObject vfxMeditar;
+        GameObject vfxMeditar, vfxMeditar2;
+        bool modoKi = true;   // (começa em Chakra) alterna a cada vez: Chakra (Naruto) / Ki (Dragon Ball)
         int acertosAcumulados;
         GameObject lanterna;
 
@@ -98,6 +99,9 @@ namespace FaithClash.Player
             return true;
         }
 
+        /// <summary>Drena a Fé sem avisos (domínio ativo).</summary>
+        public void DrenarFe(float valor) => Fe = Mathf.Max(0f, Fe - valor);
+
         public void GanharFe(float valor) => Fe = Mathf.Min(feMaxima, Fe + valor);
 
         public bool GastarCarga()
@@ -112,6 +116,14 @@ namespace FaithClash.Player
             GanharFe(regeneracaoFe * Time.deltaTime);
             if (combate != null) combate.DamageMultiplier = FuriaAtiva ? 1.5f : 1f;
 
+            var pad = UnityEngine.InputSystem.Gamepad.current;
+            if (pad != null && pad.leftTrigger.isPressed)   // LT + botão de face = técnicas 1-4
+            {
+                if (pad.buttonWest.wasPressedThisFrame) Usar(0);
+                if (pad.buttonNorth.wasPressedThisFrame) Usar(1);
+                if (pad.buttonEast.wasPressedThisFrame) Usar(2);
+                if (pad.buttonSouth.wasPressedThisFrame) Usar(3);
+            }
             var k = Keyboard.current;
             if (k == null) return;
             Meditar(k);
@@ -137,8 +149,12 @@ namespace FaithClash.Player
                 proximoGesto = 0f;
                 SomJogo.Tocar("Poder_Ativar", transform.position, 0.45f, 0.7f, duracaoMax: 1.4f);
                 CriarAuraMeditacao();
-                vfxMeditar = CatalogoVFX.Tocar("meditar", transform.position, Quaternion.identity, transform, 1f, 120f);
-                CatalogoVFX.Tocar("cura_circulo", transform.position, Quaternion.identity, null, 1f, 4f);
+                modoKi = !modoKi;
+                if (auraMeditacao != null) { var am = auraMeditacao.main; am.startColor = modoKi ? new Color(1f, 0.85f, 0.3f) : new Color(0.45f, 0.75f, 1f); }
+                Aviso?.Invoke(modoKi ? "Concentrando a Fé (estilo Ki)" : "Concentrando a Fé (estilo Chakra)");
+                vfxMeditar = CatalogoVFX.Tocar(modoKi ? "poder_aura" : "meditar", transform.position, Quaternion.identity, transform, modoKi ? 0.55f : 0.3f, 120f);
+                if (modoKi) vfxMeditar2 = CatalogoVFX.Tocar("raio_aura", transform.position, Quaternion.identity, transform, 0.6f, 120f);
+                CatalogoVFX.Tocar(modoKi ? "ki_circulo" : "cura_circulo", transform.position, Quaternion.identity, null, 0.45f, 4f);
             }
 
             bool moveu = k.wKey.isPressed || k.aKey.isPressed || k.sKey.isPressed || k.dKey.isPressed || k.spaceKey.isPressed
@@ -153,7 +169,7 @@ namespace FaithClash.Player
             if (Fe >= feMaxima - 1f) { PararMeditacao(); Aviso?.Invoke("Fé restaurada"); return; }
             if (proximoGesto == 0f)
             {
-                animador?.Acao("MeditarEntrar", 999f, 0.25f);   // senta e segue sozinho para o ciclo de meditação
+                animador?.Acao(modoKi ? "Mx_Roar" : "Mx_Magic_Heal", 999f, 0.25f, modoKi ? 0.8f : 0.7f);   // em pé: concentra chakra (mãos) ou ki (grito)
                 proximoGesto = 1f;
                 SomJogo.Tocar("UI_Elemento", transform.position, 0.25f, 0.6f);
             }
@@ -165,9 +181,9 @@ namespace FaithClash.Player
             if (!Meditando) return;
             Meditando = false;
             if (vfxMeditar != null) Destroy(vfxMeditar);
+            if (vfxMeditar2 != null) Destroy(vfxMeditar2);
             if (auraMeditacao != null) { auraMeditacao.Stop(true, ParticleSystemStopBehavior.StopEmitting); Destroy(auraMeditacao.gameObject, 2f); auraMeditacao = null; }
-            if (levantar) animador?.Acao("MeditarSair", 0.9f, 0.2f, 1.15f);
-            else animador?.Encerrar(0.25f);
+            animador?.Encerrar(0.25f);
         }
 
         void CriarAuraMeditacao()
@@ -187,10 +203,18 @@ namespace FaithClash.Player
         void Usar(int i)
         {
             PararMeditacao();
+            if (RegrasFase.SemItens) { Aviso?.Invoke("Sem itens nesta fase"); return; }
             var item = Itens[i];
             if (item.quantidade <= 0) { Aviso?.Invoke(item.nome + " esgotado"); return; }
             item.quantidade--;
-            GetComponent<AnimadorProtagonista>()?.Acao(i <= 1 ? "Curar" : i == 3 ? "PowerUp" : "PegarItem", i <= 1 ? 1.33f : i == 3 ? 1.1f : 0.83f, 0.08f);
+            var anim = GetComponent<AnimadorProtagonista>();
+            if (controle != null && new Vector3(controle.Velocity.x, 0f, controle.Velocity.z).magnitude > 3f)
+            {
+                // correndo: pega/usa o item sem parar (animação do usuário; quem move continua sendo o controle)
+                anim?.Acao("U_PegarCorrendo", 0.9f, 0.08f, 1.3f);
+                anim?.EscalarMovimento(0f);
+            }
+            else anim?.Acao(i <= 1 ? "Curar" : i == 3 ? "PowerUp" : "PegarItem", i <= 1 ? 1.33f : i == 3 ? 1.1f : 0.83f, 0.08f);
             StartCoroutine(AplicarItemDepois(i, item));
         }
 

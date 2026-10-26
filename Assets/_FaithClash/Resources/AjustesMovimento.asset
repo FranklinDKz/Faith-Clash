@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a696fa5eb08da440bcc464b18f20823, type: 3}
+  m_Name: AjustesMovimento
+  m_EditorClassIdentifier: FaithClash.Runtime::FaithClash.Core.AjustesMovimento
+  velAndar: 2.05
+  velCorrida: 5.4
+  velSprint: 6.6
+  aceleracao: 38
+  giro: 22
+  alturaPulo: 1.72
+  gravidade: -26
+  multiplicadorQueda: 1.45
+  multiplicadorPuloCurto: 2.2
+  controleNoAr: 0.45
+  alturaCapsula: 1.75
+  raioCapsula: 0.3
+  degrau: 0.4
+  rampaMaxima: 55
+  alturaMaxPularPorCima: 1.3
+  alturaMaxEscalar: 2.9
+  duracaoMinPularPorCima: 0.732
+  duracaoMaxPularPorCima: 1.2
+  folgaPularPorCima: 0.3
+  velocidadeEscalada: 1.294
+  duracaoRasteira: 0.95
+  velRasteira: 7.19
+  alturaCapsulaRasteira: 0.75
+  velParede: 4.5
+  tempoParede: 5
+  inclinacaoParede: 45
+  puloParedeLado: 7.4
+  puloParedeCima: 8.5
+  paredePeloChao: 1
+  inclinacaoCorrida: 8.9
+  inclinacaoSprint: 14.9
+  giroPesParaDentro: 0
+  estabilizarGiroQuadril: 0.5
+  velocidadeAnimCorrida: 1

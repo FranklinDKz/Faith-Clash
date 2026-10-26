@@ -1,0 +1,231 @@
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(3.08, 1.76, -0.26)/(0.19, 0.19, 0.23) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.00, 1.81, 0.01)/(0.15, 0.18, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.00, 1.81, 2.01)/(0.15, 0.18, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.00, 1.81, 2.01)/(0.15, 0.18, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.00, 1.81, 2.01)/(0.15, 0.18, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.00, 1.81, 2.01)/(0.15, 0.18, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.11, 1.68, 2.00)/(0.28, 0.23, 0.25) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(-0.03, 1.82, 1.97)/(0.18, 0.19, 0.21) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.11, 1.68, 1.99)/(0.28, 0.23, 0.25) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.00, 1.81, 0.01)/(0.15, 0.18, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.00, 1.81, 0.01)/(0.15, 0.18, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.00, 1.81, 0.01)/(0.15, 0.18, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.00, 1.81, 0.01)/(0.15, 0.18, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.00, 1.81, 0.01)/(0.15, 0.18, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.00, 1.81, 2.01)/(0.15, 0.18, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.00, 1.81, 2.01)/(0.15, 0.18, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.00, 1.81, 2.01)/(0.15, 0.18, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.00, 1.81, 2.01)/(0.15, 0.18, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.00, 1.81, 2.01)/(0.15, 0.18, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.00, 1.81, 2.01)/(0.15, 0.18, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.09, 1.68, 1.98)/(0.28, 0.22, 0.25) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.00, 1.81, 2.01)/(0.15, 0.18, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.00, 1.81, 2.01)/(0.15, 0.18, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.03, 1.73, 2.00)/(0.24, 0.19, 0.26) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.04, 1.73, 1.99)/(0.24, 0.19, 0.26) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(0.11, 1.68, 2.00)/(0.28, 0.23, 0.25) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(-0.04, 2.96, 55.55)/(0.24, 0.23, 0.21) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(-0.05, 2.96, 55.57)/(0.26, 0.23, 0.23) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(12.08, 1.39, 22.99)/(0.31, 0.26, 0.30) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 2.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.79, 2.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_SimpleParted: ossos=65 limites mundo=(0.00, 1.83, 0.01)/(0.18, 0.19, 0.19) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(-4.32, 1.72, 4.36)/(0.22, 0.19, 0.24) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+[Cabelo] Hair_Buzzed: ossos=65 limites mundo=(-4.32, 1.72, 4.36)/(0.22, 0.19, 0.24) cabeça=? mat=Cabelo1 escalaLocal=(1.00, 1.00, 1.00)
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo
+sem jogador/modelo

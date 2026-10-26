@@ -1,0 +1,139 @@
+﻿[   0,0]    ação: U_ArrancadaCorrer (z=2,0 y=0,04)
+[   2,0] SPACE em z=14,3 (Caixote (transpor)); decisão: transposição U_Vault3 (0,86 m)
+[   2,0]    ação: U_Vault3 (z=14,3 y=0,04)
+[   4,2] SPACE em z=24,3 (Mureta A); decisão: transposição U_Vault3 (0,96 m)
+[   4,3]    ação: U_Vault3 (z=24,3 y=0,04)
+[   5,9] SPACE em z=30,3 (Mureta B); decisão: transposição U_Vault1 (1,16 m)
+[   5,9]    ação: U_Vault1 (z=30,3 y=0,04)
+[   7,6] checkpoint 1 (z=38,1) tempo restante 109,0
+[   8,7] SPACE em z=45,1 (Barra de deslize); decisão: deslizar (vão 0,96 m)
+[   8,7]    ação: Mx_Running_Slide (z=45,1 y=0,04)
+[  10,5] SPACE em z=54,0 (Muro (escalar)); decisão: escalar (2,36 m, correndo)
+[  10,5]    ação: U_SubirAlto (z=54,0 y=0,04)
+[  12,5]    ação: U_ArrancadaCorrer (z=56,5 y=2,44)
+[  13,0]    ação: U_ArrancadaCorrer (z=57,6 y=1,24)
+[  14,1] checkpoint 2 (z=64,1) tempo restante 108,5
+[  16,3] SPACE em z=75,5 (vão); decisão: nada à frente (pulo normal)
+      rastro +0,1s: z=79,51 y=0,06 vel=0,0,-10,3,6,6 noChao=False
+      rastro +0,2s: z=80,21 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,3s: z=80,92 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,4s: z=81,63 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,5s: z=82,34 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,6s: z=83,02 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,7s: z=83,73 y=0,36 vel=0,0,7,8,6,6 noChao=False
+      rastro +0,8s: z=84,42 y=1,03 vel=0,0,5,1,6,6 noChao=False
+      rastro +0,9s: z=85,12 y=1,41 vel=0,0,2,3,6,6 noChao=False
+      rastro +1,0s: z=85,81 y=1,50 vel=0,0,-0,6,6,6 noChao=False
+      rastro +1,1s: z=86,52 y=1,20 vel=0,0,-4,6,6,6 noChao=False
+[  17,5] SPACE em z=83,5 (vão); decisão: nada à frente (pulo normal)
+      rastro +1,2s: z=87,22 y=0,49 vel=0,0,-8,6,6,6 noChao=False
+      rastro +0,1s: z=87,47 y=0,13 vel=0,0,-10,0,6,6 noChao=False
+      rastro +1,3s: z=87,90 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,2s: z=88,15 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +1,4s: z=88,60 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,3s: z=88,85 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,4s: z=89,53 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,5s: z=90,23 y=0,35 vel=0,0,7,9,6,6 noChao=False
+      rastro +0,6s: z=90,93 y=1,02 vel=0,0,5,1,6,6 noChao=False
+      rastro +0,7s: z=91,62 y=1,41 vel=0,0,2,4,6,6 noChao=False
+      rastro +0,8s: z=92,32 y=1,50 vel=0,0,-0,5,6,6 noChao=False
+      rastro +0,9s: z=93,00 y=1,24 vel=0,0,-4,3,6,6 noChao=False
+[  18,5] SPACE em z=90,0 (vão); decisão: nada à frente (pulo normal)
+      rastro +1,0s: z=93,70 y=0,56 vel=0,0,-8,3,6,6 noChao=False
+      rastro +0,1s: z=93,99 y=0,54 vel=0,0,-4,0,6,6 noChao=True
+      rastro +1,1s: z=94,37 y=0,54 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,2s: z=94,67 y=0,54 vel=0,0,-4,0,6,6 noChao=True
+      rastro +1,2s: z=95,06 y=0,54 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,3s: z=95,34 y=0,54 vel=0,0,-4,0,6,6 noChao=True
+      rastro +1,3s: z=95,74 y=0,54 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,4s: z=96,02 y=0,54 vel=0,0,-4,0,6,6 noChao=True
+      rastro +1,4s: z=96,41 y=0,54 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,5s: z=96,72 y=0,86 vel=0,0,7,8,6,6 noChao=False
+      rastro +0,6s: z=97,42 y=1,53 vel=0,0,5,0,6,6 noChao=False
+      rastro +0,7s: z=98,08 y=1,90 vel=0,0,2,4,6,6 noChao=False
+      rastro +0,8s: z=98,76 y=2,00 vel=0,0,-0,3,6,6 noChao=False
+      rastro +0,9s: z=99,43 y=1,76 vel=0,0,-4,1,6,6 noChao=False
+[  19,5] SPACE em z=96,5 (vão); decisão: nada à frente (pulo normal)
+      rastro +1,0s: z=100,10 y=1,13 vel=0,0,-8,0,6,6 noChao=False
+      rastro +0,1s: z=100,50 y=0,56 vel=0,0,-10,3,6,6 noChao=False
+[  19,6] checkpoint 3 (z=100,6) tempo restante 108,9
+      rastro +1,1s: z=100,78 y=0,09 vel=0,0,-11,9,6,6 noChao=False
+      rastro +0,2s: z=101,21 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +1,2s: z=101,45 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,3s: z=101,90 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +1,3s: z=102,12 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,4s: z=102,57 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +1,4s: z=102,81 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,5s: z=103,23 y=0,32 vel=0,0,7,9,6,6 noChao=False
+      rastro +0,6s: z=103,91 y=0,99 vel=0,0,5,3,6,6 noChao=False
+      rastro +0,7s: z=104,59 y=1,39 vel=0,0,2,6,6,6 noChao=False
+      rastro +0,8s: z=105,26 y=1,50 vel=0,0,-0,1,6,6 noChao=False
+      rastro +0,9s: z=105,93 y=1,29 vel=0,0,-3,9,6,6 noChao=False
+[  20,5] SPACE em z=103,0 (vão); decisão: nada à frente (pulo normal)
+      rastro +1,0s: z=106,60 y=0,69 vel=0,0,-7,7,6,6 noChao=False
+      rastro +0,1s: z=106,98 y=0,18 vel=0,0,-9,8,6,6 noChao=False
+      rastro +1,1s: z=107,30 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+[  20,7]    ação: U_SubirCorrendo (z=107,3 y=0,04)
+      rastro +0,2s: z=107,37 y=0,04 vel=0,0,0,0,0,2 noChao=True
+      rastro +1,2s: z=107,42 y=0,04 vel=0,0,0,1,3,1 noChao=False
+      rastro +0,3s: z=107,62 y=0,10 vel=0,0,2,1,3,9 noChao=False
+      rastro +1,3s: z=107,82 y=0,09 vel=0,0,-1,8,3,7 noChao=False
+      rastro +0,4s: z=108,00 y=0,04 vel=0,0,0,0,2,5 noChao=True
+      rastro +1,4s: z=108,02 y=0,05 vel=0,0,0,0,0,0 noChao=False
+      rastro +0,5s: z=108,02 y=0,09 vel=0,0,3,7,0,0 noChao=False
+      rastro +0,6s: z=108,05 y=0,95 vel=0,0,7,8,1,4 noChao=False
+      rastro +0,7s: z=108,17 y=1,02 vel=0,0,0,2,1,1 noChao=False
+      rastro +0,8s: z=108,26 y=1,04 vel=0,0,0,2,0,6 noChao=False
+      rastro +0,9s: z=108,30 y=1,03 vel=0,0,0,0,0,2 noChao=False
+      rastro +1,0s: z=108,31 y=1,02 vel=0,0,0,0,0,0 noChao=False
+      rastro +1,1s: z=108,30 y=1,03 vel=0,0,0,0,-0,1 noChao=False
+      rastro +1,2s: z=108,70 y=1,00 vel=0,0,0,1,-0,1 noChao=False
+[  21,8]    ação: U_ArrancadaCorrer (z=109,0 y=1,04)
+      rastro +1,3s: z=109,06 y=1,04 vel=0,0,-4,0,6,4 noChao=True
+      rastro +1,4s: z=109,42 y=1,04 vel=0,0,-4,0,1,8 noChao=True
+[  22,2] SPACE em z=110,1 (Caixa 2 (subir)); decisão: subir correndo (0,96 m)
+[  22,7] SPACE em z=113,4 (Caixa 3 (subir)); decisão: subir correndo (0,96 m)
+[  22,7]    ação: PuloImpulso (z=113,4 y=1,94)
+[  24,5] SPACE em z=122,3 (vão); decisão: nada à frente (pulo normal)
+      rastro +0,1s: z=126,32 y=2,90 vel=0,0,-10,2,6,6 noChao=False
+      rastro +0,2s: z=127,01 y=1,60 vel=0,0,-14,1,6,6 noChao=False
+[  24,8]    ação: Rolamento (z=127,7 y=0,04)
+      rastro +0,3s: z=127,68 y=0,04 vel=0,0,-18,0,6,6 noChao=True
+[  24,9] checkpoint 4 (z=128,1) tempo restante 109,7
+      rastro +0,4s: z=128,34 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,5s: z=129,01 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,6s: z=129,68 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,7s: z=130,38 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,8s: z=131,04 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,9s: z=131,71 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +1,0s: z=132,23 y=0,05 vel=0,0,0,8,3,3 noChao=True
+[  25,6] SPACE em z=132,2 (Caixote final); decisão: transposição U_Vault2 (1,06 m)
+[  25,6]    ação: U_Vault2 (z=132,2 y=0,04)
+      rastro +1,1s: z=132,78 y=0,04 vel=0,0,0,0,6,0 noChao=True
+      rastro +1,2s: z=133,30 y=0,37 vel=0,0,4,3,4,5 noChao=False
+      rastro +1,3s: z=133,81 y=1,61 vel=0,0,17,3,7,1 noChao=False
+      rastro +1,4s: z=134,34 y=2,13 vel=0,0,1,0,5,0 noChao=False
+[  27,1] SPACE em z=140,0 (Barra final); decisão: deslizar (vão 0,96 m)
+[  27,1]    ação: Mx_Running_Slide (z=140,0 y=0,04)
+[  28,7] SPACE em z=148,3 (Mureta final); decisão: transposição U_Vault1 (0,76 m)
+[  28,7]    ação: U_Vault1 (z=148,3 y=0,04)
+[  30,0] checkpoint 5 (z=154,1) tempo restante 110,5
+[  30,7] SPACE em z=158,1 (Muro final (escalar)); decisão: escalar (1,86 m, correndo)
+[  30,7]    ação: U_SubirAlto (z=158,1 y=0,04)
+[  32,8] SPACE em z=160,1 (vão); decisão: escalar (1,86 m, correndo)
+      rastro +0,1s: z=162,80 y=2,01 vel=0,0,-10,0,6,6 noChao=False
+      rastro +0,2s: z=163,50 y=0,72 vel=0,0,-14,0,6,6 noChao=False
+[  33,1]    ação: Rolamento (z=163,8 y=0,04)
+      rastro +0,3s: z=164,19 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,4s: z=164,88 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,5s: z=165,57 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,6s: z=166,26 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,7s: z=166,96 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,8s: z=167,64 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +0,9s: z=168,31 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +1,0s: z=168,98 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +1,1s: z=169,67 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +1,2s: z=170,34 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +1,3s: z=171,00 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+      rastro +1,4s: z=171,71 y=0,04 vel=0,0,-4,0,6,6 noChao=True
+RESULTADO: venceu=True perdeu=False tempo=34,2s quedas=0 posição final=(0.00, 0.04, 174.82)

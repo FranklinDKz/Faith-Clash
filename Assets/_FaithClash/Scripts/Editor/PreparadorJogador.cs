@@ -22,7 +22,8 @@ namespace FaithClash.EditorTools
         const string Pasta = "Assets/_FaithClash/Art/Characters/Jogador";
         const string PastaModelo = Pasta + "/Modelo";
         const string PastaAnim = Pasta + "/Anim";
-        const string Fbx = PastaModelo + "/Jogador.fbx";
+        const string PastaYuta = "Assets/_FaithClash/Art/Characters/Yuta";
+        const string Fbx = "Assets/Personagens/JogadorPrincipal/Mesh/JogadorPrincipal.fbx";
         const string FbxKatana = "Assets/_FaithClash/Art/Weapons/Katana.fbx";
         const string PastaMat = "Assets/_FaithClash/Materials/Jogador";
         const string CaminhoController = "Assets/_FaithClash/Animations/Jogador.controller";
@@ -51,15 +52,15 @@ namespace FaithClash.EditorTools
             new Clipe("Correr", "UAL1.fbx", "Jog_Fwd_Loop", 0, -1, true),
             new Clipe("Sprint", "UAL1.fbx", "Sprint_Loop", 0, -1, true),
             new Clipe("CorrerTras", "Magia/KI_Run01_Backward.fbx", null, 0, -1, true),
-            new Clipe("AndarAgachado", "UAL1.fbx", "Crouch_Fwd_Loop", 0, -1, true),
-            // ---------------- movimento especial
-            new Clipe("Dash", "UAL2.fbx", "Sword_Dash", 0, 26, false, 8, true),
             new Clipe("Rolamento", "UAL1.fbx", "Roll", 0, -1, false),
             new Clipe("PuloImpulso", "UAL1.fbx", "Jump_Start", 0, 40, false),
             new Clipe("NoAr", "UAL1.fbx", "Jump_Loop", 0, -1, true),
             new Clipe("PousoLeve", "UAL1.fbx", "Jump_Land", 0, -1, false),
             new Clipe("PousoPesado", "UAL2.fbx", "NinjaJump_Land", 0, -1, false),
             new Clipe("PuloNinja", "UAL2.fbx", "NinjaJump_Start", 0, -1, false),
+            new Clipe("AndarAgachado", "UAL1.fbx", "Crouch_Fwd_Loop", 0, -1, true),
+            // ---------------- movimento especial
+            new Clipe("Dash", "UAL2.fbx", "Sword_Dash", 0, 26, false, 8, true),
             // ---------------- espada (UAL 2 + Motifect)
             new Clipe("Corte1", "UAL2.fbx", "Sword_Regular_A", 0, -1, false, 7, true),
             new Clipe("Corte1Rec", "UAL2.fbx", "Sword_Regular_A_Rec", 0, -1, false),
@@ -145,16 +146,24 @@ namespace FaithClash.EditorTools
             }
         }
 
+        /// <summary>Clipes de parkour cuja subida/descida move o personagem (root motion vertical, pelos pés).</summary>
+        public static readonly HashSet<string> ParkourComAltura = new HashSet<string>
+        {
+            "Mx_Vault_Over_Box", "Mx_Sprint_To_Wall_Climb", "Mx_PK_Pull_Up_Ledge", "Mx_PK_Climb_Onto_Box", "Mx_PK_Step_Jump_Over",
+            "U_Descer", "U_DescerVariante", "U_DescerObstaculo", "U_Vault1", "U_Vault2", "U_Vault3", "U_SubirCorrendo", "U_SubirAndando", "U_SubirAlto",
+        };
+
         static readonly Dictionary<string, float> VelocidadeEstado = new Dictionary<string, float>();
 
         [MenuItem("Faith Clash/Preparar Jogador")]
         public static void Preparar()
         {
             todos = null;
+            orientacoes = null;
             AssetDatabase.Refresh();
             if (!File.Exists(Fbx)) { Debug.LogError("[Faith Clash] Modelo não encontrado: " + Fbx); return; }
             ConfigurarModelo();
-            ConfigurarAnimacoes();
+            if (Directory.Exists(AnimacoesMartial.PastaMartial)) AnimacoesMartial.ConfigurarClipes();
             var controller = CriarAnimator();
             GerarInfo();
             CriarPrefab(controller);
@@ -196,20 +205,20 @@ namespace FaithClash.EditorTools
 
         static void ConfigurarModelo()
         {
-            string T = PastaModelo + "/Texturas/";
-            foreach (var png in Directory.GetFiles(PastaModelo + "/Texturas", "*Normal.png"))
+            const string T = "Assets/Personagens/JogadorPrincipal/Texturas/";
+            // cor, metálico/rugosidade (R = metálico, A = suavidade) do Meshy; o material "Material_1" do FBX usa essas texturas
+            var mat = Mat("JogadorPrincipal", Color.white, 0.5f, T + "Base.png");
+            var mapaMetal = AssetDatabase.LoadAssetAtPath<Texture2D>(T + "MetalicoSuave.png");
+            var tiMetal = AssetImporter.GetAtPath(T + "MetalicoSuave.png") as TextureImporter;
+            if (tiMetal != null && tiMetal.sRGBTexture) { tiMetal.sRGBTexture = false; tiMetal.SaveAndReimport(); }
+            if (mapaMetal != null)
             {
-                var ti = (TextureImporter)AssetImporter.GetAtPath(png.Replace('\\', '/'));
-                if (ti != null && ti.textureType != TextureImporterType.NormalMap) { ti.textureType = TextureImporterType.NormalMap; ti.SaveAndReimport(); }
+                mat.SetTexture("_MetallicGlossMap", mapaMetal); mat.EnableKeyword("_METALLICSPECGLOSSMAP");
+                mat.SetFloat("_Smoothness", 1f);
+                mat.SetFloat("_Metallic", 1f);
             }
-            var materiais = new Dictionary<string, Material>
-            {
-                { "MI_Superhero_Male", Mat("Corpo", Color.white, 0.3f, T + "T_Superhero_Male_Dark.png", T + "T_Superhero_Male_Normal.png") },
-                { "MI_Ranger", Mat("Roupa", Color.white, 0.25f, T + "T_Ranger_BaseColor.png", T + "T_Ranger_Normal.png") },
-                { "MI_Regular_Male", Mat("Pele", Color.white, 0.3f, T + "T_Regular_Male_Dark_BaseColor.png", T + "T_Regular_Male_Normal.png") },
-                { "MI_Eyes", Mat("Olhos", Color.white, 0.8f, T + "T_Eye_Brown.png", T + "T_Eye_Normal.png") },
-                { "MI_Hair_1", Mat("Cabelo", new Color(0.12f, 0.1f, 0.1f), 0.35f, T + "T_Hair_1_BaseColor.png", T + "T_Hair_1_Normal.png", true) },
-            };
+            EditorUtility.SetDirty(mat);
+
             var imp = (ModelImporter)AssetImporter.GetAtPath(Fbx);
             imp.animationType = ModelImporterAnimationType.Human;
             imp.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
@@ -218,9 +227,21 @@ namespace FaithClash.EditorTools
             imp.importLights = false;
             imp.materialImportMode = ModelImporterMaterialImportMode.ImportStandard;
             imp.materialLocation = ModelImporterMaterialLocation.InPrefab;
-            foreach (var kv in materiais)
-                imp.AddRemap(new AssetImporter.SourceAssetIdentifier(typeof(Material), kv.Key), kv.Value);
+            imp.AddRemap(new AssetImporter.SourceAssetIdentifier(typeof(Material), "Material_1"), mat);
             imp.SaveAndReimport();
+
+            var go = AssetDatabase.LoadAssetAtPath<GameObject>(Fbx);
+            float minY = float.MaxValue, maxY = float.MinValue;
+            foreach (var r in go.GetComponentsInChildren<SkinnedMeshRenderer>())
+            {
+                var bb = r.sharedMesh.bounds;
+                foreach (var c in new[] { bb.min, bb.max })
+                {
+                    float y = r.transform.TransformPoint(c).y; minY = Mathf.Min(minY, y); maxY = Mathf.Max(maxY, y);
+                }
+            }
+            Debug.Log("[Faith Clash] Altura do modelo importado: " + (maxY - minY) + " m (escala " + imp.globalScale + ")");
+
             var avatar = AssetDatabase.LoadAllAssetsAtPath(Fbx).OfType<Avatar>().FirstOrDefault();
             Debug.Log("[Faith Clash] Avatar do jogador válido: " + (avatar != null && avatar.isValid && avatar.isHuman));
         }
@@ -228,52 +249,54 @@ namespace FaithClash.EditorTools
         // ------------------------------------------------------------------ animações
         static string Curto(string takeName) => takeName.Contains("|") ? takeName.Substring(takeName.LastIndexOf('|') + 1) : takeName;
 
-        static void ConfigurarAnimacoes()
-        {
-            foreach (var grupo in Todos.GroupBy(c => c.Arquivo))
-            {
-                string caminho = PastaAnim + "/" + grupo.Key;
-                var imp = AssetImporter.GetAtPath(caminho) as ModelImporter;
-                if (imp == null) { Debug.LogWarning("[Faith Clash] Arquivo de animação ausente: " + caminho); continue; }
-                imp.animationType = ModelImporterAnimationType.Human;
-                imp.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
-                imp.importAnimation = true;
-                imp.materialImportMode = ModelImporterMaterialImportMode.None;
-                imp.SaveAndReimport();
+        // ------------------------------------------------------------------ orientação dos clipes
+        const string CsvOrientacoes = PastaAnim + "/orientacoes.csv";
+        static Dictionary<string, float> orientacoes;
 
-                imp = (ModelImporter)AssetImporter.GetAtPath(caminho);
-                var padrao = imp.defaultClipAnimations;
-                var clips = new List<ModelImporterClipAnimation>();
-                foreach (var c in grupo)
-                {
-                    ModelImporterClipAnimation b = padrao.FirstOrDefault(p => c.Take != null ? Curto(p.name) == c.Take : true);
-                    if (b == null) { Debug.LogWarning($"[Faith Clash] Take '{c.Take}' não achado em {c.Arquivo} (existem: {string.Join(", ", padrao.Select(p => Curto(p.name)))})"); continue; }
-                    int total = Mathf.RoundToInt(b.lastFrame - b.firstFrame);
-                    int fim = c.Fim < 0 ? total : Mathf.Min(c.Fim, total);
-                    clips.Add(new ModelImporterClipAnimation
+        /// <summary>Giro (graus) aplicado à pose de cada clipe para que ele comece olhando para a frente do personagem.</summary>
+        static float Orientacao(string nome)
+        {
+            if (orientacoes == null)
+            {
+                orientacoes = new Dictionary<string, float>();
+                if (File.Exists(CsvOrientacoes))
+                    foreach (var l in File.ReadAllLines(CsvOrientacoes))
                     {
-                        name = c.Nome,
-                        takeName = b.takeName,
-                        firstFrame = b.firstFrame + c.Ini,
-                        lastFrame = b.firstFrame + fim,
-                        loopTime = c.Loop,
-                        loopPose = c.Loop,
-                        // a altura do quadril é a original; o deslocamento horizontal só vale nos golpes que "andam" (MovimentoXZ)
-                        lockRootHeightY = true,
-                        keepOriginalPositionY = true,
-                        heightOffset = 0f,
-                        lockRootPositionXZ = !c.MovimentoXZ,
-                        keepOriginalPositionXZ = false,
-                        lockRootRotation = true,
-                        keepOriginalOrientation = false,
-                        rotationOffset = 0f,
-                    });
-                }
-                imp.clipAnimations = clips.ToArray();
-                imp.SaveAndReimport();
-                var av = AssetDatabase.LoadAllAssetsAtPath(caminho).OfType<Avatar>().FirstOrDefault();
-                if (av == null || !av.isHuman) Debug.LogWarning("[Faith Clash] Avatar humanoide inválido em " + grupo.Key);
+                        var p = l.Split(';');
+                        if (p.Length == 2 && float.TryParse(p[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var v)) orientacoes[p[0]] = v;
+                    }
             }
+            return orientacoes.TryGetValue(nome, out var g) ? g : 0f;
+        }
+
+        /// <summary>Mede a orientação (yaw) de clipes que ficam dentro de blend trees (idle/andar/correr), amostrando o clipe no modelo.</summary>
+        [MenuItem("Faith Clash/Ferramentas/Medir Clipes de Locomoção")]
+        public static void MedirLocomocao()
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(CaminhoPrefab);
+            if (prefab == null) return;
+            var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+            go.hideFlags = HideFlags.HideAndDontSave;
+            var anim = go.GetComponentInChildren<Animator>();
+            var dir = anim.GetBoneTransform(HumanBodyBones.RightUpperLeg);
+            var esq = anim.GetBoneTransform(HumanBodyBones.LeftUpperLeg);
+            var sb = new StringBuilder();
+            foreach (var kv in TodosClipes().Where(k => k.Key == "U_RolarCorrer" || k.Key == "U_PousoAlto" || k.Key == "U_Vault1" || k.Key == "U_DescerObstaculo"))
+            {
+                string r = "";
+                var amostras = new List<float>();
+                for (int a = 0; a <= 20; a++) amostras.Add(Mathf.Min(0.99f, a / 20f));
+                foreach (float f in amostras)
+                {
+                    kv.Value.SampleAnimation(anim.gameObject, kv.Value.length * f);
+                    Vector3 d = dir.position - esq.position; d.y = 0f;
+                    r += Vector3.SignedAngle(go.transform.forward, Vector3.Cross(d.normalized, Vector3.up), Vector3.up).ToString("0") + " ";
+                }
+                sb.AppendLine(kv.Key + " (" + kv.Value.length.ToString("0.00") + "s): " + r);
+            }
+            Object.DestroyImmediate(go);
+            File.WriteAllText("Ferramentas/analise/orient_loco.txt", sb.ToString());
+            Debug.Log("[Faith Clash] Medição de locomoção: Ferramentas/analise/orient_loco.txt");
         }
 
         static Dictionary<string, AnimationClip> TodosClipes()
@@ -301,8 +324,26 @@ namespace FaithClash.EditorTools
             AssetDatabase.ImportAsset(CaminhoInfo);
         }
 
+        static readonly string[] RemovidasDoJogador =
+        {
+            "PuloImpulso", "NoAr", "PousoLeve", "PousoPesado", "PuloNinja", "Mx_Running_Jump", "Mx_PK_Running_Jump_Landing", "Mx_PK_Sprint_Jump", "Mx_PK_Jump_From_Idle", "Mx_Big_Jump",
+            "Correr", "Sprint", "CorrerTras", "U_Correr", "Mx_Fast_Run", "Mx_Sprint", "Mx_Two_Cycle_Sprint",
+            "Mx_Standing_Run_Forward", "Mx_Standing_Run_Back", "Mx_Standing_Run_Left", "Mx_Standing_Run_Right",
+            "Mx_Sprint_Forward", "Mx_Sprint_Backward", "Mx_Sprint_Left", "Mx_Sprint_Right", "Mx_SS_Run", "Mx_Great_Sword_Run",
+            "U_Vault1", "U_Vault2", "U_Vault3", "Mx_PK_Step_Jump_Over", "Mx_Jump_Over", "Mx_Jump_Away", "Mx_Vault_Over_Box",
+        };
+
+        /// <summary>Só refaz o Animator (sem reimportar o modelo): usado pela janela Animações do Jogador.</summary>
+        public static void RefazerAnimator()
+        {
+            CriarAnimator();
+            GerarInfo();
+            AssetDatabase.SaveAssets();
+        }
+
         static AnimatorController CriarAnimator()
         {
+            if (Directory.Exists(AnimacoesMartial.PastaMartial)) return AnimacoesMartial.CriarJogador(CaminhoController);
             Directory.CreateDirectory(Path.GetDirectoryName(CaminhoController));
             if (File.Exists(CaminhoController)) AssetDatabase.DeleteAsset(CaminhoController);
             var ctrl = AnimatorController.CreateAnimatorControllerAtPath(CaminhoController);
@@ -311,17 +352,21 @@ namespace FaithClash.EditorTools
             ctrl.AddParameter("VelY", AnimatorControllerParameterType.Float);
             ctrl.AddParameter("Espelho", AnimatorControllerParameterType.Bool);
             ctrl.AddParameter("VelAcao", AnimatorControllerParameterType.Float);
+            ctrl.AddParameter("MoveX", AnimatorControllerParameterType.Float);
+            ctrl.AddParameter("MoveY", AnimatorControllerParameterType.Float);
             var ps = ctrl.parameters;
             for (int p = 0; p < ps.Length; p++) if (ps[p].name == "VelAcao" || ps[p].name == "EscalaPassada") ps[p].defaultFloat = 1f;
             ctrl.parameters = ps;
             var clips = TodosClipes();
+            // animações de pular e correr do jogador removidas (o usuário vai colocar as dele); só a arrancada (U_ArrancadaCorrer) fica. Os inimigos continuam com as deles.
+            foreach (var nome in RemovidasDoJogador) clips.Remove(nome);
             Debug.Log("[Faith Clash] Clipes (" + clips.Count + "): " + string.Join(", ", clips.Keys.OrderBy(k => k)));
             var sm = ctrl.layers[0].stateMachine;
             var camadas = ctrl.layers;
             camadas[0].iKPass = true;
             ctrl.layers = camadas;
 
-            void Arvore(string nome, (string clipe, float limiar)[] itens)
+            void Arvore(string nome, (string clipe, float limiar)[] itens, Dictionary<string, float> escalas = null)
             {
                 ctrl.CreateBlendTreeInController(nome, out BlendTree arvore);
                 arvore.blendParameter = "Velocidade";
@@ -329,23 +374,74 @@ namespace FaithClash.EditorTools
                 foreach (var (clipe, limiar) in itens)
                 {
                     if (clips.TryGetValue(clipe, out var c)) arvore.AddChild(c, limiar);
+                    else if (RemovidasDoJogador.Contains(clipe) && clips.TryGetValue(itens[0].clipe, out var parado)) arvore.AddChild(parado, limiar);   // sem animação de correr: fica estático
                     else Debug.LogWarning("[Faith Clash] Clipe ausente: " + clipe);
+                }
+                if (escalas != null)
+                {
+                    var filhos = arvore.children;
+                    for (int i = 0; i < filhos.Length; i++)
+                        if (filhos[i].motion != null && escalas.TryGetValue(filhos[i].motion.name, out var ts)) filhos[i].timeScale = ts;
+                    arvore.children = filhos;
                 }
                 var estado = sm.states.First(s => s.state.name == nome).state;
                 estado.speedParameterActive = true;
                 estado.speedParameter = "EscalaPassada";
             }
             // limiares = velocidade natural de cada ciclo (medida nos arquivos com movimento): andar 0,97, correr 5,36, sprint 8,25 m/s
-            Arvore("Locomocao", new[] { ("IdlePoder", 0f), ("Andar", 0.97f), ("Correr", 5.36f), ("Sprint", 8.25f) });
-            Arvore("LocomocaoEspada", new[] { ("IdleEspada", 0f), ("Andar", 0.97f), ("Correr", 5.36f), ("Sprint", 8.25f) });
-            Arvore("LocomocaoCombate", new[] { ("IdleCombate", 0f), ("Andar", 0.97f), ("Correr", 5.36f), ("Sprint", 8.25f) });
+            // corridas de parkour (Mixamo): Fast Run 5,15 m/s (jogador corre a 5,5) e Sprint 5,62 m/s (jogador dispara a 7,5): o timeScale iguala a passada à velocidade
+            var escalasParkour = new Dictionary<string, float> { { "Mx_Fast_Run", 5.5f / 5.15f }, { "Mx_Sprint", 7.5f / 5.62f } };
+            // animações do usuário (parado, andando, correndo, ferido) + sprint do Mixamo; o timeScale casa a passada com a velocidade
+            var escalasUsuario = new Dictionary<string, float> { { "U_Andar", 1.2f } };
+            // corrida = sprint = a mesma animação do usuário (combina com a arrancada); a velocidade do jogo acompanha a da animação
+            void ArvoreCorrida(string nome, string idle)
+            {
+                ctrl.CreateBlendTreeInController(nome, out BlendTree arv);
+                arv.blendParameter = "Velocidade";
+                arv.useAutomaticThresholds = false;
+                // sem animações de correr (removidas): em velocidade de corrida o personagem fica estático (parado) até o usuário colocar as dele
+                foreach (var (clipe, limiar, ts) in new[] { (idle, 0f, 1f), ("U_Andar", 1.96f, 1.2f), ("U_Correr", 5.4f, 1.35f), ("U_Correr", 6.6f, 1.65f) })
+                    if (clips.TryGetValue(clipe, out var c)) arv.AddChild(c, limiar);
+                    else if (clips.TryGetValue(idle, out var parado)) arv.AddChild(parado, limiar);
+                var f = arv.children;
+                float[] tss = { 1f, 1.2f, 1f, 1f };
+                for (int i = 0; i < f.Length && i < tss.Length; i++) f[i].timeScale = tss[i];
+                arv.children = f;
+                var est = sm.states.First(s => s.state.name == nome).state;
+                est.speedParameterActive = false;
+            }
+            ArvoreCorrida("Locomocao", "U_Parado");
+            Arvore("LocomocaoFerido", new[] { ("U_Parado", 0f), ("U_Ferido", 1.63f) });
+            Arvore("LocomocaoEspadaDupla", new[] { ("Mx_Great_Sword_Idle", 0f), ("Mx_Great_Sword_Walk", 0.94f), ("Mx_Great_Sword_Run", 3.2f) },
+                new Dictionary<string, float> { { "Mx_Great_Sword_Run", 3.2f / 2.4f } });
+            Arvore("LocomocaoEspada", new[] { ("Mx_SS_Idle", 0f), ("Mx_SS_Walk", 1.37f), ("Mx_SS_Run", 4.4f) },
+                new Dictionary<string, float> { { "Mx_SS_Run", 4.4f / 3.78f } });
+            ArvoreCorrida("LocomocaoCombate", "Mx_KF_Guarda_Aberta");
             Arvore("LocomocaoTras", new[] { ("IdlePoder", 0f), ("CorrerTras", 5.0f) });
+            // com o alvo travado (estilo Elden Ring): andar/correr/sprint em 8 direções olhando para o inimigo; MoveX/MoveY = velocidade local (m/s)
+            {
+                ctrl.CreateBlendTreeInController("LocomocaoAlvo", out BlendTree alvo);
+                alvo.blendType = BlendTreeType.FreeformDirectional2D;
+                alvo.blendParameter = "MoveX"; alvo.blendParameterY = "MoveY";
+                alvo.useAutomaticThresholds = false;
+                void Pt(string clipe, float x, float y)
+                {
+                    if (clips.TryGetValue(clipe, out var c)) alvo.AddChild(c, new Vector2(x, y));
+                    else if (RemovidasDoJogador.Contains(clipe) && clips.TryGetValue("Mx_Fighting_Idle", out var parado)) alvo.AddChild(parado, new Vector2(x, y));
+                    else Debug.LogWarning("[Faith Clash] Clipe ausente: " + clipe);
+                }
+                Pt("Mx_Fighting_Idle", 0f, 0f);
+                // velocidades naturais medidas nos clipes (m/s): andar 1,5 / 1,1 / 0,9 / 1,5; correr 3,3 / 1,8 / 2,9 / 2,9; sprint 6,2
+                Pt("U_Andar", 0f, 1.96f); Pt("U_AlvoTras", 0f, -1.03f); Pt("U_AlvoEsquerda", -1.58f, 0f); Pt("U_AlvoDireita", 1.58f, 0f);   // andar com foco: animações do usuário
+                Pt("Mx_Standing_Run_Forward", 0f, 3.3f); Pt("Mx_Standing_Run_Back", 0f, -2.2f); Pt("Mx_Standing_Run_Left", -2.9f, 0f); Pt("Mx_Standing_Run_Right", 2.9f, 0f);
+                Pt("Mx_Sprint_Forward", 0f, 6.2f); Pt("Mx_Sprint_Backward", 0f, -6.2f); Pt("Mx_Sprint_Left", -6.2f, 0f); Pt("Mx_Sprint_Right", 6.2f, 0f);
+            }
             sm.defaultState = sm.states.First(s => s.state.name == "Locomocao").state;
 
             var estados = new Dictionary<string, AnimatorState>();
             foreach (var c in Todos)
             {
-                if (c.Nome.StartsWith("Idle") || c.Nome == "Andar" || c.Nome == "Correr" || c.Nome == "Sprint" || c.Nome == "CorrerTras") continue;   // já nas árvores
+                if (c.Nome.StartsWith("Idle") || c.Nome == "Andar" || c.Nome == "Correr" || c.Nome == "Sprint" || c.Nome == "Mx_Fast_Run" || c.Nome == "Mx_SS_Idle" || c.Nome == "Mx_SS_Walk" || c.Nome == "Mx_SS_Run" || c.Nome == "Mx_Great_Sword_Idle" || c.Nome == "Mx_Great_Sword_Walk" || c.Nome == "Mx_Great_Sword_Run" || c.Nome == "Mx_Sprint" || c.Nome == "CorrerTras") continue;   // já nas árvores
                 if (!clips.TryGetValue(c.Nome, out var clip)) { Debug.LogWarning("[Faith Clash] Clipe ausente: " + c.Nome); continue; }
                 var st = sm.AddState(c.Nome);
                 st.motion = clip;
@@ -374,7 +470,7 @@ namespace FaithClash.EditorTools
             var raiz = new GameObject("Jogador");
             raiz.transform.position = new Vector3(0, 0.1f, 0);
             var cc = raiz.AddComponent<CharacterController>();
-            cc.height = 1.8f; cc.radius = 0.32f; cc.center = new Vector3(0, 0.9f, 0);
+            cc.height = 1.75f; cc.radius = 0.3f; cc.center = new Vector3(0, 0.875f, 0);   // cápsula do tamanho do modelo (1,75 m)
             cc.stepOffset = 0.4f; cc.slopeLimit = 55f; cc.skinWidth = 0.04f;
             var pc = raiz.AddComponent<PlayerController>();
             var vida = raiz.AddComponent<Health>();
@@ -383,6 +479,7 @@ namespace FaithClash.EditorTools
             raiz.AddComponent<StatusJogador>();
             raiz.AddComponent<EstilosElementais>();
             raiz.AddComponent<TravaAlvo>();
+            raiz.AddComponent<Parkour>();
             raiz.AddComponent<ModoCombate>();
             var vso = new SerializedObject(vida);
             vso.FindProperty("maxHealth").floatValue = 1850f;
@@ -400,6 +497,10 @@ namespace FaithClash.EditorTools
             if (avatar != null) animator.avatar = avatar;
             modelo.AddComponent<MovimentoDaAnimacao>();
             modelo.AddComponent<PesNoChao>();
+            modelo.AddComponent<EmpunhaduraKatana>();
+            modelo.AddComponent<EstabilizadorMarcha>();
+            modelo.AddComponent<EscaladaProcedural>();
+            modelo.AddComponent<CorpoVivo>();
 
             AnexarKatana(modelo, animator);
             ConfigurarVFX(raiz);
@@ -413,37 +514,47 @@ namespace FaithClash.EditorTools
             Object.DestroyImmediate(raiz);
         }
 
-        /// <summary>Katana presa na mão direita; a orientação é calculada a partir da pose do golpe de espada.</summary>
+        /// <summary>
+        /// Katana na mão direita, segurada como uma espada de verdade: o cabo cruza a palma (do dedo mínimo para o indicador) e a lâmina sai pelo lado do indicador.
+        /// Cria também o ponto "PegadaEsquerda" (cabo, perto do pomo) onde a mão esquerda se prende na empunhadura de duas mãos.
+        /// </summary>
         static void AnexarKatana(GameObject modelo, Animator animator)
         {
             var katanaFbx = AssetDatabase.LoadAssetAtPath<GameObject>(FbxKatana);
             if (katanaFbx == null || animator == null || !animator.isHuman) return;
             var mao = animator.GetBoneTransform(HumanBodyBones.RightHand);
-            var clipes = TodosClipes();
+            Transform Dedo(HumanBodyBones b) => animator.GetBoneTransform(b);
+            var indicador = Dedo(HumanBodyBones.RightIndexProximal);
+            var minimo = Dedo(HumanBodyBones.RightLittleProximal);
+            var medio = Dedo(HumanBodyBones.RightMiddleProximal);
+            var anelar = Dedo(HumanBodyBones.RightRingProximal);
+            if (indicador == null || minimo == null || medio == null) return;
 
-            Vector3 eixoLocal = Vector3.up;
-            Vector3 posLocal = Vector3.zero;
-            if (clipes.TryGetValue("Corte1", out var corte))
-            {
-                var temp = Object.Instantiate(modelo);
-                var anim = temp.GetComponent<Animator>();
-                var m1 = anim.GetBoneTransform(HumanBodyBones.RightHand);
-                var m2 = anim.GetBoneTransform(HumanBodyBones.LeftHand);
-                corte.SampleAnimation(temp, corte.length * 0.5f);
-                Vector3 d = (m1.position - m2.position).normalized;
-                eixoLocal = m1.InverseTransformDirection(d).normalized;
-                posLocal = m1.InverseTransformPoint(m1.position - d * 0.02f);
-                Object.DestroyImmediate(temp);
-                Debug.Log("[Faith Clash] Eixo da katana (local da mão): " + eixoLocal);
-            }
+            Vector3 L(Transform t) => mao.InverseTransformPoint(t.position);
+            Vector3 eixo = (L(indicador) - L(minimo)).normalized;                       // cabo atravessa a palma
+            Vector3 dedos = (L(medio) - Vector3.zero).normalized;                         // direção dos dedos
+            Vector3 palma = (L(indicador) + L(minimo) + L(medio) + (anelar != null ? L(anelar) : L(medio))) / 4f;
+            palma -= dedos * 0.012f;
+            Vector3 lado = Vector3.Cross(eixo, dedos).normalized;                          // normal da palma
+            // inclina a lâmina um pouco para a frente (pulso relaxado)
+            eixo = (eixo + dedos * 0.35f).normalized;
 
             var k = (GameObject)PrefabUtility.InstantiatePrefab(katanaFbx);
             k.name = "Katana";
             k.transform.SetParent(mao, false);
-            k.transform.localRotation = Quaternion.FromToRotation(Vector3.forward, eixoLocal);
-            k.transform.localPosition = posLocal;
-            k.transform.localScale = Vector3.one / Mathf.Max(0.0001f, mao.lossyScale.x);
+            float escalaMao = Mathf.Max(0.0001f, mao.lossyScale.x);
+            k.transform.localScale = Vector3.one / escalaMao;
+            // a lâmina do modelo aponta para +Z; o fio fica voltado para fora da palma (-normal)
+            k.transform.localRotation = Quaternion.LookRotation(eixo, lado);
+            const float gripDireita = 0.035f;   // ponto do cabo (m) onde a mão direita pega
+            k.transform.localPosition = palma - k.transform.localRotation * Vector3.forward * (gripDireita / escalaMao);
+
+            var pegada = new GameObject("PegadaEsquerda").transform;
+            pegada.SetParent(k.transform, false);
+            pegada.localPosition = new Vector3(0f, 0f, -0.095f);
+            pegada.localRotation = Quaternion.Euler(0f, 0f, 180f) * Quaternion.Euler(-90f, 0f, 0f);
             k.SetActive(false);
+            Debug.Log("[Faith Clash] Katana montada: eixo local " + eixo + ", palma " + palma);
         }
 
         // chave do jogo -> (nome do prefab, escala). Pacotes gratuitos da Asset Store (veja Docs/CREDITOS_ASSETS.md).
@@ -459,7 +570,12 @@ namespace FaithClash.EditorTools
             ("roxo_circulo", "Magic circle", 1f), ("roxo_portal", "Portal red", 1f), ("azul_portal", "Portal blue", 1f), ("azul_plexus", "Plexus AoE", 1f),
             ("poder_aura", "Buff", 1f), ("poder_estrela", "Star aura", 1f), ("cura_circulo", "Healing circle", 1f), ("meditar", "L_Recover_hold", 1f),
             ("escudo", "Magic shield blue", 1f), ("teleporte", "Teleport", 1f), ("poeira", "Dust puff", 1f), ("poeira_chao", "Dust ground", 1f),
-            ("explosao_vermelha", "Red energy explosion", 1f), ("meteoros", "Meteors AOE", 1f), ("laser_area", "Laser AOE", 1f), ("congelar", "Freeze circle", 1f),
+            ("explosao_vermelha", "Red energy explosion", 1f),
+            ("ki_circulo", "Magic circle 2", 1f), ("ki_faiscas", "Sparks explode blue", 1f), ("raio_trilha", "VFX_Trail_Electric", 1f), ("raio_hit", "Electro hit", 1f),
+            ("areia_trilha", "VFX_Trail_Earth", 1f), ("maldito", "CFXR2 _CURSED_", 1f), ("vazio_trilha", "VFX_Trail_Void", 1f), ("dominio_domo", "Smoke hemisphere loop", 1f),
+            ("sangue_espinho", "BloodSprayFX", 1f), ("fogos_azul", "FX_Fireworks_Blue_Large", 1f), ("fogos_verde", "FX_Fireworks_Green_Large", 1f), ("fogos_amarelo", "FX_Fireworks_Yellow_Large", 1f),
+            ("pedras_cair", "FX_Rubble", 1f), ("explosao_pedras", "FX_Explosion_Rubble", 1f), ("poeira_nuvem", "FX_Dust_Prefab_01", 1f), ("terra_respingo", "FX_DirtSplatter", 1f), ("vapor", "FX_Steam", 1f),
+            ("faisca_amarela", "Sparks explode yellow", 1f), ("portal_vermelho", "Portal red", 1f), ("raio_luz", "FX_Lightray", 1f), ("meteoros", "Meteors AOE", 1f), ("laser_area", "Laser AOE", 1f), ("congelar", "Freeze circle", 1f),
         };
 
         static void ConfigurarVFX(GameObject raiz)

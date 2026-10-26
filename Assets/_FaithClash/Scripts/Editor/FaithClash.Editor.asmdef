@@ -3,6 +3,7 @@
     "rootNamespace": "FaithClash.EditorTools",
     "references": [
         "FaithClash.Runtime",
+        "CharacterMovement.Core",
         "Unity.RenderPipelines.Core.Runtime",
         "Unity.RenderPipelines.Universal.Runtime"
     ],

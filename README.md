@@ -47,7 +47,7 @@ Inspirações: Jujutsu Kaisen, Naruto, Dragon Ball Z, Naraka: Bladepoint, Elden 
 | Trocar de alvo | Roda do mouse | — |
 | **Espada ⇄ Poder** | G | — |
 | **Só combate** (sem espada nem poderes; de novo volta ao modo anterior) | **5** | — |
-| **Meditar** (segurar: recupera Fé; qualquer movimento interrompe) | **E** | — |
+| **Concentrar a Fé** (segurar; alterna Chakra / Ki; mover interrompe) | **E** | — |
 | Estilo Fogo / Água / Terra / Ar (entra no modo Poder) | 1 / 2 / 3 / 4 | — |
 | **Habilidade do estilo** (gesto + jutsu) | F | — |
 | Roxo (gasta carga espiritual) | R | — |
@@ -67,7 +67,13 @@ Teclas que o Naraka usa para outras coisas (itens, habilidades) ficam em Z X B V
 - **Espada (katana, tecla G):** só corta. Combo de 4 cortes e golpe pesado com salto.
 - **Poder (teclas 1–4):** jutsus de Naruto e técnicas de Jujutsu Kaisen, **sem socos nem chutes**. Clique = técnica leve do estilo, segurar = técnica forte, F = habilidade do estilo, R = Roxo. Cada técnica tem o próprio gesto (animação) e som e gasta Fé.
 
-**Meditar (E):** segure parado para recuperar Fé bem mais rápido (aura azul). Mover, pular, atacar ou levar dano interrompe.
+**Concentrar a Fé (E):** segure parado, em pé, para recuperar Fé bem mais rápido. A cada vez alterna entre o estilo Chakra (mãos, aura azul) e o estilo Ki (grito, aura dourada). Mover, pular, atacar ou levar dano interrompe.
+
+**Poderes (modo Poder):** 1 Fogo, 2 Água, 3 Terra, 4 Ar, 6 Raio, 7 Areia, 8 Ki, 9 Dōjutsu, 0 Domínio. Clique = técnica leve, segurar = forte, F = habilidade. Fogo sai pela boca, água pelas mãos; Ar/F = Shinra Tensei; Raio = Raikou/Chidori/Kirin; Areia = onda/caixão/escudo; Ki = rajada/Kamehameha/Rasengan; Dōjutsu = Sharingan/Chibaku Tensei/Rinnegan (teleporte); Domínio = Raijin Voador/Vazio Infinito/Santuário Malevolente. R = Roxo.
+
+**Katana (G):** H alterna a empunhadura. Duas mãos (padrão) usa as animações "Great Sword"/"Two Hand" com a mão esquerda presa ao cabo por IK; uma mão usa as animações "Sword And Shield" (escudo opcional, ainda sem modelo de escudo).
+
+**Parkour:** corra (Shift) contra muretas (vault automático) e muros (escalada); no ar ao lado de uma parede você corre nela e Espaço pula dela; Ctrl correndo = deslize. Dash (C) e avanços deixam riscos de rapidez em vez de poeira.
 
 Sem alvo travado há uma assistência leve de mira nos ataques. Com alvo travado (Q) o personagem encara o inimigo e cada golpe avança só o necessário para alcançá-lo.
 

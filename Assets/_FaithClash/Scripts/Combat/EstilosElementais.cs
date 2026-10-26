@@ -8,7 +8,7 @@ using FaithClash.Training;
 
 namespace FaithClash.Combat
 {
-    public enum Elemento { Fogo, Agua, Terra, Ar }
+    public enum Elemento { Fogo, Agua, Terra, Ar, Raio, Areia, Ki, Olhos, Dominio, Rinnegan }
 
     /// <summary>
     /// Modo Poder: jutsus inspirados em Naruto e técnicas amaldiçoadas inspiradas em Jujutsu Kaisen.
@@ -16,7 +16,7 @@ namespace FaithClash.Combat
     /// F = habilidade do estilo. Cada técnica usa só o gesto de conjuração (nunca socos ou chutes). R solta o Roxo (Técnica Reversa) gastando uma carga espiritual.
     /// No modo Combate, o golpe pesado tem chance de Faísca Negra (Kokusen). Água → Fogo → Terra → Ar em sequência causa a Explosão Elemental.
     /// </summary>
-    public class EstilosElementais : MonoBehaviour
+    public partial class EstilosElementais : MonoBehaviour
     {
         [SerializeField] float custoLeve = 60f, custoForte = 100f, custoFinal = 150f;
         [SerializeField, Range(0f, 1f)] float chanceFaiscaNegra = 0.3f;
@@ -27,6 +27,12 @@ namespace FaithClash.Combat
             new Color(0.25f, 0.65f, 1f),
             new Color(0.85f, 0.65f, 0.3f),
             new Color(0.75f, 0.55f, 1f),
+            new Color(1f, 0.92f, 0.35f),
+            new Color(0.86f, 0.7f, 0.38f),
+            new Color(0.3f, 0.82f, 1f),
+            new Color(0.95f, 0.12f, 0.18f),
+            new Color(0.5f, 0.25f, 0.95f),
+            new Color(0.72f, 0.5f, 1f),
         };
 
         MeleeCombat combate;
@@ -39,6 +45,9 @@ namespace FaithClash.Combat
         Light luzAura;
         readonly List<(Elemento e, float t)> historico = new List<(Elemento, float)>();
 
+        /// <summary>Expansão de domínio em andamento: não dá para sair até a Fé cair abaixo de 10%.</summary>
+        public static bool DominioAtivo;
+        float feAntes;
         public Elemento Atual { get; private set; } = Elemento.Fogo;
         public event Action<Elemento> ElementoMudou;
         public event Action<string, Color> TecnicaUsada;
@@ -59,19 +68,23 @@ namespace FaithClash.Combat
         {
             if (animator != null && animator.isHuman) mao = animator.GetBoneTransform(HumanBodyBones.RightHand);
             CriarAura();
-            Selecionar(Elemento.Fogo);
+            int primeiro = 0;
+            foreach (int s in PerfilJogo.D.slots) if (s >= 0) { primeiro = s; break; }
+            Selecionar((Elemento)primeiro);
         }
 
         void OnEnable()
         {
             if (combate != null) combate.AttackImpact += AoImpacto;
             if (modo != null) modo.Mudou += AoMudarModo;
+            PerfilJogo.Mudou += AoMudarPerfil;
         }
 
         void OnDisable()
         {
             if (combate != null) combate.AttackImpact -= AoImpacto;
             if (modo != null) modo.Mudou -= AoMudarModo;
+            PerfilJogo.Mudou -= AoMudarPerfil;
         }
 
         void AoMudarModo(Modo m)
@@ -98,15 +111,27 @@ namespace FaithClash.Combat
         void Update()
         {
             var k = Keyboard.current;
+            var pad = Gamepad.current;
+            if (pad != null && Cursor.lockState == CursorLockMode.Locked)
+            {
+                // controle: direcional ← → troca de poder, LB = carregar (R), RT = habilidade (F)
+                if (pad.dpad.right.wasPressedThisFrame) { slotPad = (slotPad + 1) % 4; EscolherSlot(slotPad); }
+                if (pad.dpad.left.wasPressedThisFrame) { slotPad = (slotPad + 3) % 4; EscolherSlot(slotPad); }
+                if (pad.leftShoulder.wasPressedThisFrame && EmPoder && status != null && status.Cargas > 0 && !RegrasFase.PoderesBloqueados)
+                    if (combate.IniciarAcaoEspecial("PowerUp", 2.4f, 1.2f, () => { if (status.GastarCarga()) Roxo(); })) SomJogo.Tocar("Roxo_Carga", transform.position, 0.9f, duracaoMax: 1.4f);
+            }
             if (k != null && Cursor.lockState == CursorLockMode.Locked)
             {
-                if (k.digit1Key.wasPressedThisFrame) Escolher(Elemento.Fogo);
-                if (k.digit2Key.wasPressedThisFrame) Escolher(Elemento.Agua);
-                if (k.digit3Key.wasPressedThisFrame) Escolher(Elemento.Terra);
-                if (k.digit4Key.wasPressedThisFrame) Escolher(Elemento.Ar);
+                // 1 = sem poder (só taijutsu); 2-5 = os quatro poderes equipados no inventário
+                if (k.digit1Key.wasPressedThisFrame && !DominioAtivo) { modo?.Definir(Modo.Combate); SomJogo.Tocar("UI_Travar", null, 0.5f, 0.9f); }
+                if (k.digit2Key.wasPressedThisFrame) EscolherSlot(0);
+                if (k.digit3Key.wasPressedThisFrame) EscolherSlot(1);
+                if (k.digit4Key.wasPressedThisFrame) EscolherSlot(2);
+                if (k.digit5Key.wasPressedThisFrame) EscolherSlot(3);
                 if (k.rKey.wasPressedThisFrame)
                 {
-                    if (!EmPoder) status?.Avisar("Entre no modo Poder (1-4) para usar poderes");
+                    if (RegrasFase.PoderesBloqueados) status?.Avisar("Poderes bloqueados nesta fase");
+                    else if (!EmPoder) status?.Avisar("Escolha um poder (2-5) para usar poderes");
                     else if (status != null && status.Cargas <= 0) status.Avisar("Sem cargas espirituais");
                     else if (combate.IniciarAcaoEspecial("PowerUp", 2.4f, 1.2f, () => { if (status.GastarCarga()) Roxo(); }))
                         SomJogo.Tocar("Roxo_Carga", transform.position, 0.9f, duracaoMax: 1.4f);
@@ -114,11 +139,36 @@ namespace FaithClash.Combat
             }
 
             // F = habilidade ativa do estilo (como a tecla de habilidade do Naraka)
-            if (k != null && Cursor.lockState == CursorLockMode.Locked && k.fKey.wasPressedThisFrame)
+            if (Cursor.lockState == CursorLockMode.Locked && ((k != null && k.fKey.wasPressedThisFrame) || (Gamepad.current != null && Gamepad.current.rightTrigger.wasPressedThisFrame)))
             {
-                if (!EmPoder) status?.Avisar("Entre no modo Poder (1-4) para usar poderes");
+                if (RegrasFase.PoderesBloqueados) status?.Avisar("Poderes bloqueados nesta fase");
+                else if (!EmPoder) status?.Avisar("Escolha um poder (2-5) para usar poderes");
                 else Conjurar();
             }
+        }
+
+        int slotPad = -1;
+
+        void EscolherSlot(int slot)
+        {
+            if (DominioAtivo) { status?.Avisar("Domínio ativo — só sai quando a Fé estiver abaixo de 10%"); return; }
+            if (RegrasFase.PoderesBloqueados) { status?.Avisar("Poderes bloqueados nesta fase"); SomJogo.Tocar("UI_Travar", null, 0.4f, 0.7f); return; }
+            int e = PerfilJogo.D.slots[slot];
+            if (e < 0) { status?.Avisar("Slot vazio — abra o inventário de poderes (I)"); SomJogo.Tocar("UI_Travar", null, 0.4f, 0.7f); return; }
+            Escolher((Elemento)e);
+        }
+
+        /// <summary>Chamado quando o inventário muda: se o poder atual saiu dos slots, escolhe outro (ou fica sem poder).</summary>
+        void AoMudarPerfil()
+        {
+            if (!PerfilJogo.Equipado((int)Atual))
+            {
+                int primeiro = -1;
+                foreach (int s in PerfilJogo.D.slots) if (s >= 0) { primeiro = s; break; }
+                if (primeiro >= 0) Selecionar((Elemento)primeiro);
+                else if (modo != null && modo.Atual == Modo.Poder) modo.Definir(Modo.Combate);
+            }
+            else ElementoMudou?.Invoke(Atual);
         }
 
         void Escolher(Elemento e)
@@ -180,7 +230,7 @@ namespace FaithClash.Combat
 
         // gesto (animação do Mixamo) de cada técnica: clipe, duração e momento da liberação (s)
         // gesto de cada técnica: clipe, duração e momento da liberação (s) — lidos da própria animação (InfoGolpes)
-        static (string clip, float dur, float imp) Gesto(string clip) => (clip, InfoGolpes.Duracao(clip, 1.5f), InfoGolpes.Impacto(clip, 0.7f));
+        static (string clip, float dur, float imp) Gesto(string clip) { float d = InfoGolpes.Duracao(clip, 1.5f); return (clip, d, InfoGolpes.Impacto(clip, Mathf.Min(0.7f, d * 0.5f))); }
         static (string clip, float dur, float imp) GestoFogo => Gesto("CastFogo");
         static (string clip, float dur, float imp) GestoVento => Gesto("CastVento");
         static (string clip, float dur, float imp) GestoEnergia => Gesto("CastEnergia");
@@ -188,56 +238,17 @@ namespace FaithClash.Combat
         static (string clip, float dur, float imp) GestoPoder => Gesto("PowerUp");
 
         /// <summary>Clique no modo Poder: técnica leve do estilo (só o gesto de conjuração, sem golpes de luta).</summary>
-        public bool TecnicaLeve()
-        {
-            Action tecnica; (string clip, float dur, float imp) g; float custo = custoLeve;
-            switch (Atual)
-            {
-                case Elemento.Fogo: tecnica = GoukakyuuNoJutsu; g = GestoFogo; break;
-                case Elemento.Agua: tecnica = SuiryuudanNoJutsu; g = GestoEnergia; break;
-                case Elemento.Terra: tecnica = DoryuudanNoJutsu; g = GestoTerra; break;
-                default: tecnica = DaitoppaNoJutsu; g = GestoVento; custo = custoLeve * 0.5f; break;
-            }
-            return Usar(custo, tecnica, g);
-        }
+        public bool TecnicaLeve() => Lancar(0);
 
         /// <summary>Segurar o clique no modo Poder: técnica forte do estilo.</summary>
-        public bool TecnicaForte()
-        {
-            Action tecnica; (string clip, float dur, float imp) g; float custo = custoForte;
-            switch (Atual)
-            {
-                case Elemento.Fogo: tecnica = HousenkaNoJutsu; g = Gesto("Mx_Standing_2H_Magic_Attack_05"); break;
-                case Elemento.Agua: tecnica = SuirouNoJutsu; g = Gesto("Mx_Standing_2H_Magic_Area_Attack_02"); break;
-                case Elemento.Terra: tecnica = MuralhaDeTerra; g = Gesto("Mx_Standing_2H_Magic_Area_Attack_01"); custo = custoFinal; break;
-                default: tecnica = Azul; g = Gesto("Mx_Two_Hand_Spell_Casting"); break;
-            }
-            return Usar(custo, tecnica, g);
-        }
+        public bool TecnicaForte() => Lancar(1);
 
-        bool Usar(float custo, Action tecnica, (string clip, float dur, float imp) g)
-        {
-            if (status != null && status.Fe < custo) { status.Avisar("Fé insuficiente"); return false; }
-            return combate.IniciarAcaoEspecial(g.clip, g.dur, g.imp, () => TentarTecnica(custo, tecnica));
-        }
         /// <summary>Habilidade ativa do estilo (tecla F): faz o gesto e libera a técnica no tempo certo.</summary>
-        void Conjurar()
-        {
-            Action tecnica; float custo; (string clip, float dur, float imp) g;
-            switch (Atual)
-            {
-                case Elemento.Fogo: tecnica = HousenkaNoJutsu; g = Gesto("Mx_Wide_Arm_Spell_Casting"); break;
-                case Elemento.Agua: tecnica = SuirouNoJutsu; g = Gesto("Mx_Magic_Spell_Casting"); break;
-                case Elemento.Terra: tecnica = MuralhaDeTerra; g = Gesto("Mx_Standing_2H_Magic_Area_Attack_01"); break;
-                default: tecnica = Reppusho; g = Gesto("Mx_Strong_Gesture"); break;
-            }
-            custo = custoFinal;
-            if (status != null && status.Fe < custo) { status.Avisar("Fé insuficiente"); return; }
-            combate.IniciarAcaoEspecial(g.clip, g.dur, g.imp, () => TentarTecnica(custo, tecnica));
-        }
+        void Conjurar() => Lancar(2);
 
         void TentarTecnica(float custo, Action tecnica)
         {
+            if (status != null) feAntes = status.Fe;
             if (status != null && !status.GastarFe(custo)) return;
             tecnica();
             RegistrarSequencia(Atual);
@@ -277,6 +288,10 @@ namespace FaithClash.Combat
             foreach (var col in Physics.OverlapSphere(centro, raio, ~0, QueryTriggerInteraction.Ignore))
             {
                 if (col.transform.IsChildOf(transform)) continue;
+                // objetos físicos (caixas, barris, troncos) também sentem a força do poder
+                var rbObj = col.attachedRigidbody;
+                if (rbObj != null && !rbObj.isKinematic && rbObj.GetComponentInParent<IDamageable>() == null)
+                    rbObj.AddExplosionForce(Mathf.Max(empurrao, 6f) * Mathf.Clamp(rbObj.mass, 5f, 120f) * (puxar ? -0.8f : 1.2f), centro, raio + 1f, 0.4f, ForceMode.Impulse);
                 var alvo = col.GetComponentInParent<IDamageable>();
                 if (alvo == null || alvo.IsDead || !vistos.Add(alvo)) continue;
                 alvo.TakeDamage(dano * (combate != null ? combate.DamageMultiplier : 1f), col.ClosestPoint(centro), gameObject);
@@ -309,7 +324,8 @@ namespace FaithClash.Combat
             SomJogo.Tocar("Fogo_Lancar", transform.position, 1f);
             SomJogo.Tocar("Fogo_Impacto", Frente(5f), 0.9f, atraso: 0.35f);
             TremorGlobal.Disparar(1.5f);
-            Disparar(Frente(1.2f), DirecaoAlvo(), new ProjetilElemental.Opcoes
+            CatalogoVFX.Tocar("fogo_sopro", BocaPos(), Quaternion.LookRotation(DirecaoAlvo()), null, 1.3f, 1.5f);   // o fogo sai pela boca
+            Disparar(BocaPos(), DirecaoAlvo(), new ProjetilElemental.Opcoes
             {
                 cor = Cores[0], velocidade = 14f, duracao = 1.3f, dano = 55f, empurrao = 9f, tamanho = 2.2f, raioImpacto = 4f, explodir = true, particulas = 260, vfxRastro = "fogo_grande", vfxExplosao = "fogo_explosao",
             });
@@ -335,9 +351,11 @@ namespace FaithClash.Combat
         void SuiryuudanNoJutsu()
         {
             Anunciar("Suiton: Suiryuudan no Jutsu");
+            MundoEfeitos.Poca(Frente(6f), 1.8f, 45f); MundoEfeitos.Poca(Frente(3f), 1.1f, 45f);
             SomJogo.Tocar("Agua_Splash", transform.position, 1f);
             SomJogo.Tocar("Agua_Impacto", Frente(6f), 0.8f, atraso: 0.45f, duracaoMax: 2.2f);
-            Disparar(Frente(1f), DirecaoAlvo(), new ProjetilElemental.Opcoes
+            Efeitos.Rajada(MaosPos(), Quaternion.LookRotation(DirecaoAlvo()), Cores[1], 60, new Vector2(3, 8), new Vector2(0.1f, 0.3f), new Vector2(0.3f, 0.7f), ParticleSystemShapeType.Cone, 0.6f, 0.2f);   // a água sai das mãos
+            Disparar(MaosPos(), DirecaoAlvo(), new ProjetilElemental.Opcoes
             {
                 cor = Cores[1], velocidade = 17f, duracao = 1.5f, dano = 45f, empurrao = 8f, tamanho = 1.5f, serpentear = true, particulas = 320, vfxRastro = "agua_trilha", vfxExplosao = "agua_splash",
             });
@@ -346,6 +364,7 @@ namespace FaithClash.Combat
         void SuirouNoJutsu()
         {
             Anunciar("Suiton: Suirou no Jutsu");
+            MundoEfeitos.Poca(Frente(2.5f), 3.2f, 60f);
             SomJogo.Tocar("Agua_Explosao", transform.position, 0.8f, duracaoMax: 3f);
             TrainingDummy alvo = null;
             float melhor = 7f;

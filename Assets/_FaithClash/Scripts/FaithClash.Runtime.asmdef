@@ -3,7 +3,10 @@
     "rootNamespace": "FaithClash",
     "references": [
         "Unity.InputSystem",
-        "UnityEngine.UI"
+        "CharacterMovement.Core",
+        "UnityEngine.UI",
+        "Unity.RenderPipelines.Core.Runtime",
+        "Unity.RenderPipelines.Universal.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

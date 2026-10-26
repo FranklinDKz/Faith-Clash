@@ -25,7 +25,19 @@ namespace FaithClash.Combat
 
         public Transform Alvo { get; private set; }
         public bool Travado => Alvo != null;
-        public Vector3 PontoFoco => Alvo != null ? Alvo.position + Vector3.up * (alturaFoco - 1f) : Vector3.zero;
+        public Vector3 PontoFoco
+        {
+            get
+            {
+                if (Alvo == null) return Vector3.zero;
+                // centro do peito: pela cápsula do inimigo (não os pés)
+                var ccA = Alvo.GetComponentInParent<CharacterController>();
+                if (ccA != null) return ccA.bounds.center + Vector3.up * ccA.bounds.extents.y * 0.35f;
+                var col = Alvo.GetComponentInParent<Collider>();
+                if (col != null) return col.bounds.center + Vector3.up * col.bounds.extents.y * 0.35f;
+                return Alvo.position + Vector3.up * 1.3f;
+            }
+        }
         /// <summary>Alvo trocado; o segundo parâmetro é o ângulo (graus) entre o alvo antigo e o novo.</summary>
         public event Action<float> AlvoTrocado;
 

@@ -124,3 +124,32 @@ Ferramentas/analise/previews/
 
 # Fotos individuais do teste de combate (ficam só as folhas de contato *_folha.png)
 Ferramentas/analise/fotos/*_[0-9][0-9].png
+
+# Plugin pago de terceiros (nao redistribuir)
+/Assets/UMotionEditor/
+/Assets/UMotionEditor.meta
+/UMotionData/
+
+# Mapas e pacotes de terceiros (Asset Store): grandes e com licenca propria, baixe de novo pela Asset Store
+/Assets/Agua/
+/Assets/Agua.meta
+/Assets/Ceus/
+/Assets/Ceus.meta
+/Assets/Character Controller/
+/Assets/Character Controller.meta
+/Assets/Efeitos/
+/Assets/Efeitos.meta
+/Assets/Mapas/
+/Assets/Mapas.meta
+/Assets/Martial Art Animations Sample/
+/Assets/Martial Art Animations Sample.meta
+/Assets/MobileDependencyResolver/
+/Assets/MobileDependencyResolver.meta
+/Assets/Props/
+/Assets/Props.meta
+/Assets/Personagens/Personagens Adam/
+/Assets/Personagens/Personagens Adam.meta
+/Assets/_Recovery/
+/Assets/_Recovery.meta
+/Assets/_TerrainAutoUpgrade/
+/Assets/_TerrainAutoUpgrade.meta

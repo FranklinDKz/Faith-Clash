@@ -9,6 +9,9 @@ namespace FaithClash.Combat
 {
     public enum Modo { Espada, Poder, Combate }
 
+    /// <summary>Katana com uma mão (animações "Sword": escudo opcional) ou com as duas (animações "Great" e Two Hand).</summary>
+    public enum Empunhadura { UmaMao, DuasMaos }
+
     /// <summary>
     /// Três modos de combate, que não se misturam: <b>Combate</b> (só taijutsu: punhos, chutes, joelhadas — sem espada nem poderes),
     /// <b>Espada</b> (katana, só corta) e <b>Poder</b> (jutsus e técnicas de maldição).
@@ -25,6 +28,9 @@ namespace FaithClash.Combat
         Modo anterior = Modo.Poder;
 
         public Modo Atual { get; private set; } = Modo.Poder;
+        public Empunhadura Grip { get; private set; } = Empunhadura.DuasMaos;
+        public bool DuasMaos => Atual == Modo.Espada && Grip == Empunhadura.DuasMaos;
+        public event Action<Empunhadura> GripMudou;
         public event Action<Modo> Mudou;
 
         void Awake()
@@ -41,25 +47,37 @@ namespace FaithClash.Combat
         void Start()
         {
             if (katana != null) katana.SetActive(false);
+            if (!PerfilJogo.PoderesDisponiveis && Atual == Modo.Poder) { Atual = Modo.Combate; anterior = Modo.Combate; }
             Mudou?.Invoke(Atual);
         }
 
         void Update()
         {
-            var k = Keyboard.current;
-            if (k == null || Cursor.lockState != CursorLockMode.Locked) return;
-            if (k.gKey.wasPressedThisFrame) Alternar();
-            if (k.digit5Key.wasPressedThisFrame) AlternarCombate();
+            var k = Keyboard.current; var pad = Gamepad.current;
+            if (Cursor.lockState != CursorLockMode.Locked) return;
+            if ((k != null && k.gKey.wasPressedThisFrame) || (pad != null && pad.dpad.up.wasPressedThisFrame)) Alternar();
+            if (((k != null && k.hKey.wasPressedThisFrame) || (pad != null && pad.dpad.down.wasPressedThisFrame)) && Atual == Modo.Espada && (combate == null || !combate.IsAttacking)) AlternarEmpunhadura();
         }
 
         /// <summary>G: Espada ⇄ Poder (a partir do modo Combate, saca a espada).</summary>
-        public void Alternar() => Definir(Atual == Modo.Espada ? Modo.Poder : Modo.Espada);
+        public void Alternar() => Definir(Atual == Modo.Espada ? Modo.Poder : Modo.Espada);   // sem poderes disponíveis: Espada ⇄ Combate
+
+        /// <summary>H (com a katana): alterna entre uma mão e duas mãos.</summary>
+        public void AlternarEmpunhadura()
+        {
+            Grip = Grip == Empunhadura.DuasMaos ? Empunhadura.UmaMao : Empunhadura.DuasMaos;
+            SomJogo.Tocar("Espada_Sacar", transform.position, 0.5f, 1.2f, duracaoMax: 0.8f);
+            GripMudou?.Invoke(Grip);
+            animador?.Encerrar(0.15f);
+        }
 
         /// <summary>5: entra no modo só-combate; apertar de novo volta ao modo em que estava.</summary>
         public void AlternarCombate() => Definir(Atual == Modo.Combate ? (anterior == Modo.Combate ? Modo.Poder : anterior) : Modo.Combate);
 
         public void Definir(Modo m)
         {
+            if (EstilosElementais.DominioAtivo) return;   // dentro do domínio não dá para trocar de modo
+            if (m == Modo.Poder && !PerfilJogo.PoderesDisponiveis) m = Modo.Combate;
             if (m == Atual) return;
             if (combate != null && combate.IsAttacking) return;
             var saiu = Atual;
@@ -70,7 +88,8 @@ namespace FaithClash.Combat
             {
                 case Modo.Espada:
                     CatalogoVFX.Tocar("corte_azul", transform.position + Vector3.up, transform.rotation, null, 0.8f, 2f);
-                    animador?.Acao("SacarEspada", 0.8f, 0.08f);
+                    if (Grip == Empunhadura.DuasMaos) animador?.Acao("U_SacarKatanaDupla", 0.8f, 0.08f, 1f);
+                    else animador?.Acao("SacarEspada", 0.8f, 0.08f);
                     SomJogo.Tocar("Espada_Sacar", transform.position, 0.9f, atraso: 0.25f);
                     SomJogo.Tocar("Poder_Desativar", transform.position, 0.5f, 1.3f);
                     mostrando = StartCoroutine(MostrarKatana(true));

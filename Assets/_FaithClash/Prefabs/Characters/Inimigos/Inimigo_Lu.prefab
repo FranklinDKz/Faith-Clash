@@ -1,0 +1,208 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8079769861056270862
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7767457461173384615}
+  - component: {fileID: 4986786556695666617}
+  - component: {fileID: 8475398800132765204}
+  - component: {fileID: 4180925491328177531}
+  - component: {fileID: 3941174326049243711}
+  m_Layer: 0
+  m_Name: Inimigo_Lu
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7767457461173384615
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8079769861056270862}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8552127558736564585}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!143 &4986786556695666617
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8079769861056270862}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 1.8
+  m_Radius: 0.4
+  m_SlopeLimit: 45
+  m_StepOffset: 0.35
+  m_SkinWidth: 0.04
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0.92, z: 0}
+--- !u!114 &8475398800132765204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8079769861056270862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d53cdac38aac9e343a0a52fdaf30b9be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FaithClash.Runtime::FaithClash.Core.Health
+  maxHealth: 1400
+--- !u!114 &4180925491328177531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8079769861056270862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 081acc060263bec4daa855da01aad062, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FaithClash.Runtime::FaithClash.Training.TrainingDummy
+  body: {fileID: 0}
+  respawnDelay: 2
+  nome: Sentinela do Lago
+  subtitulo: "Guardi\xE3 das \xC1guas"
+  nivel: 28
+--- !u!114 &3941174326049243711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8079769861056270862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e61b75c385add6f4995228af106e394d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FaithClash.Runtime::FaithClash.Training.InimigoIA
+  animator: {fileID: 8552127558744063793}
+  ataques:
+  - clip: Mx_Roundhouse_Kick
+    dano: 45
+    alcance: 2.1
+    velocidade: 1.1
+  - clip: Mx_Hook_Punch
+    dano: 35
+    alcance: 1.8
+    velocidade: 1.1
+  - clip: Mx_Martelo_3
+    dano: 50
+    alcance: 2
+    velocidade: 1
+  mortes:
+  - Mx_Standing_React_Death_Backward
+  - Mx_Standing_React_Death_Forward
+  - Mx_Falling_Back_Death
+  velAndar: 2
+  velCorrer: 4.6
+  distanciaVisao: 16
+  distanciaCorrer: 6
+  intervaloAtaque: 2.2
+  giro: 7
+--- !u!1001 &8552127558736693841
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7767457461173384615}
+    m_Modifications:
+    - target: {fileID: 100184, guid: d5025efbcc7ae004db8312cd46d86e5d, type: 3}
+      propertyPath: m_Name
+      value: Modelo
+      objectReference: {fileID: 0}
+    - target: {fileID: 400184, guid: d5025efbcc7ae004db8312cd46d86e5d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400184, guid: d5025efbcc7ae004db8312cd46d86e5d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400184, guid: d5025efbcc7ae004db8312cd46d86e5d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400184, guid: d5025efbcc7ae004db8312cd46d86e5d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400184, guid: d5025efbcc7ae004db8312cd46d86e5d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400184, guid: d5025efbcc7ae004db8312cd46d86e5d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400184, guid: d5025efbcc7ae004db8312cd46d86e5d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400184, guid: d5025efbcc7ae004db8312cd46d86e5d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400184, guid: d5025efbcc7ae004db8312cd46d86e5d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400184, guid: d5025efbcc7ae004db8312cd46d86e5d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: d5025efbcc7ae004db8312cd46d86e5d, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 85fc790fcfd1365448dd6e25edcf6e8b, type: 2}
+    - target: {fileID: 9500000, guid: d5025efbcc7ae004db8312cd46d86e5d, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: d5025efbcc7ae004db8312cd46d86e5d, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d5025efbcc7ae004db8312cd46d86e5d, type: 3}
+--- !u!4 &8552127558736564585 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400184, guid: d5025efbcc7ae004db8312cd46d86e5d, type: 3}
+  m_PrefabInstance: {fileID: 8552127558736693841}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &8552127558744063793 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 9500000, guid: d5025efbcc7ae004db8312cd46d86e5d, type: 3}
+  m_PrefabInstance: {fileID: 8552127558736693841}
+  m_PrefabAsset: {fileID: 0}

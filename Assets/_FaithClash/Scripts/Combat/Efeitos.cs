@@ -73,6 +73,18 @@ namespace FaithClash.Combat
         }
 
         /// <summary>Explosão de partículas genérica.</summary>
+        /// <summary>Partículas de rapidez: riscos finos azul-brancos que ficam para trás do movimento (dash, avanço, parkour).</summary>
+        public static void Rapidez(Vector3 pos, Vector3 dir, float escala = 1f)
+        {
+            if (dir.sqrMagnitude < 0.001f) return;
+            var ps = Rajada(pos, Quaternion.LookRotation(-dir.normalized), new Color(0.65f, 0.85f, 1f, 0.9f), (int)(46 * escala), new Vector2(7f, 16f),
+                new Vector2(0.025f, 0.06f), new Vector2(0.14f, 0.3f), ParticleSystemShapeType.Cone, 0.45f * escala, 0f, true);
+            var sh = ps.shape; sh.angle = 5f; sh.radius = 0.55f * escala;
+            var r = ps.GetComponent<ParticleSystemRenderer>();
+            r.renderMode = ParticleSystemRenderMode.Stretch;
+            r.lengthScale = 7f; r.velocityScale = 0.06f;
+        }
+
         public static ParticleSystem Rajada(Vector3 pos, Quaternion rot, Color cor, int quantidade, Vector2 velocidade,
             Vector2 tamanho, Vector2 vida, ParticleSystemShapeType forma = ParticleSystemShapeType.Sphere,
             float raio = 0.3f, float gravidade = 0f, bool aditivo = true, float arco = 360f, bool autoDestruir = true)
